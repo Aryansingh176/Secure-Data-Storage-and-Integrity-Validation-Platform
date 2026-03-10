@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Validation Rules - Data Integrity Platform</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/pages/validation-rules.css">
+</head>
+<body>
+    <header>
+        <h1>Validation Rules</h1>
+    </header>
+    <main>
+        <section>
+            <h2>Define Validation Rules</h2>
+            <form id="validation-rule-form">
+                <label for="rule-name">Rule Name:</label>
+                <input type="text" id="rule-name" name="rule-name" required>
+                
+                <label for="rule-condition">Condition:</label>
+                <input type="text" id="rule-condition" name="rule-condition" required>
+                
+                <button type="submit">Save Rule</button>
+            </form>
+        </section>
+        <section>
+            <h2>Existing Validation Rules</h2>
+            <ul id="rules-list">
+                <!-- List of validation rules will be populated here -->
+            </ul>
+        </section>
+    </main>
+    <script src="../js/app.js"></script>
+    <script src="../js/pages/validation-rules.js"></script>
+</body>
+</html>

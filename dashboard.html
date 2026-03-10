@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Data Integrity Platform</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/dashboard-style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="css/footer.css">
+    <script>
+        // Check authentication
+        window.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('auth_token');
+            if (!token) {
+                window.location.href = 'login.html';
+            }
+        });
+    </script>
+</head>
+<body>
+    <!-- Top Navigation Bar -->
+    <nav class="top-navbar">
+        <div class="navbar-container">
+            <div class="navbar-left">
+                <div class="logo-section">
+                    <span class="logo-icon">🔒</span>
+                    <span class="logo-text">Data Integrity Platform</span>
+                </div>
+            </div>
+            <div class="navbar-right">
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="records.html">View Records</a></li>
+                    <li><a href="dashboard.html" class="active">Dashboard</a></li>
+                    <li><a href="profile.html">Profile</a></li>
+                    <li><a href="#" id="logoutBtn" style="color: #ff6b6b;">Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="dashboard-main">
+        <div class="dashboard-container">
+            <!-- Welcome Section -->
+            <div class="welcome-section">
+                <h1 class="welcome-title">Welcome, <span id="welcomeName">User</span></h1>
+                <p class="welcome-subtitle">Manage your data with cryptographic integrity verification</p>
+            </div>
+
+            <!-- Quick Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: #e3f2fd;">
+                        <span style="color: #1976d2;">📊</span>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="totalRecords">0</div>
+                        <div class="stat-label">Total Records</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: #e8f5e9;">
+                        <span style="color: #388e3c;">✅</span>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="verifiedRecords">0</div>
+                        <div class="stat-label">Verified</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: #ffebee;">
+                        <span style="color: #c62828;">⚠️</span>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="tamperedRecords">0</div>
+                        <div class="stat-label">Tampered</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: #fff3e0;">
+                        <span style="color: #f57c00;">🔐</span>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value">SHA-256</div>
+                        <div class="stat-label">Algorithm</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: #f3e5f5;">
+                        <span style="color: #7b1fa2;">⚡</span>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="totalVerifications">0</div>
+                        <div class="stat-label">Total Verifications</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Cards -->
+            <div class="action-section">
+                <h2 class="section-title">Quick Actions</h2>
+                <div class="action-grid">
+                    <a href="index.html" class="action-card">
+                        <div class="action-icon" style="background: #e3f2fd; color: #1976d2;">
+                            <span>➕</span>
+                        </div>
+                        <div class="action-content">
+                            <h3 class="action-title">Store New Data</h3>
+                            <p class="action-description">Add and secure new data records</p>
+                        </div>
+                    </a>
+
+                    <a href="records.html" class="action-card">
+                        <div class="action-icon" style="background: #e8f5e9; color: #388e3c;">
+                            <span>📋</span>
+                        </div>
+                        <div class="action-content">
+                            <h3 class="action-title">View Records</h3>
+                            <p class="action-description">Browse all stored records</p>
+                        </div>
+                    </a>
+
+                    <a href="profile.html" class="action-card">
+                        <div class="action-icon" style="background: #f3e5f5; color: #7b1fa2;">
+                            <span>⚙️</span>
+                        </div>
+                        <div class="action-content">
+                            <h3 class="action-title">Profile Settings</h3>
+                            <p class="action-description">Manage your account details</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const API_URL = 'http://localhost:5000';
+
+        // Logout handler
+        document.getElementById('logoutBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            localStorage.removeItem('auth_token');
+            localStorage.removeItem('user_email');
+            window.location.href = 'login.html';
+        });
+
+        function authHeaders() {
+            return { 'Authorization': 'Bearer ' + localStorage.getItem('auth_token') };
+        }
+
+        // Load user profile display name
+        async function loadUserProfile() {
+            try {
+                const res = await fetch(`${API_URL}/api/auth/user/profile`, { headers: authHeaders() });
+                if (res.ok) {
+                    const data = await res.json();
+                    const user = data.user || {};
+                    const name = user.name || user.email || 'User';
+                    document.getElementById('welcomeName').textContent = name.split(' ')[0];
+                } else {
+                    const email = localStorage.getItem('user_email') || 'User';
+                    document.getElementById('welcomeName').textContent = email.split('@')[0];
+                }
+            } catch {
+                const email = localStorage.getItem('user_email') || 'User';
+                document.getElementById('welcomeName').textContent = email.split('@')[0];
+            }
+        }
+
+        // Load per-user statistics from the new endpoint
+        async function loadStatistics() {
+            try {
+                const res = await fetch(`${API_URL}/api/data/my-statistics`, { headers: authHeaders() });
+                if (res.status === 401) { window.location.href = 'login.html'; return; }
+                if (!res.ok) return;
+
+                const data = await res.json();
+                const s = data.statistics || {};
+                document.getElementById('totalRecords').textContent      = s.total_records       || 0;
+                document.getElementById('verifiedRecords').textContent   = s.verified_count      || 0;
+                document.getElementById('tamperedRecords').textContent   = s.tampered_count      || 0;
+                document.getElementById('totalVerifications').textContent = s.total_verifications || 0;
+            } catch (err) {
+                console.error('Error loading stats:', err);
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadUserProfile();
+            loadStatistics();
+        });
+    </script>
+
+    <!-- Site Footer -->
+    <footer class="site-footer">
+        <div class="footer-container">
+            <div class="footer-grid">
+
+                <!-- Column 1: About Platform -->
+                <div class="footer-col">
+                    <div class="footer-brand">
+                        <span class="footer-brand-icon">&#128274;</span>
+                        <span class="footer-brand-name">Data Integrity Platform</span>
+                    </div>
+                    <p class="footer-desc">Secure data storage and integrity verification using SHA-256 cryptographic hashing. Built as a Final Year BTech CSE Project.</p>
+                    <div class="footer-social">
+                        <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" title="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" title="GitHub"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+
+                <!-- Column 2: Quick Links -->
+                <div class="footer-col">
+                    <p class="footer-col-title">Quick Links</p>
+                    <ul class="footer-links">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="dashboard.html">Dashboard</a></li>
+                        <li><a href="records.html">View Records</a></li>
+                        <li><a href="profile.html">Profile Settings</a></li>
+                    </ul>
+                </div>
+
+                <!-- Column 3: Support -->
+                <div class="footer-col">
+                    <p class="footer-col-title">Support</p>
+                    <ul class="footer-links">
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">FAQs</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+
+                <!-- Column 4: Technologies Used -->
+                <div class="footer-col">
+                    <p class="footer-col-title">Technologies Used</p>
+                    <ul class="footer-tech-list">
+                        <li class="footer-tech-item">
+                            <span class="footer-tech-icon flask"><i class="fas fa-flask"></i></span>
+                            Flask Backend
+                        </li>
+                        <li class="footer-tech-item">
+                            <span class="footer-tech-icon mongo"><i class="fas fa-database"></i></span>
+                            MongoDB Database
+                        </li>
+                        <li class="footer-tech-item">
+                            <span class="footer-tech-icon sha"><i class="fas fa-shield-alt"></i></span>
+                            SHA-256 Cryptographic Hashing
+                        </li>
+                        <li class="footer-tech-item">
+                            <span class="footer-tech-icon google"><i class="fab fa-google"></i></span>
+                            Google OAuth Authentication
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <div class="footer-divider"></div>
+            <div class="footer-bottom">
+                <p class="footer-copyright">&copy; 2026 Data Integrity Platform | Final Year BTech CSE Project</p>
+                <div class="footer-bottom-badge">
+                    <i class="fas fa-lock"></i>
+                    Built with <span>SHA-256</span> Security
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Settings - Data Integrity Platform</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/dashboard-style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="css/footer.css">
+    <script>
+        // Check authentication
+        window.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('auth_token');
+            if (!token) {
+                window.location.href = 'login.html';
+            }
+        });
+    </script>
+</head>
+<body>
+    <!-- Top Navigation Bar -->
+    <nav class="top-navbar">
+        <div class="navbar-container">
+            <div class="navbar-left">
+                <div class="logo-section">
+                    <span class="logo-icon">🔒</span>
+                    <span class="logo-text">Data Integrity Platform</span>
+                </div>
+            </div>
+            <div class="navbar-right">
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="records.html">View Records</a></li>
+                    <li><a href="dashboard.html">Dashboard</a></li>
+                    <li><a href="profile.html" class="active">Profile</a></li>
+                    <li><a href="#" id="logoutBtn" style="color: #ff6b6b;">Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="dashboard-main">
+        <div class="profile-container">
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1 class="page-title">Profile Settings</h1>
+                <p class="page-subtitle">Manage your personal information and account details</p>
+            </div>
+
+            <!-- Success/Error Message -->
+            <div id="messageBox" class="message-box" style="display: none;"></div>
+
+            <!-- Profile Form -->
+            <form id="profileForm">
+                <!-- Personal Information Section -->
+                <div class="profile-card">
+                    <div class="card-header">
+                        <h2 class="card-title">Personal Information</h2>
+                        <p class="card-subtitle">Basic details about you</p>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="fullName" class="form-label">Full Name *</label>
+                                <input type="text" id="fullName" name="fullName" class="form-input" placeholder="Enter your full name" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="email" class="form-label">Email Address *</label>
+                                <input type="email" id="email" name="email" class="form-input" placeholder="Enter your email" required>
+                                <small class="form-hint">Verified via Google OAuth</small>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="dateOfBirth" class="form-label">Date of Birth</label>
+                                <input type="date" id="dateOfBirth" name="dateOfBirth" class="form-input">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Details Section -->
+                <div class="profile-card">
+                    <div class="card-header">
+                        <h2 class="card-title">Contact Details</h2>
+                        <p class="card-subtitle">How we can reach you</p>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="phoneNumber" class="form-label">Phone Number</label>
+                                <input type="tel" id="phoneNumber" name="phoneNumber" class="form-input" placeholder="+91 XXXXX XXXXX">
+                                <small class="form-hint">Enter your contact number with country code</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Account Information (Read-only) -->
+                <div class="profile-card">
+                    <div class="card-header">
+                        <h2 class="card-title">Account Information</h2>
+                        <p class="card-subtitle">Your account details</p>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Google ID</label>
+                                <input type="text" id="googleId" class="form-input" disabled readonly>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Member Since</label>
+                                <input type="text" id="memberSince" class="form-input" disabled readonly>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Last Login</label>
+                                <input type="text" id="lastLogin" class="form-input" disabled readonly>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- OTP Identity Verification Section -->
+                <div class="profile-card">
+                    <div class="card-header">
+                        <h2 class="card-title">🔐 Identity Verification</h2>
+                        <p class="card-subtitle">Verify your email and phone number via OTP for enhanced security</p>
+                    </div>
+                    <div class="card-body">
+
+                        <!-- Email Verification -->
+                        <div style="border:1px solid #e0e0e0;border-radius:12px;padding:20px;margin-bottom:20px;">
+                            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+                                <div>
+                                    <p style="font-weight:600;color:#1a1a1a;margin-bottom:4px;">📧 Email Verification</p>
+                                    <p style="font-size:13px;color:#666;" id="emailVerifyHint">Send an OTP to verify your email address</p>
+                                </div>
+                                <span id="emailVerifyBadge" style="font-size:12px;font-weight:700;padding:4px 12px;border-radius:20px;background:#fff3cd;color:#856404;">PENDING</span>
+                            </div>
+                            <!-- Step 1: Send button -->
+                            <div id="emailSendStep">
+                                <button type="button" onclick="sendOtp('email')" id="sendEmailOtpBtn"
+                                    style="background:#2563EB;color:#fff;border:none;
+                                           border-radius:8px;padding:10px 22px;font-size:14px;font-weight:600;cursor:pointer;">
+                                    Send Email OTP
+                                </button>
+                            </div>
+                            <!-- Step 2: OTP entry (hidden until sent) -->
+                            <div id="emailVerifyStep" style="display:none;">
+                                <p style="font-size:13px;color:#555;margin-bottom:10px;">Enter the 6-digit OTP sent to your email:</p>
+                                <div style="display:flex;gap:8px;margin-bottom:12px;">
+                                    <input class="otp-digit" data-channel="email" type="text" maxlength="1" inputmode="numeric"
+                                           style="width:42px;height:48px;border:2px solid #e0e0e0;border-radius:8px;text-align:center;font-size:20px;font-weight:700;outline:none;">
+                                    <input class="otp-digit" data-channel="email" type="text" maxlength="1" inputmode="numeric"
+                                           style="width:42px;height:48px;border:2px solid #e0e0e0;border-radius:8px;text-align:center;font-size:20px;font-weight:700;outline:none;">
+                                    <input class="otp-digit" data-channel="email" type="text" maxlength="1" inputmode="numeric"
+                                           style="width:42px;height:48px;border:2px solid #e0e0e0;border-radius:8px;text-align:center;font-size:20px;font-weight:700;outline:none;">
+                                    <input class="otp-digit" data-channel="email" type="text" maxlength="1" inputmode="numeric"
+                                           style="width:42px;height:48px;border:2px solid #e0e0e0;border-radius:8px;text-align:center;font-size:20px;font-weight:700;outline:none;">
+                                    <input class="otp-digit" data-channel="email" type="text" maxlength="1" inputmode="numeric"
+                                           style="width:42px;height:48px;border:2px solid #e0e0e0;border-radius:8px;text-align:center;font-size:20px;font-weight:700;outline:none;">
+                                    <input class="otp-digit" data-channel="email" type="text" maxlength="1" inputmode="numeric"
+                                           style="width:42px;height:48px;border:2px solid #e0e0e0;border-radius:8px;text-align:center;font-size:20px;font-weight:700;outline:none;">
+                                </div>
+                                <div style="display:flex;gap:10px;align-items:center;">
+                                    <button type="button" onclick="verifyOtp('email')" id="verifyEmailOtpBtn"
+                                        style="background:#2563EB;color:#fff;border:none;
+                                               border-radius:8px;padding:10px 22px;font-size:14px;font-weight:600;cursor:pointer;">
+                                        Verify Email
+                                    </button>
+                                    <button type="button" onclick="resetOtpStep('email')"
+                                        style="background:none;border:none;color:#2563EB;font-size:13px;cursor:pointer;font-weight:600;">
+                                        ← Resend
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Phone Verification -->
+                        <div style="border:1px solid #e0e0e0;border-radius:12px;padding:20px;">
+                            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+                                <div>
+                                    <p style="font-weight:600;color:#1a1a1a;margin-bottom:4px;">📱 Phone Verification</p>
+                                    <p style="font-size:13px;color:#666;" id="phoneVerifyHint">Send an OTP to verify your phone number</p>
+                                </div>
+                                <span id="phoneVerifyBadge" style="font-size:12px;font-weight:700;padding:4px 12px;border-radius:20px;background:#fff3cd;color:#856404;">PENDING</span>
+                            </div>
+                            <!-- Step 1: Send button -->
+                            <div id="phoneSendStep">
+                                <button type="button" onclick="sendOtp('phone')" id="sendPhoneOtpBtn"
+                                    style="background:#2563EB;color:#fff;border:none;
+                                           border-radius:8px;padding:10px 22px;font-size:14px;font-weight:600;cursor:pointer;">
+                                    Send Phone OTP
+                                </button>
+                            </div>
+                            <!-- Step 2: OTP entry (hidden until sent) -->
+                            <div id="phoneVerifyStep" style="display:none;">
+                                <p style="font-size:13px;color:#555;margin-bottom:10px;">Enter the 6-digit OTP sent to your phone:</p>
+                                <div style="display:flex;gap:8px;margin-bottom:12px;">
+                                    <input class="otp-digit" data-channel="phone" type="text" maxlength="1" inputmode="numeric"
+                                           style="width:42px;height:48px;border:2px solid #e0e0e0;border-radius:8px;text-align:center;font-size:20px;font-weight:700;outline:none;">
+                                    <input class="otp-digit" data-channel="phone" type="text" maxlength="1" inputmode="numeric"
+                                           style="width:42px;height:48px;border:2px solid #e0e0e0;border-radius:8px;text-align:center;font-size:20px;font-weight:700;outline:none;">
+                                    <input class="otp-digit" data-channel="phone" type="text" maxlength="1" inputmode="numeric"
+                                           style="width:42px;height:48px;border:2px solid #e0e0e0;border-radius:8px;text-align:center;font-size:20px;font-weight:700;outline:none;">
+                                    <input class="otp-digit" data-channel="phone" type="text" maxlength="1" inputmode="numeric"
+                                           style="width:42px;height:48px;border:2px solid #e0e0e0;border-radius:8px;text-align:center;font-size:20px;font-weight:700;outline:none;">
+                                    <input class="otp-digit" data-channel="phone" type="text" maxlength="1" inputmode="numeric"
+                                           style="width:42px;height:48px;border:2px solid #e0e0e0;border-radius:8px;text-align:center;font-size:20px;font-weight:700;outline:none;">
+                                    <input class="otp-digit" data-channel="phone" type="text" maxlength="1" inputmode="numeric"
+                                           style="width:42px;height:48px;border:2px solid #e0e0e0;border-radius:8px;text-align:center;font-size:20px;font-weight:700;outline:none;">
+                                </div>
+                                <div style="display:flex;gap:10px;align-items:center;">
+                                    <button type="button" onclick="verifyOtp('phone')" id="verifyPhoneOtpBtn"
+                                        style="background:#2563EB;color:#fff;border:none;
+                                               border-radius:8px;padding:10px 22px;font-size:14px;font-weight:600;cursor:pointer;">
+                                        Verify Phone
+                                    </button>
+                                    <button type="button" onclick="resetOtpStep('phone')"
+                                        style="background:none;border:none;color:#2563EB;font-size:13px;cursor:pointer;font-weight:600;">
+                                        ← Resend
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="window.location.href='dashboard.html'">Cancel</button>
+                    <button type="submit" class="btn-primary" id="saveBtn">
+                        <span id="saveBtnText">Save Changes</span>
+                        <span id="saveBtnLoader" class="btn-loader" style="display: none;">Saving...</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        const API_URL = 'http://localhost:5000';
+
+        // Logout handler
+        document.getElementById('logoutBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            localStorage.removeItem('auth_token');
+            localStorage.removeItem('user_email');
+            window.location.href = 'login.html';
+        });
+
+        // Show message
+        function showMessage(message, type = 'success') {
+            const messageBox = document.getElementById('messageBox');
+            messageBox.textContent = message;
+            messageBox.className = `message-box message-${type}`;
+            messageBox.style.display = 'block';
+            
+            setTimeout(() => {
+                messageBox.style.display = 'none';
+            }, 5000);
+        }
+
+        // Load user profile
+        async function loadUserProfile() {
+            const token = localStorage.getItem('auth_token');
+            try {
+                const response = await fetch(`${API_URL}/api/auth/user/profile`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    const user = data.user;
+                    
+                    // Populate form
+                    document.getElementById('fullName').value = user.name || '';
+                    document.getElementById('email').value = user.email || '';
+                    document.getElementById('dateOfBirth').value = user.date_of_birth || '';
+                    document.getElementById('phoneNumber').value = user.phone || user.phone_number || '';
+                    document.getElementById('googleId').value = user.google_id || 'N/A';
+
+                    // Update OTP verification badge status
+                    if (user.email_verified) {
+                        const b = document.getElementById('emailVerifyBadge');
+                        b.textContent = 'VERIFIED ✓'; b.style.background = '#d4edda'; b.style.color = '#155724';
+                        document.getElementById('emailVerifyHint').textContent = 'Your email has been verified.';
+                        document.getElementById('emailSendStep').innerHTML = '<p style="color:#155724;font-size:13px;font-weight:600;">✅ Email is verified</p>';
+                    }
+                    if (user.phone_verified) {
+                        const b = document.getElementById('phoneVerifyBadge');
+                        b.textContent = 'VERIFIED ✓'; b.style.background = '#d4edda'; b.style.color = '#155724';
+                        document.getElementById('phoneVerifyHint').textContent = 'Your phone has been verified.';
+                        document.getElementById('phoneSendStep').innerHTML = '<p style="color:#155724;font-size:13px;font-weight:600;">✅ Phone is verified</p>';
+                    }
+                    
+                    // Format dates
+                    if (user.created_at) {
+                        const createdDate = new Date(user.created_at);
+                        document.getElementById('memberSince').value = createdDate.toLocaleDateString('en-US', {
+                            year: 'numeric', month: 'long', day: 'numeric'
+                        });
+                    }
+                    
+                    if (user.last_login) {
+                        const lastLoginDate = new Date(user.last_login);
+                        document.getElementById('lastLogin').value = lastLoginDate.toLocaleString('en-US', {
+                            year: 'numeric', month: 'long', day: 'numeric',
+                            hour: '2-digit', minute: '2-digit'
+                        });
+                    }
+                } else {
+                    showMessage('Failed to load profile data', 'error');
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+                showMessage('Error connecting to server', 'error');
+            }
+        }
+
+        // Save profile
+        document.getElementById('profileForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const saveBtn = document.getElementById('saveBtn');
+            const saveBtnText = document.getElementById('saveBtnText');
+            const saveBtnLoader = document.getElementById('saveBtnLoader');
+            
+            // Show loading
+            saveBtn.disabled = true;
+            saveBtnText.style.display = 'none';
+            saveBtnLoader.style.display = 'inline';
+            
+            const token = localStorage.getItem('auth_token');
+            const profileData = {
+                name: document.getElementById('fullName').value,
+                email: document.getElementById('email').value,
+                date_of_birth: document.getElementById('dateOfBirth').value || null,
+                phone_number: document.getElementById('phoneNumber').value || null
+            };
+            
+            try {
+                const response = await fetch(`${API_URL}/api/auth/user/profile`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(profileData)
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showMessage('Profile updated successfully!', 'success');
+                    // Update localStorage email if changed
+                    localStorage.setItem('user_email', profileData.email);
+                } else {
+                    showMessage(data.error || 'Failed to update profile', 'error');
+                }
+            } catch (error) {
+                console.error('Error saving profile:', error);
+                showMessage('Error connecting to server', 'error');
+            } finally {
+                // Hide loading
+                saveBtn.disabled = false;
+                saveBtnText.style.display = 'inline';
+                saveBtnLoader.style.display = 'none';
+            }
+        });
+
+        // Initialize
+        window.addEventListener('DOMContentLoaded', () => {
+            loadUserProfile();
+            initOtpBoxes();
+        });
+
+        // ── OTP Verification ──────────────────────────────────────────────────
+        function initOtpBoxes() {
+            document.querySelectorAll('.otp-digit').forEach((input, idx, all) => {
+                const channelInputs = Array.from(all).filter(i => i.dataset.channel === input.dataset.channel);
+                const localIdx = channelInputs.indexOf(input);
+
+                input.addEventListener('input', function () {
+                    this.value = this.value.replace(/\D/g, '');
+                    if (this.value && localIdx < channelInputs.length - 1) channelInputs[localIdx + 1].focus();
+                });
+                input.addEventListener('keydown', function (e) {
+                    if (e.key === 'Backspace' && !this.value && localIdx > 0) channelInputs[localIdx - 1].focus();
+                });
+                input.addEventListener('paste', function (e) {
+                    e.preventDefault();
+                    const digits = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
+                    digits.split('').forEach((d, i) => { if (channelInputs[i]) channelInputs[i].value = d; });
+                    const nextEmpty = channelInputs.findIndex(i => !i.value);
+                    if (nextEmpty >= 0) channelInputs[nextEmpty].focus(); else channelInputs[5].focus();
+                });
+            });
+        }
+
+        async function sendOtp(channel) {
+            const identifier = channel === 'email'
+                ? document.getElementById('email').value.trim().toLowerCase()
+                : document.getElementById('phoneNumber').value.trim();
+
+            if (!identifier) {
+                showMessage(`Please fill in your ${channel === 'email' ? 'email address' : 'phone number'} above first.`, 'error');
+                return;
+            }
+
+            const btn = document.getElementById(channel === 'email' ? 'sendEmailOtpBtn' : 'sendPhoneOtpBtn');
+            btn.textContent = 'Sending…';
+            btn.disabled = true;
+
+            try {
+                const token = localStorage.getItem('auth_token');
+                const res = await fetch(`${API_URL}/api/auth/resend-otp`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify({ identifier, channel, purpose: 'verification' })
+                });
+                const data = await res.json();
+
+                if (res.ok && data.success) {
+                    document.getElementById(`${channel}SendStep`).style.display = 'none';
+                    document.getElementById(`${channel}VerifyStep`).style.display = 'block';
+                    document.querySelector(`.otp-digit[data-channel="${channel}"]`).focus();
+                    showMessage(`OTP sent to your ${channel}!`, 'success');
+                } else {
+                    showMessage(data.error || `Failed to send OTP to ${channel}.`, 'error');
+                    btn.disabled = false;
+                    btn.textContent = `Send ${channel === 'email' ? 'Email' : 'Phone'} OTP`;
+                }
+            } catch (e) {
+                showMessage('Cannot reach server.', 'error');
+                btn.disabled = false;
+                btn.textContent = `Send ${channel === 'email' ? 'Email' : 'Phone'} OTP`;
+            }
+        }
+
+        async function verifyOtp(channel) {
+            const digits = Array.from(document.querySelectorAll(`.otp-digit[data-channel="${channel}"]`)).map(i => i.value);
+            const otp = digits.join('');
+            if (otp.length !== 6) { showMessage('Enter all 6 digits.', 'error'); return; }
+
+            const identifier = channel === 'email'
+                ? document.getElementById('email').value.trim().toLowerCase()
+                : document.getElementById('phoneNumber').value.trim();
+
+            const btn = document.getElementById(channel === 'email' ? 'verifyEmailOtpBtn' : 'verifyPhoneOtpBtn');
+            btn.textContent = 'Verifying…';
+            btn.disabled = true;
+
+            try {
+                const token = localStorage.getItem('auth_token');
+                const endpoint = channel === 'email' ? '/api/auth/verify-email' : '/api/auth/verify-phone';
+                const res = await fetch(`${API_URL}${endpoint}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify({ identifier, otp })
+                });
+                const data = await res.json();
+
+                if (res.ok && data.success) {
+                    // Mark as verified in UI
+                    const badge = document.getElementById(`${channel}VerifyBadge`);
+                    badge.textContent = 'VERIFIED ✓';
+                    badge.style.background = '#d4edda';
+                    badge.style.color = '#155724';
+                    document.getElementById(`${channel}VerifyStep`).style.display = 'none';
+                    document.getElementById(`${channel}VerifyHint`).textContent = `Your ${channel} has been verified successfully.`;
+                    showMessage(`${channel === 'email' ? 'Email' : 'Phone'} verified successfully!`, 'success');
+                } else {
+                    showMessage(data.error || data.message || 'Invalid OTP.', 'error');
+                    btn.disabled = false;
+                    btn.textContent = `Verify ${channel === 'email' ? 'Email' : 'Phone'}`;
+                }
+            } catch (e) {
+                showMessage('Network error.', 'error');
+                btn.disabled = false;
+                btn.textContent = `Verify ${channel === 'email' ? 'Email' : 'Phone'}`;
+            }
+        }
+
+        function resetOtpStep(channel) {
+            document.getElementById(`${channel}SendStep`).style.display = 'block';
+            document.getElementById(`${channel}VerifyStep`).style.display = 'none';
+            document.querySelectorAll(`.otp-digit[data-channel="${channel}"]`).forEach(i => i.value = '');
+            const btn = document.getElementById(channel === 'email' ? 'sendEmailOtpBtn' : 'sendPhoneOtpBtn');
+            btn.disabled = false;
+            btn.textContent = `Send ${channel === 'email' ? 'Email' : 'Phone'} OTP`;
+        }
+    </script>
+
+    <!-- Site Footer -->
+    <footer class="site-footer">
+        <div class="footer-container">
+            <div class="footer-grid">
+
+                <!-- Column 1: About Platform -->
+                <div class="footer-col">
+                    <div class="footer-brand">
+                        <span class="footer-brand-icon">&#128274;</span>
+                        <span class="footer-brand-name">Data Integrity Platform</span>
+                    </div>
+                    <p class="footer-desc">Secure data storage and integrity verification using SHA-256 cryptographic hashing. Built as a Final Year BTech CSE Project.</p>
+                    <div class="footer-social">
+                        <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" title="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" title="GitHub"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+
+                <!-- Column 2: Quick Links -->
+                <div class="footer-col">
+                    <p class="footer-col-title">Quick Links</p>
+                    <ul class="footer-links">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="dashboard.html">Dashboard</a></li>
+                        <li><a href="records.html">View Records</a></li>
+                        <li><a href="profile.html">Profile Settings</a></li>
+                    </ul>
+                </div>
+
+                <!-- Column 3: Support -->
+                <div class="footer-col">
+                    <p class="footer-col-title">Support</p>
+                    <ul class="footer-links">
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">FAQs</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+
+                <!-- Column 4: Technologies Used -->
+                <div class="footer-col">
+                    <p class="footer-col-title">Technologies Used</p>
+                    <ul class="footer-tech-list">
+                        <li class="footer-tech-item">
+                            <span class="footer-tech-icon flask"><i class="fas fa-flask"></i></span>
+                            Flask Backend
+                        </li>
+                        <li class="footer-tech-item">
+                            <span class="footer-tech-icon mongo"><i class="fas fa-database"></i></span>
+                            MongoDB Database
+                        </li>
+                        <li class="footer-tech-item">
+                            <span class="footer-tech-icon sha"><i class="fas fa-shield-alt"></i></span>
+                            SHA-256 Cryptographic Hashing
+                        </li>
+                        <li class="footer-tech-item">
+                            <span class="footer-tech-icon google"><i class="fab fa-google"></i></span>
+                            Google OAuth Authentication
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <div class="footer-divider"></div>
+            <div class="footer-bottom">
+                <p class="footer-copyright">&copy; 2026 Data Integrity Platform | Final Year BTech CSE Project</p>
+                <div class="footer-bottom-badge">
+                    <i class="fas fa-lock"></i>
+                    Built with <span>SHA-256</span> Security
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

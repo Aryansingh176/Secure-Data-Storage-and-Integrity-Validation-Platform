@@ -1,0 +1,237 @@
+/* ============================================================
+   Site Footer — Data Integrity Platform
+   Enterprise-grade footer inspired by DigiLocker style
+   ============================================================ */
+
+.site-footer {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #1a1f3a 100%);
+    color: #cbd5e1;
+    padding: 56px 0 0;
+    margin-top: 60px;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+.footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 32px;
+}
+
+/* ── Grid Layout ─────────────────────────────────────────── */
+.footer-grid {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr 1fr 1.3fr;
+    gap: 48px;
+    padding-bottom: 48px;
+}
+
+/* ── Column Headings ──────────────────────────────────────── */
+.footer-col-title {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: #f1f5f9;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #334155;
+    display: inline-block;
+}
+
+/* ── Column 1: About ─────────────────────────────────────── */
+.footer-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.footer-brand-icon {
+    font-size: 26px;
+}
+
+.footer-brand-name {
+    font-size: 17px;
+    font-weight: 700;
+    color: #f8fafc;
+    letter-spacing: -0.3px;
+}
+
+.footer-desc {
+    color: #94a3b8;
+    font-size: 13.5px;
+    line-height: 1.75;
+    margin-bottom: 22px;
+    max-width: 260px;
+}
+
+.footer-social {
+    display: flex;
+    gap: 10px;
+}
+
+.footer-social a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: #1e293b;
+    border: 1px solid #334155;
+    color: #94a3b8;
+    font-size: 15px;
+    text-decoration: none;
+    transition: background 0.25s, color 0.25s, border-color 0.25s, transform 0.2s;
+}
+
+.footer-social a:hover {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-color: transparent;
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+/* ── Columns 2 & 3: Links ────────────────────────────────── */
+.footer-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-links li {
+    margin-bottom: 10px;
+}
+
+.footer-links a {
+    color: #94a3b8;
+    text-decoration: none;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    transition: color 0.2s, gap 0.2s;
+}
+
+.footer-links a::before {
+    content: '›';
+    color: #667eea;
+    font-size: 16px;
+    font-weight: 700;
+    transition: transform 0.2s;
+}
+
+.footer-links a:hover {
+    color: #e2e8f0;
+    gap: 10px;
+}
+
+.footer-links a:hover::before {
+    transform: translateX(2px);
+}
+
+/* ── Column 4: Tech Stack ────────────────────────────────── */
+.footer-tech-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-tech-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    color: #94a3b8;
+    font-size: 13.5px;
+}
+
+.footer-tech-icon {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+.footer-tech-icon.flask   { background: #1e3a2e; color: #4ade80; }
+.footer-tech-icon.mongo   { background: #1a2e1a; color: #22c55e; }
+.footer-tech-icon.sha     { background: #1e1a3a; color: #818cf8; }
+.footer-tech-icon.google  { background: #2e1a1a; color: #f87171; }
+
+/* ── Bottom Strip ────────────────────────────────────────── */
+.footer-divider {
+    border: none;
+    border-top: 1px solid #1e293b;
+    margin: 0;
+}
+
+.footer-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 0;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.footer-copyright {
+    color: #475569;
+    font-size: 13px;
+    letter-spacing: 0.2px;
+}
+
+.footer-bottom-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-size: 12px;
+    color: #64748b;
+    font-weight: 500;
+}
+
+.footer-bottom-badge span {
+    color: #667eea;
+    font-weight: 700;
+}
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 1024px) {
+    .footer-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 36px;
+    }
+}
+
+@media (max-width: 600px) {
+    .site-footer {
+        padding: 40px 0 0;
+    }
+
+    .footer-container {
+        padding: 0 20px;
+    }
+
+    .footer-grid {
+        grid-template-columns: 1fr;
+        gap: 28px;
+    }
+
+    .footer-bottom {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .footer-desc {
+        max-width: 100%;
+    }
+}

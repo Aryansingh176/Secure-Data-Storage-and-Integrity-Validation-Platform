@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Data Integrity Platform</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 24px 64px rgba(0,0,0,0.35);
+            padding: 48px 40px;
+            width: 100%;
+            max-width: 460px;
+            animation: slideUp 0.45s ease;
+        }
+
+        @keyframes slideUp {
+            from { opacity:0; transform:translateY(28px); }
+            to   { opacity:1; transform:translateY(0); }
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        .logo-icon { font-size: 52px; display:block; margin-bottom:12px; }
+        .logo h1  { font-size: 24px; font-weight:800; color:#1a1a2e; }
+        .logo p   { color:#6b7280; font-size:13.5px; margin-top:4px; }
+
+        /* ── Step indicators ── */
+        .steps {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 32px;
+        }
+        .step {
+            display: flex; flex-direction: column; align-items: center; gap: 4px;
+        }
+        .step-circle {
+            width: 32px; height: 32px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 13px; font-weight: 700;
+            background: #e5e7eb; color: #9ca3af;
+            transition: all 0.3s;
+        }
+        .step-circle.active  { background:#2563EB; color:#fff; }
+        .step-circle.done    { background:#16a34a; color:#fff; }
+        .step-label { font-size: 10px; color: #9ca3af; font-weight: 500; }
+        .step-label.active { color: #2563EB; }
+        .step-line { width: 40px; height: 2px; background: #e5e7eb; margin-bottom: 18px; }
+        .step-line.done { background: #16a34a; }
+
+        /* ── Form ── */
+        .form-group { margin-bottom: 20px; }
+        label { display:block; font-size:13px; font-weight:600; color:#374151; margin-bottom:6px; }
+
+        .input-wrap { position: relative; }
+        .input-icon {
+            position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+            font-size: 17px; pointer-events: none;
+        }
+        input[type="text"], input[type="email"], input[type="tel"] {
+            width: 100%; padding: 12px 14px 12px 44px;
+            border: 1.5px solid #e5e7eb; border-radius: 10px;
+            font-size: 15px; font-family: 'Inter', sans-serif;
+            color: #1f2937; outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        input:focus { border-color: #2563EB; box-shadow: 0 0 0 3px rgba(37,99,235,0.12); }
+        input.error { border-color: #dc2626; }
+        .field-error { color: #dc2626; font-size: 12px; margin-top: 4px; display:none; }
+
+        /* Phone row */
+        .phone-row { display: flex; gap: 8px; }
+        .country-select {
+            width: 110px; flex-shrink: 0;
+            padding: 12px 8px; border: 1.5px solid #e5e7eb;
+            border-radius: 10px; font-size: 14px;
+            font-family: 'Inter', sans-serif; color: #1f2937;
+            cursor: pointer; outline: none;
+            background: #f9fafb;
+            transition: border-color 0.2s;
+        }
+        .country-select:focus { border-color: #2563EB; }
+        .phone-row input { flex: 1; }
+        .phone-row input { padding-left: 14px; }   /* no icon in phone number input */
+
+        /* Notice box */
+        .dual-notice {
+            background: #eff6ff; border: 1px solid #bfdbfe;
+            border-radius: 10px; padding: 12px 14px;
+            display: flex; gap: 10px; align-items: flex-start;
+            margin-bottom: 24px;
+        }
+        .dual-notice span { font-size: 18px; }
+        .dual-notice p { font-size: 13px; color: #1e40af; line-height: 1.5; }
+
+        /* Submit button */
+        .btn-primary {
+            width: 100%; padding: 14px;
+            background: #2563EB;
+            color: #fff; border: none; border-radius: 10px;
+            font-size: 16px; font-weight: 700; cursor: pointer;
+            letter-spacing: 0.3px;
+            transition: opacity 0.2s, transform 0.1s;
+        }
+        .btn-primary:hover { opacity: 0.92; }
+        .btn-primary:active { transform: scale(0.98); }
+        .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        /* Status / Alert */
+        .alert {
+            padding: 12px 16px; border-radius: 10px;
+            font-size: 13.5px; margin-bottom: 20px;
+            display: none; line-height: 1.5;
+        }
+        .alert.error   { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+        .alert.success { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+        .alert.show    { display: block; }
+
+        .footer-link {
+            text-align: center; margin-top: 24px;
+            font-size: 14px; color: #6b7280;
+        }
+        .footer-link a { color: #2563EB; font-weight: 600; text-decoration: none; }
+        .footer-link a:hover { text-decoration: underline; }
+
+        .spinner {
+            width: 18px; height: 18px; border: 2.5px solid rgba(255,255,255,0.4);
+            border-top-color: #fff; border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            display: none; margin: 0 auto;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <!-- Logo -->
+    <div class="logo">
+        <span class="logo-icon">🔐</span>
+        <h1>Create Account</h1>
+        <p>Data Integrity Platform · BTech CSE Project</p>
+    </div>
+
+    <!-- Step Indicator -->
+    <div class="steps">
+        <div class="step">
+            <div class="step-circle active" id="step1-circle">1</div>
+            <div class="step-label active" id="step1-label">Details</div>
+        </div>
+        <div class="step-line" id="line1"></div>
+        <div class="step">
+            <div class="step-circle" id="step2-circle">2</div>
+            <div class="step-label" id="step2-label">Verify</div>
+        </div>
+        <div class="step-line" id="line2"></div>
+        <div class="step">
+            <div class="step-circle" id="step3-circle">3</div>
+            <div class="step-label" id="step3-label">Done</div>
+        </div>
+    </div>
+
+    <!-- Alert -->
+    <div class="alert" id="alert"></div>
+
+    <!-- Registration Form -->
+    <form id="registerForm">
+        <div class="form-group">
+            <label for="name">Full Name</label>
+            <div class="input-wrap">
+                <span class="input-icon">👤</span>
+                <input type="text" id="name" placeholder="Rajesh Kumar" autocomplete="name">
+            </div>
+            <div class="field-error" id="name-err"></div>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email Address</label>
+            <div class="input-wrap">
+                <span class="input-icon">📧</span>
+                <input type="email" id="email" placeholder="you@example.com" autocomplete="email">
+            </div>
+            <div class="field-error" id="email-err"></div>
+        </div>
+
+        <div class="form-group">
+            <label for="phone">Mobile Number</label>
+            <div class="phone-row">
+                <select class="country-select" id="countryCode">
+                    <option value="+91">🇮🇳 +91</option>
+                    <option value="+1">🇺🇸 +1</option>
+                    <option value="+44">🇬🇧 +44</option>
+                    <option value="+61">🇦🇺 +61</option>
+                    <option value="+971">🇦🇪 +971</option>
+                </select>
+                <input type="tel" id="phone" placeholder="9876543210"
+                       maxlength="10" autocomplete="tel">
+            </div>
+            <div class="field-error" id="phone-err"></div>
+        </div>
+
+        <!-- Dual OTP notice -->
+        <div class="dual-notice">
+            <span>ℹ️</span>
+            <p>
+                OTP will be sent to <strong>both email and phone</strong> for
+                two-factor identity verification. You must verify both to complete registration.
+            </p>
+        </div>
+
+        <button type="submit" class="btn-primary" id="registerBtn">
+            <span id="btnText">Create Account & Send OTPs</span>
+            <div class="spinner" id="spinner"></div>
+        </button>
+    </form>
+
+    <div class="footer-link">
+        Already have an account? <a href="login.html">Sign in</a>
+    </div>
+</div>
+
+<script>
+    const API_URL = 'http://localhost:5000';
+
+    // ── Utility: show/hide alert ─────────────────────────────────────────────
+    function showAlert(msg, type) {
+        const el = document.getElementById('alert');
+        el.textContent = msg;
+        el.className = `alert ${type} show`;
+    }
+    function hideAlert() {
+        document.getElementById('alert').className = 'alert';
+    }
+
+    function fieldError(id, msg) {
+        const el = document.getElementById(id + '-err');
+        const input = document.getElementById(id);
+        if (msg) {
+            el.textContent = msg;
+            el.style.display = 'block';
+            input && input.classList.add('error');
+        } else {
+            el.style.display = 'none';
+            input && input.classList.remove('error');
+        }
+    }
+
+    function setLoading(isLoading) {
+        const btn = document.getElementById('registerBtn');
+        const spinner = document.getElementById('spinner');
+        const text = document.getElementById('btnText');
+        btn.disabled = isLoading;
+        spinner.style.display = isLoading ? 'block' : 'none';
+        text.style.display = isLoading ? 'none' : 'block';
+    }
+
+    // ── Form submit ──────────────────────────────────────────────────────────
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        hideAlert();
+
+        // Clear field errors
+        ['name', 'email', 'phone'].forEach(f => fieldError(f, ''));
+
+        const name  = document.getElementById('name').value.trim();
+        const email = document.getElementById('email').value.trim().toLowerCase();
+        const countryCode = document.getElementById('countryCode').value;
+        const phoneRaw = document.getElementById('phone').value.trim().replace(/\D/g, '');
+        const phone = countryCode + phoneRaw;
+
+        // Client-side validation
+        let hasError = false;
+        if (!name) { fieldError('name', 'Name is required'); hasError = true; }
+        if (!email || !/^[^@]+@[^@]+\.[^@]+$/.test(email)) {
+            fieldError('email', 'Enter a valid email address'); hasError = true;
+        }
+        if (!phoneRaw || phoneRaw.length < 7) {
+            fieldError('phone', 'Enter a valid phone number'); hasError = true;
+        }
+        if (hasError) return;
+
+        setLoading(true);
+
+        try {
+            const res = await fetch(`${API_URL}/api/auth/register`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, phone, name })
+            });
+
+            const data = await res.json();
+
+            if (res.ok) {
+                // Save registration context for OTP page
+                localStorage.setItem('reg_email', email);
+                localStorage.setItem('reg_phone', phone);
+                localStorage.setItem('reg_user_id', data.user_id);
+                localStorage.setItem('reg_name', name);
+
+                showAlert(
+                    `✅ OTPs sent! Check your email (${email}) and phone (${phone}).`,
+                    'success'
+                );
+
+                // Redirect to OTP verification page after 1.5s
+                setTimeout(() => {
+                    window.location.href = 'otp-verify.html?purpose=registration';
+                }, 1500);
+            } else {
+                // Handle field-level errors from server
+                if (data.fields) {
+                    Object.entries(data.fields).forEach(([field, msg]) => {
+                        fieldError(field, msg);
+                    });
+                } else {
+                    showAlert(data.error || 'Registration failed. Please try again.', 'error');
+                }
+            }
+        } catch (err) {
+            showAlert('Cannot connect to server. Make sure the backend is running on port 5000.', 'error');
+        } finally {
+            setLoading(false);
+        }
+    });
+
+    // ── Only allow digits in phone input ────────────────────────────────────
+    document.getElementById('phone').addEventListener('input', function() {
+        this.value = this.value.replace(/\D/g, '');
+    });
+</script>
+
+</body>
+</html>

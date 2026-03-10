@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify OTP - Data Integrity Platform</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh; display: flex;
+            align-items: center; justify-content: center; padding: 20px;
+        }
+
+        .card {
+            background: #fff; border-radius: 20px;
+            box-shadow: 0 24px 64px rgba(0,0,0,0.35);
+            padding: 48px 40px; width: 100%; max-width: 480px;
+            animation: slideUp 0.45s ease;
+        }
+        @keyframes slideUp {
+            from { opacity:0; transform:translateY(24px); }
+            to   { opacity:1; transform:translateY(0); }
+        }
+
+        .logo { text-align: center; margin-bottom: 28px; }
+        .logo-icon { font-size: 48px; display: block; margin-bottom: 10px; }
+        .logo h1 { font-size: 22px; font-weight: 800; color: #1a1a2e; }
+        .logo p  { color: #6b7280; font-size: 13px; margin-top: 4px; }
+
+        /* ── Channel card ── */
+        .channel-card {
+            border: 1.5px solid #e5e7eb; border-radius: 14px;
+            padding: 22px; margin-bottom: 20px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .channel-card.verified {
+            border-color: #16a34a; background: #f0fdf4;
+        }
+        .channel-card.active {
+            border-color: #2563EB;
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+        }
+
+        .channel-header {
+            display: flex; align-items: center;
+            justify-content: space-between; margin-bottom: 16px;
+        }
+        .channel-title {
+            display: flex; align-items: center; gap: 10px;
+        }
+        .channel-icon { font-size: 22px; }
+        .channel-name { font-weight: 700; color: #1f2937; font-size: 15px; }
+        .channel-sub  { font-size: 12px; color: #6b7280; margin-top: 2px; }
+
+        /* Status badge */
+        .badge {
+            padding: 4px 10px; border-radius: 20px;
+            font-size: 12px; font-weight: 600;
+        }
+        .badge.pending  { background: #fef3c7; color: #92400e; }
+        .badge.verified { background: #dcfce7; color: #166534; }
+        .badge.failed   { background: #fee2e2; color: #991b1b; }
+
+        /* ── OTP Input boxes ── */
+        .otp-input-group {
+            display: flex; gap: 8px; justify-content: center; margin-bottom: 14px;
+        }
+        .otp-digit {
+            width: 46px; height: 52px;
+            border: 2px solid #e5e7eb; border-radius: 10px;
+            text-align: center; font-size: 22px; font-weight: 700;
+            color: #1a1a2e; font-family: 'Inter', sans-serif;
+            outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+            caret-color: transparent;
+        }
+        .otp-digit:focus { border-color: #2563EB; box-shadow: 0 0 0 3px rgba(37,99,235,0.15); }
+        .otp-digit.filled { border-color: #2563EB; background: #EFF6FF; }
+        .otp-digit.error  { border-color: #dc2626; background: #fff5f5; animation: shake 0.35s ease; }
+
+        @keyframes shake {
+            0%,100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        /* Verify button per channel */
+        .btn-verify {
+            width: 100%; padding: 11px;
+            background: #2563EB; color: #fff;
+            border: none; border-radius: 10px;
+            font-size: 14px; font-weight: 700; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            transition: opacity 0.2s;
+        }
+        .btn-verify:hover { opacity: 0.88; }
+        .btn-verify:disabled { opacity: 0.55; cursor: not-allowed; }
+        .btn-verify.done {
+            background: #16a34a; pointer-events: none;
+        }
+
+        /* Resend row */
+        .resend-row {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-top: 10px;
+        }
+        .timer { font-size: 12px; color: #6b7280; }
+        .timer span { font-weight: 700; color: #2563EB; }
+        .btn-resend {
+            font-size: 12px; color: #2563EB; font-weight: 600;
+            background: none; border: none; cursor: pointer;
+            padding: 0; display: none;
+        }
+        .btn-resend:hover { text-decoration: underline; }
+
+        /* Status message per channel */
+        .channel-msg {
+            font-size: 12.5px; margin-top: 8px; border-radius: 8px;
+            padding: 7px 10px; display: none;
+        }
+        .channel-msg.error   { background:#fee2e2; color:#991b1b; display:block; }
+        .channel-msg.success { background:#dcfce7; color:#166534; display:block; }
+
+        /* Bottom alert */
+        .alert {
+            padding: 12px 16px; border-radius: 10px; margin-bottom: 16px;
+            font-size: 13.5px; display: none; line-height: 1.5;
+        }
+        .alert.error   { background:#fee2e2; color:#991b1b; border:1px solid #fca5a5; }
+        .alert.success { background:#dcfce7; color:#166534; border:1px solid #86efac; }
+        .alert.info    { background:#eff6ff; color:#1e40af; border:1px solid #bfdbfe; }
+        .alert.show    { display:block; }
+
+        /* Progress bar */
+        .progress-wrap { margin-bottom: 24px; }
+        .progress-label {
+            display:flex; justify-content:space-between; align-items:center;
+            font-size: 12px; color: #6b7280; margin-bottom: 8px;
+        }
+        .progress-label strong { color: #1f2937; }
+        .progress-bar {
+            height: 6px; background: #e5e7eb; border-radius: 99px; overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%; border-radius: 99px;
+            background: #2563EB;
+            transition: width 0.5s ease;
+        }
+
+        /* Proceed button */
+        .btn-proceed {
+            width: 100%; padding: 14px;
+            background: linear-gradient(135deg, #16a34a, #15803d);
+            color: #fff; border: none; border-radius: 10px;
+            font-size: 16px; font-weight: 700; cursor: pointer;
+            display: none; margin-top: 8px;
+            transition: opacity 0.2s;
+        }
+        .btn-proceed.show { display: block; }
+        .btn-proceed:hover { opacity: 0.9; }
+
+        .spinner {
+            width: 16px; height: 16px;
+            border: 2px solid rgba(255,255,255,0.4);
+            border-top-color: #fff; border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+        @keyframes spin { to { transform:rotate(360deg); } }
+
+        .footer-link {
+            text-align: center; margin-top: 20px;
+            font-size: 13px; color: #6b7280;
+        }
+        .footer-link a { color: #2563EB; font-weight: 600; text-decoration: none; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <div class="logo">
+        <span class="logo-icon">🔒</span>
+        <h1 id="pageTitle">Verify Your Identity</h1>
+        <p id="pageSubtitle">Enter the OTPs sent to your email and phone</p>
+    </div>
+
+    <!-- Progress -->
+    <div class="progress-wrap">
+        <div class="progress-label">
+            <span>Verification Progress</span>
+            <strong id="progressText">0 / 2 channels verified</strong>
+        </div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill" style="width:0%"></div>
+        </div>
+    </div>
+
+    <!-- Global alert -->
+    <div class="alert" id="globalAlert"></div>
+
+    <!-- ── EMAIL OTP CARD ─────────────────────────────────────────── -->
+    <div class="channel-card" id="emailCard">
+        <div class="channel-header">
+            <div class="channel-title">
+                <span class="channel-icon">📧</span>
+                <div>
+                    <div class="channel-name">Email OTP</div>
+                    <div class="channel-sub" id="emailSub">OTP sent to your email · Expires in 10 min</div>
+                </div>
+            </div>
+            <span class="badge pending" id="emailBadge">Pending</span>
+        </div>
+
+        <div class="otp-input-group" id="emailOtpGroup">
+            <input class="otp-digit" data-channel="email" data-idx="0" type="text" maxlength="1" inputmode="numeric">
+            <input class="otp-digit" data-channel="email" data-idx="1" type="text" maxlength="1" inputmode="numeric">
+            <input class="otp-digit" data-channel="email" data-idx="2" type="text" maxlength="1" inputmode="numeric">
+            <input class="otp-digit" data-channel="email" data-idx="3" type="text" maxlength="1" inputmode="numeric">
+            <input class="otp-digit" data-channel="email" data-idx="4" type="text" maxlength="1" inputmode="numeric">
+            <input class="otp-digit" data-channel="email" data-idx="5" type="text" maxlength="1" inputmode="numeric">
+        </div>
+
+        <button class="btn-verify" id="emailVerifyBtn" onclick="verifyOtp('email')">
+            Verify Email OTP
+        </button>
+
+        <div class="channel-msg" id="emailMsg"></div>
+
+        <div class="resend-row">
+            <div class="timer" id="emailTimer">Resend in <span id="emailCountdown">600</span>s</div>
+            <button class="btn-resend" id="emailResendBtn" onclick="resendOtp('email')">Resend OTP</button>
+        </div>
+    </div>
+
+    <!-- ── PHONE OTP CARD ─────────────────────────────────────────── -->
+    <div class="channel-card" id="phoneCard">
+        <div class="channel-header">
+            <div class="channel-title">
+                <span class="channel-icon">📱</span>
+                <div>
+                    <div class="channel-name">Phone OTP</div>
+                    <div class="channel-sub" id="phoneSub">OTP sent to your phone · Expires in 5 min</div>
+                </div>
+            </div>
+            <span class="badge pending" id="phoneBadge">Pending</span>
+        </div>
+
+        <div class="otp-input-group" id="phoneOtpGroup">
+            <input class="otp-digit" data-channel="phone" data-idx="0" type="text" maxlength="1" inputmode="numeric">
+            <input class="otp-digit" data-channel="phone" data-idx="1" type="text" maxlength="1" inputmode="numeric">
+            <input class="otp-digit" data-channel="phone" data-idx="2" type="text" maxlength="1" inputmode="numeric">
+            <input class="otp-digit" data-channel="phone" data-idx="3" type="text" maxlength="1" inputmode="numeric">
+            <input class="otp-digit" data-channel="phone" data-idx="4" type="text" maxlength="1" inputmode="numeric">
+            <input class="otp-digit" data-channel="phone" data-idx="5" type="text" maxlength="1" inputmode="numeric">
+        </div>
+
+        <button class="btn-verify" id="phoneVerifyBtn" onclick="verifyOtp('phone')">
+            Verify Phone OTP
+        </button>
+
+        <div class="channel-msg" id="phoneMsg"></div>
+
+        <div class="resend-row">
+            <div class="timer" id="phoneTimer">Resend in <span id="phoneCountdown">300</span>s</div>
+            <button class="btn-resend" id="phoneResendBtn" onclick="resendOtp('phone')">Resend OTP</button>
+        </div>
+    </div>
+
+    <!-- Proceed button (shows when both verified) -->
+    <button class="btn-proceed" id="proceedBtn" onclick="handleProceed()">
+        ✅ Registration Complete — Go to Dashboard
+    </button>
+
+    <div class="footer-link">
+        Wrong details? <a href="register.html">Start over</a>
+    </div>
+</div>
+
+<script>
+    const API_URL = 'http://localhost:5000';
+
+    // ── Context from registration / login ───────────────────────────────────
+    const params   = new URLSearchParams(window.location.search);
+    const PURPOSE  = params.get('purpose') || 'registration';   // 'registration' | 'login'
+    const CHANNEL  = params.get('channel') || null;             // for login: 'email' | 'phone'
+
+    // Registration context
+    const REG_EMAIL   = localStorage.getItem('reg_email')   || '';
+    const REG_PHONE   = localStorage.getItem('reg_phone')   || '';
+    const LOGIN_IDENT = localStorage.getItem('login_identifier') || '';
+    const LOGIN_CHAN  = localStorage.getItem('login_channel') || 'email';
+
+    // Tracking state per channel
+    const state = {
+        email: { verified: false, interval: null, seconds: 600 },
+        phone: { verified: false, interval: null, seconds: 300 }
+    };
+
+    // ── Page setup ───────────────────────────────────────────────────────────
+    function setup() {
+        if (PURPOSE === 'login') {
+            // Login mode — show only the relevant channel card
+            document.getElementById('pageTitle').textContent = 'Login Verification';
+            document.getElementById('pageSubtitle').textContent =
+                `Enter the OTP sent to your ${LOGIN_CHAN}`;
+
+            // Hide the other channel card
+            const hideChannel = LOGIN_CHAN === 'email' ? 'phone' : 'email';
+            document.getElementById(hideChannel + 'Card').style.display = 'none';
+
+            // Update subtitle
+            const ident = LOGIN_CHAN === 'email' ? REG_EMAIL : REG_PHONE;
+            document.getElementById(LOGIN_CHAN + 'Sub').textContent =
+                `OTP sent to ${maskIdentifier(ident, LOGIN_CHAN)}`;
+        } else {
+            // Registration mode — show both cards
+            if (REG_EMAIL) document.getElementById('emailSub').textContent =
+                `OTP sent to ${maskIdentifier(REG_EMAIL, 'email')} · 10 min`;
+            if (REG_PHONE) document.getElementById('phoneSub').textContent =
+                `OTP sent to ${maskIdentifier(REG_PHONE, 'phone')} · 5 min`;
+        }
+
+        startTimer('email');
+        startTimer('phone');
+    }
+
+    function maskIdentifier(val, type) {
+        if (!val) return '';
+        if (type === 'email') {
+            const [u, d] = val.split('@');
+            return u.slice(0, 3) + '***@' + d;
+        }
+        return val.slice(0, 4) + '****' + val.slice(-3);
+    }
+
+    // ── Progress bar ─────────────────────────────────────────────────────────
+    function updateProgress() {
+        const emailV = state.email.verified;
+        const phoneV = state.phone.verified;
+
+        let count = (emailV ? 1 : 0) + (phoneV ? 1 : 0);
+        let total  = PURPOSE === 'login' ? 1 : 2;
+        let pct    = (count / total) * 100;
+
+        if (PURPOSE === 'login') count = state[LOGIN_CHAN].verified ? 1 : 0;
+
+        document.getElementById('progressText').textContent = `${count} / ${total} channels verified`;
+        document.getElementById('progressFill').style.width = pct + '%';
+
+        // Show proceed button when all verified
+        const allDone = PURPOSE === 'login' ? state[LOGIN_CHAN].verified : (emailV && phoneV);
+        if (allDone) {
+            document.getElementById('proceedBtn').classList.add('show');
+        }
+    }
+
+    // ── OTP Input: auto-focus next box, auto-submit on complete ──────────────
+    document.querySelectorAll('.otp-digit').forEach(input => {
+        input.addEventListener('input', function() {
+            const channel = this.dataset.channel;
+            const idx     = parseInt(this.dataset.idx);
+            const inputs  = document.querySelectorAll(`.otp-digit[data-channel="${channel}"]`);
+
+            // Only allow digits
+            this.value = this.value.replace(/\D/g, '');
+
+            if (this.value) {
+                this.classList.add('filled');
+                // Move to next input
+                if (idx < 5) inputs[idx + 1].focus();
+                // Auto-verify when all 6 filled
+                const otp = Array.from(inputs).map(i => i.value).join('');
+                if (otp.length === 6) verifyOtp(channel);
+            } else {
+                this.classList.remove('filled');
+            }
+        });
+
+        // Backspace: clear + go back
+        input.addEventListener('keydown', function(e) {
+            const channel = this.dataset.channel;
+            const idx     = parseInt(this.dataset.idx);
+            const inputs  = document.querySelectorAll(`.otp-digit[data-channel="${channel}"]`);
+
+            if (e.key === 'Backspace' && !this.value && idx > 0) {
+                inputs[idx - 1].focus();
+            }
+        });
+
+        // Paste: distribute across boxes
+        input.addEventListener('paste', function(e) {
+            e.preventDefault();
+            const channel = this.dataset.channel;
+            const inputs  = document.querySelectorAll(`.otp-digit[data-channel="${channel}"]`);
+            const pasted  = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
+
+            pasted.split('').forEach((digit, i) => {
+                if (inputs[i]) { inputs[i].value = digit; inputs[i].classList.add('filled'); }
+            });
+
+            // Focus the last filled or next empty
+            const nextEmpty = Array.from(inputs).findIndex(i => !i.value);
+            if (nextEmpty >= 0) inputs[nextEmpty].focus();
+            else inputs[5].focus();
+
+            // Auto-verify if all filled
+            if (pasted.length === 6) verifyOtp(channel);
+        });
+    });
+
+    // ── Get OTP string from inputs ───────────────────────────────────────────
+    function getOtpValue(channel) {
+        return Array.from(
+            document.querySelectorAll(`.otp-digit[data-channel="${channel}"]`)
+        ).map(i => i.value).join('');
+    }
+
+    function clearOtpInputs(channel) {
+        document.querySelectorAll(`.otp-digit[data-channel="${channel}"]`).forEach(i => {
+            i.value = '';
+            i.classList.remove('filled', 'error');
+        });
+    }
+
+    function shakeOtpInputs(channel) {
+        document.querySelectorAll(`.otp-digit[data-channel="${channel}"]`).forEach(i => {
+            i.classList.add('error');
+            setTimeout(() => i.classList.remove('error'), 400);
+        });
+    }
+
+    // ── Channel message display ───────────────────────────────────────────────
+    function showChannelMsg(channel, msg, type) {
+        const el = document.getElementById(channel + 'Msg');
+        el.textContent = msg;
+        el.className = 'channel-msg ' + type;
+    }
+
+    // ── Verify OTP ───────────────────────────────────────────────────────────
+    async function verifyOtp(channel) {
+        const otp = getOtpValue(channel);
+        if (otp.length !== 6) {
+            showChannelMsg(channel, 'Please enter all 6 digits.', 'error');
+            return;
+        }
+
+        const btn = document.getElementById(channel + 'VerifyBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<div class="spinner"></div> Verifying…';
+
+        // Build request body based on purpose
+        let body, endpoint;
+        if (PURPOSE === 'registration') {
+            endpoint = `/api/auth/verify-${channel}`;
+            body = channel === 'email'
+                ? { email: REG_EMAIL, otp }
+                : { phone: REG_PHONE, otp };
+        } else {
+            // Login verification
+            const identifier = LOGIN_CHAN === 'email' ? REG_EMAIL || LOGIN_IDENT : REG_PHONE || LOGIN_IDENT;
+            endpoint = '/api/auth/verify-login';
+            body = { identifier, otp, channel: LOGIN_CHAN };
+        }
+
+        try {
+            const res  = await fetch(API_URL + endpoint, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+            const data = await res.json();
+
+            if (res.ok && data.success) {
+                // ✅ Verified
+                state[channel].verified = true;
+                clearInterval(state[channel].interval);
+
+                setChannelVerified(channel);
+                showChannelMsg(channel, `✓ ${channel.charAt(0).toUpperCase() + channel.slice(1)} verified!`, 'success');
+                updateProgress();
+
+                // If token returned (registration complete / login success)
+                if (data.token) {
+                    localStorage.setItem('auth_token', data.token);
+                    localStorage.setItem('user_data', JSON.stringify(data.user));
+                }
+            } else {
+                shakeOtpInputs(channel);
+                showChannelMsg(channel, data.message || data.error || 'Verification failed.', 'error');
+                btn.disabled = false;
+                btn.textContent = `Verify ${channel.charAt(0).toUpperCase() + channel.slice(1)} OTP`;
+
+                // Account locked?
+                if (data.error_code === 'ACCOUNT_LOCKED') {
+                    showGlobalAlert('⚠ Account locked due to too many failed attempts. Please try again later.', 'error');
+                    btn.disabled = true;
+                }
+            }
+        } catch (err) {
+            showChannelMsg(channel, 'Network error. Check if backend is running.', 'error');
+            btn.disabled = false;
+            btn.textContent = `Verify ${channel.charAt(0).toUpperCase() + channel.slice(1)} OTP`;
+        }
+    }
+
+    function setChannelVerified(channel) {
+        const card  = document.getElementById(channel + 'Card');
+        const badge = document.getElementById(channel + 'Badge');
+        const btn   = document.getElementById(channel + 'VerifyBtn');
+        const group = document.getElementById(channel + 'OtpGroup');
+        const timer = document.getElementById(channel + 'Timer');
+        const resend= document.getElementById(channel + 'ResendBtn');
+
+        card.classList.add('verified');
+        card.classList.remove('active');
+        badge.textContent = '✓ Verified';
+        badge.className = 'badge verified';
+        btn.classList.add('done');
+        btn.textContent = '✓ Verified';
+        group.style.opacity = '0.5';
+        timer.style.display = 'none';
+        resend.style.display = 'none';
+    }
+
+    // ── Countdown Timer ───────────────────────────────────────────────────────
+    function startTimer(channel) {
+        const countdownEl = document.getElementById(channel + 'Countdown');
+        const timerEl     = document.getElementById(channel + 'Timer');
+        const resendBtn   = document.getElementById(channel + 'ResendBtn');
+
+        state[channel].interval = setInterval(() => {
+            state[channel].seconds--;
+            countdownEl.textContent = state[channel].seconds;
+
+            if (state[channel].seconds <= 0) {
+                clearInterval(state[channel].interval);
+                timerEl.style.display = 'none';
+                resendBtn.style.display = 'block';
+            }
+        }, 1000);
+    }
+
+    // ── Resend OTP ────────────────────────────────────────────────────────────
+    async function resendOtp(channel) {
+        const btn = document.getElementById(channel + 'ResendBtn');
+        btn.disabled = true;
+        btn.textContent = 'Sending…';
+
+        const identifier = channel === 'email'
+            ? (REG_EMAIL || LOGIN_IDENT)
+            : (REG_PHONE || LOGIN_IDENT);
+
+        try {
+            const res = await fetch(`${API_URL}/api/auth/resend-otp`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ identifier, channel, purpose: PURPOSE })
+            });
+            const data = await res.json();
+
+            if (res.ok && data.success) {
+                clearOtpInputs(channel);
+                showChannelMsg(channel, `✓ New OTP sent to your ${channel}.`, 'success');
+
+                // Reset timer
+                state[channel].seconds = channel === 'email' ? 600 : 300;
+                document.getElementById(channel + 'Countdown').textContent = state[channel].seconds;
+                document.getElementById(channel + 'Timer').style.display = 'block';
+                btn.style.display = 'none';
+
+                startTimer(channel);
+            } else {
+                showChannelMsg(channel, data.error || 'Failed to resend. Try again.', 'error');
+            }
+        } catch (err) {
+            showChannelMsg(channel, 'Network error.', 'error');
+        } finally {
+            btn.disabled = false;
+            btn.textContent = 'Resend OTP';
+        }
+    }
+
+    // ── Global alert ─────────────────────────────────────────────────────────
+    function showGlobalAlert(msg, type) {
+        const el = document.getElementById('globalAlert');
+        el.textContent = msg;
+        el.className = `alert ${type} show`;
+    }
+
+    // ── Proceed after verification ────────────────────────────────────────────
+    function handleProceed() {
+        const token = localStorage.getItem('auth_token');
+        if (token) {
+            window.location.href = 'dashboard.html';
+        } else {
+            window.location.href = 'login.html';
+        }
+    }
+
+    // ── Init ─────────────────────────────────────────────────────────────────
+    setup();
+</script>
+
+</body>
+</html>

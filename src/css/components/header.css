@@ -1,0 +1,25 @@
+.header {
+    background-color: #4CAF50; /* Green background */
+    color: white; /* White text */
+    padding: 15px; /* Padding around the header */
+    text-align: center; /* Centered text */
+    font-size: 24px; /* Larger font size */
+}
+
+.header h1 {
+    margin: 0; /* Remove default margin */
+}
+
+.header nav {
+    margin-top: 10px; /* Space between title and navigation */
+}
+
+.header nav a {
+    color: white; /* White text for links */
+    margin: 0 15px; /* Space between links */
+    text-decoration: none; /* Remove underline from links */
+}
+
+.header nav a:hover {
+    text-decoration: underline; /* Underline on hover */
+}

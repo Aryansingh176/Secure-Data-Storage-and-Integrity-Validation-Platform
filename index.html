@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Integrity Platform - Home</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="css/footer.css">
+    <script>
+        // Check if user is logged in, if not redirect to login
+        window.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('auth_token');
+            if (!token) {
+                window.location.href = 'login.html';
+            }
+        });
+    </script>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <div class="logo-icon">🔒</div>
+                <h1>Data Integrity Platform</h1>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html" class="active">Home</a></li>
+                <li><a href="records.html">View Records</a></li>
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="profile.html">Profile</a></li>
+                <li><a href="#" id="logoutBtn" style="color: #ff6b6b;">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-container">
+        <div class="container">
+            <!-- Hero Section -->
+            <section class="hero-section">
+                <div class="hero-badge">
+                    <span class="badge-icon">🔒</span>
+                    SHA-256 Cryptography
+                </div>
+                <h2>Secure Data Integrity Verification</h2>
+                <p>Store and verify your data with cryptographic integrity checks. Detect unauthorized modifications instantly using industry-standard hashing algorithms.</p>
+            </section>
+
+            <!-- Data Entry Card -->
+            <section class="card data-entry-card">
+                <div class="card-header">
+                    <h3>Store New Data</h3>
+                    <span class="security-badge">🔐 Secure</span>
+                </div>
+                
+                <!-- Data Entry Form -->
+                <form id="dataForm" class="card-content">
+                    <div class="form-group">
+                        <label for="dataInput">Your Data:</label>
+                        <textarea 
+                            id="dataInput" 
+                            class="form-control" 
+                            rows="6" 
+                            placeholder="Enter any text data you want to store securely..."
+                            required
+                        ></textarea>
+                        <small class="form-text">This data will be stored and you can verify its integrity later.</small>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <span class="btn-icon">💾</span>
+                            Save & Generate Hash
+                        </button>
+                        <div class="form-info">
+                            <span class="info-icon">ℹ️</span>
+                            <span>Your data will be secured with SHA-256 hash</span>
+                        </div>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Security Features Section -->
+            <section class="security-features">
+                <div class="section-header">
+                    <h3>Why Trust Our Platform?</h3>
+                    <p>Industry-standard security with cryptographic verification</p>
+                </div>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🛡️</div>
+                        <h4>Data Protection</h4>
+                        <p>Your data is protected with industry-standard SHA-256 cryptographic hashing.</p>
+                        <div class="feature-badge">Secure</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">✓</div>
+                        <h4>Integrity Verification</h4>
+                        <p>Instantly detect any unauthorized modifications or tampering of stored data.</p>
+                        <div class="feature-badge">Verified</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">⚡</div>
+                        <h4>Instant Results</h4>
+                        <p>Real-time verification with immediate status updates and alerts.</p>
+                        <div class="feature-badge">Fast</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- How It Works Section -->
+            <section class="workflow-section">
+                <h3>Verification Workflow</h3>
+                <div class="workflow-steps">
+                    <div class="workflow-step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h4>Store Data</h4>
+                            <p>Enter your data and click save</p>
+                        </div>
+                    </div>
+                    <div class="workflow-arrow">→</div>
+                    <div class="workflow-step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h4>Hash Generation</h4>
+                            <p>SHA-256 hash is computed</p>
+                        </div>
+                    </div>
+                    <div class="workflow-arrow">→</div>
+                    <div class="workflow-step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h4>Verify Anytime</h4>
+                            <p>Check data integrity later</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 Data Integrity Platform | BTech CSE Final Year Project</p>
+        </div>
+    </footer>
+
+    <!-- Notification Toast -->
+    <div id="notification" class="notification"></div>
+
+    <!-- JavaScript -->
+    <script>
+        // Logout handler
+        document.getElementById('logoutBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            localStorage.removeItem('auth_token');
+            localStorage.removeItem('user_email');
+            window.location.href = 'login.html';
+        });
+    </script>
+    <script src="js/script.js"></script>
+
+    <!-- Site Footer -->
+    <footer class="site-footer">
+        <div class="footer-container">
+            <div class="footer-grid">
+
+                <!-- Column 1: About Platform -->
+                <div class="footer-col">
+                    <div class="footer-brand">
+                        <span class="footer-brand-icon">&#128274;</span>
+                        <span class="footer-brand-name">Data Integrity Platform</span>
+                    </div>
+                    <p class="footer-desc">Secure data storage and integrity verification using SHA-256 cryptographic hashing. Built as a Final Year BTech CSE Project.</p>
+                    <div class="footer-social">
+                        <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" title="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" title="GitHub"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+
+                <!-- Column 2: Quick Links -->
+                <div class="footer-col">
+                    <p class="footer-col-title">Quick Links</p>
+                    <ul class="footer-links">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="dashboard.html">Dashboard</a></li>
+                        <li><a href="records.html">View Records</a></li>
+                        <li><a href="profile.html">Profile Settings</a></li>
+                    </ul>
+                </div>
+
+                <!-- Column 3: Support -->
+                <div class="footer-col">
+                    <p class="footer-col-title">Support</p>
+                    <ul class="footer-links">
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">FAQs</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+
+                <!-- Column 4: Technologies Used -->
+                <div class="footer-col">
+                    <p class="footer-col-title">Technologies Used</p>
+                    <ul class="footer-tech-list">
+                        <li class="footer-tech-item">
+                            <span class="footer-tech-icon flask"><i class="fas fa-flask"></i></span>
+                            Flask Backend
+                        </li>
+                        <li class="footer-tech-item">
+                            <span class="footer-tech-icon mongo"><i class="fas fa-database"></i></span>
+                            MongoDB Database
+                        </li>
+                        <li class="footer-tech-item">
+                            <span class="footer-tech-icon sha"><i class="fas fa-shield-alt"></i></span>
+                            SHA-256 Cryptographic Hashing
+                        </li>
+                        <li class="footer-tech-item">
+                            <span class="footer-tech-icon google"><i class="fab fa-google"></i></span>
+                            Google OAuth Authentication
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <div class="footer-divider"></div>
+            <div class="footer-bottom">
+                <p class="footer-copyright">&copy; 2026 Data Integrity Platform | Final Year BTech CSE Project</p>
+                <div class="footer-bottom-badge">
+                    <i class="fas fa-lock"></i>
+                    Built with <span>SHA-256</span> Security
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

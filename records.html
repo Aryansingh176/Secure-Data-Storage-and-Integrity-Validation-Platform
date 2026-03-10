@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Integrity Platform - Records</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="css/footer.css">
+    <script>
+        // Check if user is logged in, if not redirect to login
+        window.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('auth_token');
+            if (!token) {
+                window.location.href = 'login.html';
+            }
+        });
+    </script>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <div class="logo-icon">🔒</div>
+                <h1>Data Integrity Platform</h1>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="records.html" class="active">View Records</a></li>
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="profile.html">Profile</a></li>
+                <li><a href="#" id="logoutBtn" style="color: #ff6b6b;">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-container">
+        <div class="container">
+
+            <!-- Page Header -->
+            <section class="page-header">
+                <div class="page-title-section">
+                    <h2>Data Records</h2>
+                    <p>Store cryptographic fingerprints and verify file or text integrity</p>
+                </div>
+                <div class="header-actions">
+                    <button id="refreshBtn" class="btn btn-secondary">🔄 Refresh</button>
+                </div>
+            </section>
+
+            <!-- ── Store New Fingerprint ─────────────────────────────── -->
+            <section class="card" style="margin-bottom:1.5rem;">
+                <div class="card-header">
+                    <h3>📥 Store New Fingerprint</h3>
+                    <span class="security-badge">🔐 SHA-256</span>
+                </div>
+
+                <!-- Tab Switcher -->
+                <div style="display:flex;gap:0.5rem;margin-bottom:1rem;">
+                    <button id="tabFileBtn" class="btn btn-primary" onclick="switchTab('file')">📄 Upload File</button>
+                    <button id="tabTextBtn" class="btn btn-secondary" onclick="switchTab('text')">📝 Enter Text</button>
+                </div>
+
+                <!-- File Upload Panel -->
+                <div id="filePanel">
+                    <p style="color:#555;font-size:0.9rem;margin-bottom:0.75rem;">
+                        Allowed types: PDF, DOCX, XLSX, JPG, PNG, TXT &nbsp;|&nbsp; Max size: 10 MB<br>
+                        <em>The file is NOT stored — only its SHA-256 hash is saved.</em>
+                    </p>
+                    <form id="fileUploadForm">
+                        <div style="display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;">
+                            <input type="file" id="fileInput"
+                                   accept=".pdf,.docx,.xlsx,.jpg,.jpeg,.png,.txt"
+                                   style="flex:1;min-width:200px;padding:0.5rem;border:1px solid #ccc;border-radius:6px;">
+                            <button type="submit" class="btn btn-primary">Store Fingerprint</button>
+                        </div>
+                        <div id="fileUploadStatus" style="margin-top:0.5rem;font-size:0.85rem;"></div>
+                    </form>
+                </div>
+
+                <!-- Text Input Panel -->
+                <div id="textPanel" style="display:none;">
+                    <p style="color:#555;font-size:0.9rem;margin-bottom:0.75rem;">
+                        Enter any text — contract clauses, notes, code snippets.<br>
+                        <em>The text is NOT stored — only its SHA-256 hash is saved.</em>
+                    </p>
+                    <form id="textHashForm">
+                        <input type="text" id="textLabel" placeholder="Label (optional, e.g. Contract v1)"
+                               style="width:100%;padding:0.5rem;border:1px solid #ccc;border-radius:6px;margin-bottom:0.5rem;box-sizing:border-box;">
+                        <textarea id="textInput" rows="4" placeholder="Paste or type your text here..."
+                                  style="width:100%;padding:0.5rem;border:1px solid #ccc;border-radius:6px;box-sizing:border-box;font-family:inherit;resize:vertical;"></textarea>
+                        <div style="margin-top:0.5rem;">
+                            <button type="submit" class="btn btn-primary">Store Fingerprint</button>
+                        </div>
+                        <div id="textHashStatus" style="margin-top:0.5rem;font-size:0.85rem;"></div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- ── Records Table ────────────────────────────────────── -->
+            <section class="card records-card">
+                <div class="card-header">
+                    <h3>My Integrity Records</h3>
+                    <span class="security-badge">🔐 Secure</span>
+                </div>
+
+                <!-- Statistics Bar -->
+                <div class="stats-bar">
+                    <div class="stat-item">
+                        <span class="stat-label">Total:</span>
+                        <span id="totalRecords" class="stat-value">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">✅ Verified:</span>
+                        <span id="verifiedRecords" class="stat-value" style="color:#2e7d32;">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">⚠️ Tampered:</span>
+                        <span id="tamperedRecords" class="stat-value" style="color:#c62828;">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">🔢 Verifications:</span>
+                        <span id="totalVerifications" class="stat-value">0</span>
+                    </div>
+                </div>
+
+                <!-- Table -->
+                <div class="table-container">
+                    <table class="records-table">
+                        <thead>
+                            <tr>
+                                <th>Name / Label</th>
+                                <th>Type</th>
+                                <th>Size</th>
+                                <th>SHA-256 Hash</th>
+                                <th>Stored On</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recordsTableBody">
+                            <tr class="no-records">
+                                <td colspan="7" class="text-center">
+                                    <div class="empty-state">
+                                        <div class="empty-icon">📭</div>
+                                        <h3>No Records Yet</h3>
+                                        <p>Use the form above to store your first fingerprint.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- ── Status Guide ──────────────────────────────────────── -->
+            <section class="verification-info">
+                <div class="info-header">
+                    <span class="info-icon">ℹ️</span>
+                    <h4>Verification Status Guide</h4>
+                </div>
+                <div class="legend-items">
+                    <div class="legend-item">
+                        <span class="badge badge-pending">⏳ Not Verified</span>
+                        <div class="legend-desc">
+                            <strong>Awaiting Verification</strong>
+                            <p>Fingerprint stored; not yet checked</p>
+                        </div>
+                    </div>
+                    <div class="legend-item">
+                        <span class="badge badge-valid">✅ Verified</span>
+                        <div class="legend-desc">
+                            <strong>Integrity Confirmed</strong>
+                            <p>Re-computed hash matches stored hash — data is authentic</p>
+                        </div>
+                    </div>
+                    <div class="legend-item">
+                        <span class="badge badge-invalid">⚠️ Tampered</span>
+                        <div class="legend-desc">
+                            <strong>Tampering Detected</strong>
+                            <p>Hashes differ — data has been modified since fingerprinting</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="verification-footer">
+                    <span class="footer-icon">🔐</span>
+                    <span>All verifications use SHA-256 — a one-way cryptographic hash function</span>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- ── Verification Modal ─────────────────────────────────────────── -->
+    <div id="verifyModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:1000;align-items:center;justify-content:center;">
+        <div style="background:#fff;border-radius:12px;padding:2rem;max-width:520px;width:90%;position:relative;box-shadow:0 4px 32px rgba(0,0,0,0.25);">
+            <button onclick="closeModal()" style="position:absolute;top:1rem;right:1rem;background:none;border:none;font-size:1.4rem;cursor:pointer;color:#555;">✕</button>
+            <h3 id="modalTitle" style="margin-top:0;">Verify Integrity</h3>
+            <p id="modalDesc" style="color:#555;font-size:0.9rem;"></p>
+
+            <!-- File verification form -->
+            <div id="modalFileSection" style="display:none;">
+                <p style="font-size:0.85rem;color:#666;">Re-upload the <strong>same original file</strong>. The system will recompute its SHA-256 hash and compare.</p>
+                <input type="file" id="verifyFileInput" accept=".pdf,.docx,.xlsx,.jpg,.jpeg,.png,.txt"
+                       style="width:100%;padding:0.5rem;border:1px solid #ccc;border-radius:6px;box-sizing:border-box;">
+            </div>
+
+            <!-- Text verification form -->
+            <div id="modalTextSection" style="display:none;">
+                <p style="font-size:0.85rem;color:#666;">Re-enter the <strong>exact original text</strong>. The system will recompute its SHA-256 hash and compare.</p>
+                <textarea id="verifyTextInput" rows="5"
+                          style="width:100%;padding:0.5rem;border:1px solid #ccc;border-radius:6px;box-sizing:border-box;font-family:inherit;resize:vertical;"
+                          placeholder="Paste the original text here..."></textarea>
+            </div>
+
+            <!-- Result area -->
+            <div id="verifyResult" style="display:none;margin-top:1rem;padding:1rem;border-radius:8px;font-size:0.9rem;"></div>
+
+            <div style="margin-top:1.25rem;display:flex;gap:0.75rem;">
+                <button id="verifySubmitBtn" class="btn btn-primary" onclick="submitVerification()">🔍 Verify Now</button>
+                <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 Data Integrity Platform | BTech CSE Final Year Project</p>
+        </div>
+    </footer>
+
+    <!-- Notification Toast -->
+    <div id="notification" class="notification"></div>
+
+    <!-- JavaScript -->
+    <script>
+        const API = 'http://localhost:5000';
+        let currentVerifyRecord = null;
+
+        // ── Auth helper ────────────────────────────────────────────────────────
+        function getToken() {
+            return localStorage.getItem('auth_token');
+        }
+        function authHeaders() {
+            return { 'Authorization': 'Bearer ' + getToken() };
+        }
+
+        // ── Logout ─────────────────────────────────────────────────────────────
+        document.getElementById('logoutBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            localStorage.removeItem('auth_token');
+            localStorage.removeItem('user_email');
+            window.location.href = 'login.html';
+        });
+
+        // ── Notification ───────────────────────────────────────────────────────
+        function showNotification(msg, type = 'success') {
+            const el = document.getElementById('notification');
+            el.textContent = msg;
+            el.className = 'notification ' + type + ' show';
+            setTimeout(() => el.classList.remove('show'), 4000);
+        }
+
+        // ── Tab switcher ───────────────────────────────────────────────────────
+        function switchTab(tab) {
+            document.getElementById('filePanel').style.display = tab === 'file' ? 'block' : 'none';
+            document.getElementById('textPanel').style.display = tab === 'text' ? 'block' : 'none';
+            document.getElementById('tabFileBtn').className = 'btn ' + (tab === 'file' ? 'btn-primary' : 'btn-secondary');
+            document.getElementById('tabTextBtn').className = 'btn ' + (tab === 'text' ? 'btn-primary' : 'btn-secondary');
+        }
+
+        // ── Format helpers ─────────────────────────────────────────────────────
+        function formatDate(iso) {
+            if (!iso) return '—';
+            return new Date(iso).toLocaleString('en-IN', { year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
+        }
+        function formatSize(bytes) {
+            if (!bytes) return '—';
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+        }
+        function truncateHash(hash) {
+            return hash ? hash.substring(0, 16) + '…' : '—';
+        }
+        function statusBadge(status) {
+            if (status === 'verified')
+                return '<span class="badge badge-valid">✅ Verified</span>';
+            if (status === 'tampered')
+                return '<span class="badge badge-invalid">⚠️ Tampered</span>';
+            return '<span class="badge badge-pending">⏳ Not Verified</span>';
+        }
+
+        // ── Load records ───────────────────────────────────────────────────────
+        async function loadRecords() {
+            const tbody = document.getElementById('recordsTableBody');
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:2rem;color:#888;">Loading...</td></tr>';
+
+            try {
+                const res = await fetch(API + '/api/data/my-records', { headers: authHeaders() });
+                if (res.status === 401) { window.location.href = 'login.html'; return; }
+                const data = await res.json();
+
+                // Update stats
+                const s = data.statistics || {};
+                document.getElementById('totalRecords').textContent      = s.total_records || 0;
+                document.getElementById('verifiedRecords').textContent   = s.verified_count || 0;
+                document.getElementById('tamperedRecords').textContent   = s.tampered_count || 0;
+                document.getElementById('totalVerifications').textContent = s.total_verifications || 0;
+
+                const records = data.records || [];
+                if (records.length === 0) {
+                    tbody.innerHTML = '<tr class="no-records"><td colspan="7" class="text-center"><div class="empty-state"><div class="empty-icon">📭</div><h3>No Records Yet</h3><p>Use the form above to store your first fingerprint.</p></div></td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = '';
+                records.forEach(r => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td title="${r.original_filename || ''}">${(r.original_filename || 'Unnamed').substring(0, 30)}</td>
+                        <td>${r.file_type || '—'}</td>
+                        <td>${formatSize(r.file_size)}</td>
+                        <td><code title="${r.data_hash}" style="font-size:0.78rem;cursor:pointer;" onclick="copyToClipboard('${r.data_hash}')">${truncateHash(r.data_hash)}</code></td>
+                        <td>${formatDate(r.created_at)}</td>
+                        <td>${statusBadge(r.last_verification_status)}<br><small style="color:#888;">${r.verification_count || 0}x verified</small></td>
+                        <td>
+                            <button class="btn btn-secondary" style="font-size:0.78rem;padding:0.3rem 0.6rem;margin-bottom:0.25rem;"
+                                    onclick="openVerifyModal('${r._id}', '${r.upload_method}', '${(r.original_filename||'').replace(/'/g,"\\'")}')">
+                                🔍 Verify
+                            </button>
+                            <button class="btn btn-danger" style="font-size:0.78rem;padding:0.3rem 0.6rem;"
+                                    onclick="deleteRecord('${r._id}')">
+                                🗑️
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            } catch (err) {
+                console.error(err);
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:red;padding:1rem;">⚠️ Could not load records. Ensure backend is running.</td></tr>';
+            }
+        }
+
+        // ── File upload ────────────────────────────────────────────────────────
+        document.getElementById('fileUploadForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const fileInput = document.getElementById('fileInput');
+            const statusEl  = document.getElementById('fileUploadStatus');
+
+            if (!fileInput.files.length) {
+                statusEl.innerHTML = '<span style="color:red;">Select a file first.</span>';
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+            statusEl.innerHTML = '⏳ Computing SHA-256 and storing fingerprint…';
+
+            try {
+                const res  = await fetch(API + '/api/data/upload', {
+                    method:  'POST',
+                    headers: authHeaders(),
+                    body:    formData,
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    statusEl.innerHTML = `<span style="color:green;">✅ Stored! Hash: <code>${data.record.data_hash.substring(0,32)}…</code></span>`;
+                    fileInput.value = '';
+                    showNotification('File fingerprint stored successfully!', 'success');
+                    loadRecords();
+                } else {
+                    statusEl.innerHTML = '<span style="color:red;">❌ ' + (data.error || 'Upload failed') + '</span>';
+                }
+            } catch (err) {
+                statusEl.innerHTML = '<span style="color:red;">❌ Backend unreachable.</span>';
+            }
+        });
+
+        // ── Text hash ──────────────────────────────────────────────────────────
+        document.getElementById('textHashForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const text     = document.getElementById('textInput').value.trim();
+            const label    = document.getElementById('textLabel').value.trim();
+            const statusEl = document.getElementById('textHashStatus');
+
+            if (!text) {
+                statusEl.innerHTML = '<span style="color:red;">Enter some text first.</span>';
+                return;
+            }
+
+            statusEl.innerHTML = '⏳ Computing SHA-256 and storing fingerprint…';
+
+            try {
+                const res  = await fetch(API + '/api/data/text', {
+                    method:  'POST',
+                    headers: { ...authHeaders(), 'Content-Type': 'application/json' },
+                    body:    JSON.stringify({ text, label }),
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    statusEl.innerHTML = `<span style="color:green;">✅ Stored! Hash: <code>${data.record.data_hash.substring(0,32)}…</code></span>`;
+                    document.getElementById('textInput').value = '';
+                    document.getElementById('textLabel').value = '';
+                    showNotification('Text fingerprint stored successfully!', 'success');
+                    loadRecords();
+                } else {
+                    statusEl.innerHTML = '<span style="color:red;">❌ ' + (data.error || 'Failed') + '</span>';
+                }
+            } catch (err) {
+                statusEl.innerHTML = '<span style="color:red;">❌ Backend unreachable.</span>';
+            }
+        });
+
+        // ── Verify Modal ───────────────────────────────────────────────────────
+        function openVerifyModal(recordId, uploadMethod, filename) {
+            currentVerifyRecord = { recordId, uploadMethod, filename };
+            document.getElementById('modalTitle').textContent = 'Verify: ' + (filename || recordId);
+            document.getElementById('modalDesc').textContent  =
+                uploadMethod === 'file'
+                    ? 'Re-upload the original file to check if it has been tampered with.'
+                    : 'Re-enter the original text to check if it has been tampered with.';
+            document.getElementById('modalFileSection').style.display = uploadMethod === 'file' ? 'block' : 'none';
+            document.getElementById('modalTextSection').style.display = uploadMethod === 'text' ? 'block' : 'none';
+            document.getElementById('verifyResult').style.display = 'none';
+            document.getElementById('verifyFileInput').value = '';
+            document.getElementById('verifyTextInput').value = '';
+            document.getElementById('verifyModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('verifyModal').style.display = 'none';
+            currentVerifyRecord = null;
+        }
+
+        async function submitVerification() {
+            if (!currentVerifyRecord) return;
+            const { recordId, uploadMethod } = currentVerifyRecord;
+            const resultEl = document.getElementById('verifyResult');
+            const submitBtn = document.getElementById('verifySubmitBtn');
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = '⏳ Verifying…';
+            resultEl.style.display = 'none';
+
+            try {
+                let res, data;
+                if (uploadMethod === 'file') {
+                    const fileInput = document.getElementById('verifyFileInput');
+                    if (!fileInput.files.length) {
+                        resultEl.style.display = 'block';
+                        resultEl.style.background = '#fff3e0';
+                        resultEl.innerHTML = '⚠️ Please select a file.';
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = '🔍 Verify Now';
+                        return;
+                    }
+                    const fd = new FormData();
+                    fd.append('file', fileInput.files[0]);
+                    res  = await fetch(API + '/api/data/' + recordId + '/verify', {
+                        method:  'POST',
+                        headers: authHeaders(),
+                        body:    fd,
+                    });
+                } else {
+                    const text = document.getElementById('verifyTextInput').value;
+                    if (!text.trim()) {
+                        resultEl.style.display = 'block';
+                        resultEl.style.background = '#fff3e0';
+                        resultEl.innerHTML = '⚠️ Please enter the text.';
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = '🔍 Verify Now';
+                        return;
+                    }
+                    res  = await fetch(API + '/api/data/' + recordId + '/verify', {
+                        method:  'POST',
+                        headers: { ...authHeaders(), 'Content-Type': 'application/json' },
+                        body:    JSON.stringify({ text }),
+                    });
+                }
+
+                data = await res.json();
+                resultEl.style.display = 'block';
+
+                if (res.ok && data.status === 'verified') {
+                    resultEl.style.background = '#e8f5e9';
+                    resultEl.style.border = '1px solid #4caf50';
+                    resultEl.innerHTML = `
+                        <strong style="color:#2e7d32;font-size:1.1rem;">✅ VERIFIED — No Tampering Detected</strong><br><br>
+                        <span style="color:#555;">Stored hash &nbsp;&nbsp;: <code>${data.stored_hash}</code></span><br>
+                        <span style="color:#555;">Computed hash: <code>${data.computed_hash}</code></span>`;
+                    showNotification('✅ Integrity verified!', 'success');
+                } else if (res.ok && data.status === 'tampered') {
+                    resultEl.style.background = '#ffebee';
+                    resultEl.style.border = '1px solid #f44336';
+                    resultEl.innerHTML = `
+                        <strong style="color:#c62828;font-size:1.1rem;">⚠️ TAMPERED — Hash Mismatch!</strong><br><br>
+                        <span style="color:#555;">Stored hash &nbsp;&nbsp;: <code>${data.stored_hash}</code></span><br>
+                        <span style="color:#555;">Computed hash: <code>${data.computed_hash}</code></span>`;
+                    showNotification('⚠️ Tampering detected!', 'error');
+                } else {
+                    resultEl.style.background = '#fff3e0';
+                    resultEl.style.border = '1px solid #ff9800';
+                    resultEl.innerHTML = '❌ ' + (data.message || data.error || 'Verification failed.');
+                }
+                loadRecords(); // Refresh table to update status
+            } catch (err) {
+                resultEl.style.display = 'block';
+                resultEl.style.background = '#ffebee';
+                resultEl.innerHTML = '❌ Backend unreachable.';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = '🔍 Verify Now';
+            }
+        }
+
+        // ── Delete record ──────────────────────────────────────────────────────
+        async function deleteRecord(recordId) {
+            if (!confirm('Delete this record? This cannot be undone.')) return;
+            try {
+                const res = await fetch(API + '/api/data/' + recordId, {
+                    method:  'DELETE',
+                    headers: authHeaders(),
+                });
+                if (res.ok) {
+                    showNotification('Record deleted.', 'success');
+                    loadRecords();
+                } else {
+                    showNotification('Delete failed.', 'error');
+                }
+            } catch (err) {
+                showNotification('Backend unreachable.', 'error');
+            }
+        }
+
+        // ── Copy hash to clipboard ──────────────────────────────────────────────
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text)
+                .then(() => showNotification('Hash copied to clipboard!', 'success'))
+                .catch(() => {});
+        }
+
+        // ── Refresh button ─────────────────────────────────────────────────────
+        document.getElementById('refreshBtn').addEventListener('click', loadRecords);
+
+        // Close modal when clicking backdrop
+        document.getElementById('verifyModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('verifyModal')) closeModal();
+        });
+
+        // ── Init ───────────────────────────────────────────────────────────────
+        window.addEventListener('DOMContentLoaded', loadRecords);
+    </script>
+
+    <!-- Site Footer -->
+    <footer class="site-footer">
+        <div class="footer-container">
+            <div class="footer-grid">
+
+                <!-- Column 1: About Platform -->
+                <div class="footer-col">
+                    <div class="footer-brand">
+                        <span class="footer-brand-icon">&#128274;</span>
+                        <span class="footer-brand-name">Data Integrity Platform</span>
+                    </div>
+                    <p class="footer-desc">Secure data storage and integrity verification using SHA-256 cryptographic hashing. Built as a Final Year BTech CSE Project.</p>
+                    <div class="footer-social">
+                        <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" title="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" title="GitHub"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+
+                <!-- Column 2: Quick Links -->
+                <div class="footer-col">
+                    <p class="footer-col-title">Quick Links</p>
+                    <ul class="footer-links">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="dashboard.html">Dashboard</a></li>
+                        <li><a href="records.html">View Records</a></li>
+                        <li><a href="profile.html">Profile Settings</a></li>
+                    </ul>
+                </div>
+
+                <!-- Column 3: Support -->
+                <div class="footer-col">
+                    <p class="footer-col-title">Support</p>
+                    <ul class="footer-links">
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">FAQs</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+
+                <!-- Column 4: Technologies Used -->
+                <div class="footer-col">
+                    <p class="footer-col-title">Technologies Used</p>
+                    <ul class="footer-tech-list">
+                        <li class="footer-tech-item">
+                            <span class="footer-tech-icon flask"><i class="fas fa-flask"></i></span>
+                            Flask Backend
+                        </li>
+                        <li class="footer-tech-item">
+                            <span class="footer-tech-icon mongo"><i class="fas fa-database"></i></span>
+                            MongoDB Database
+                        </li>
+                        <li class="footer-tech-item">
+                            <span class="footer-tech-icon sha"><i class="fas fa-shield-alt"></i></span>
+                            SHA-256 Cryptographic Hashing
+                        </li>
+                        <li class="footer-tech-item">
+                            <span class="footer-tech-icon google"><i class="fab fa-google"></i></span>
+                            Google OAuth Authentication
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <div class="footer-divider"></div>
+            <div class="footer-bottom">
+                <p class="footer-copyright">&copy; 2026 Data Integrity Platform | Final Year BTech CSE Project</p>
+                <div class="footer-bottom-badge">
+                    <i class="fas fa-lock"></i>
+                    Built with <span>SHA-256</span> Security
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

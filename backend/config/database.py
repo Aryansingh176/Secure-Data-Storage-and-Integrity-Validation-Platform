@@ -1,0 +1,74 @@
+"""
+Database Configuration
+BTech CSE Final Year Project - Data Integrity Platform
+
+This module handles MongoDB connection and configuration.
+"""
+
+from pymongo import MongoClient
+from pymongo.errors import ConnectionFailure
+import os
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
+
+class Database:
+    """MongoDB Database Connection Manager"""
+    
+    def __init__(self):
+        """Initialize database connection"""
+        self.mongo_uri = os.getenv('MONGO_URI', 'mongodb://localhost:27017/')
+        self.db_name = os.getenv('MONGO_DB_NAME', 'data_integrity_platform')
+        self.client = None
+        self.db = None
+        
+    def connect(self):
+        """
+        Establish connection to MongoDB
+        
+        Returns:
+            Database object if successful, None otherwise
+        """
+        try:
+            # Create MongoDB client
+            self.client = MongoClient(self.mongo_uri, serverSelectionTimeoutMS=5000)
+            
+            # Test connection
+            self.client.admin.command('ping')
+            
+            # Get database
+            self.db = self.client[self.db_name]
+            
+            print(f"[OK] Connected to MongoDB: {self.db_name}")
+            return self.db
+            
+        except ConnectionFailure as e:
+            print(f"[ERROR] Failed to connect to MongoDB: {e}")
+            return None
+        except Exception as e:
+            print(f"[ERROR] Database error: {e}")
+            return None
+    
+    def get_collection(self, collection_name):
+        """
+        Get a specific collection from database
+        
+        Args:
+            collection_name (str): Name of the collection
+            
+        Returns:
+            Collection object
+        """
+        if self.db is None:
+            raise Exception("Database not connected. Call connect() first.")
+        return self.db[collection_name]
+    
+    def close(self):
+        """Close database connection"""
+        if self.client:
+            self.client.close()
+            print("[OK] MongoDB connection closed")
+
+# Global database instance
+db_instance = Database()

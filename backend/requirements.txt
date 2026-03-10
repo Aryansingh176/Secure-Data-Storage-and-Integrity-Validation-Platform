@@ -1,0 +1,38 @@
+# Data Integrity Platform - Backend Dependencies
+# BTech CSE Final Year Project
+
+# Flask Framework
+Flask==3.0.0
+flask-cors==4.0.0
+
+# MongoDB Driver
+pymongo==4.6.1
+
+# Environment Variables
+python-dotenv==1.0.0
+
+# Date/Time handling
+python-dateutil==2.8.2
+
+# Authentication & OAuth
+PyJWT==2.8.0
+google-auth==2.27.0
+google-auth-oauthlib==1.2.0
+google-auth-httplib2==0.2.0
+requests==2.31.0
+cryptography==41.0.7
+
+# OTP Security — password hashing for OTP storage
+Werkzeug==3.0.1          # generate_password_hash / check_password_hash (pbkdf2:sha256)
+                         # Also provides secure_filename for safe file upload handling
+
+# SMS Service — optional, used for phone OTP
+# twilio==8.10.0         # Uncomment to enable real SMS in production
+
+# Rate Limiting (integrity routes)
+flask-limiter==3.5.0
+
+# Structured Logging (optional, for production JSON logs)
+python-json-logger==2.0.7
+                         # In development mode, OTP is printed to console
+
