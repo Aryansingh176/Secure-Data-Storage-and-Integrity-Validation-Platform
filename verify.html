@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Document — Data Integrity Platform</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f0f2f5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ── Navbar ── */
+        .navbar {
+            background: #1a237e;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        .navbar .logo { font-size: 1.5rem; }
+        .navbar h1 { color: #fff; font-size: 1.1rem; font-weight: 600; letter-spacing: 0.5px; }
+
+        /* ── Main ── */
+        main {
+            flex: 1;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 2.5rem 1rem;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.09);
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 680px;
+        }
+
+        /* ── Record Info ── */
+        .record-info-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .record-type-icon {
+            width: 56px; height: 56px;
+            border-radius: 12px;
+            background: #e8eaf6;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.8rem; flex-shrink: 0;
+        }
+        .record-title { font-size: 1.2rem; font-weight: 700; color: #1a237e; }
+        .record-subtitle { font-size: 0.85rem; color: #666; margin-top: 2px; }
+
+        .meta-table { width: 100%; border-collapse: collapse; margin-bottom: 1.25rem; }
+        .meta-table td { padding: 7px 0; font-size: 0.9rem; vertical-align: top; }
+        .meta-table td:first-child { color: #555; font-weight: 500; width: 140px; }
+        .meta-table td:last-child { color: #212121; word-break: break-all; }
+
+        .hash-box {
+            background: #f5f5f5;
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            font-family: monospace;
+            font-size: 0.8rem;
+            color: #37474f;
+            word-break: break-all;
+            margin-bottom: 1.5rem;
+            border: 1px solid #e0e0e0;
+        }
+
+        .divider { border: none; border-top: 1px solid #e8eae6; margin: 1.5rem 0; }
+
+        /* ── Upload area ── */
+        .section-label {
+            font-size: 1rem; font-weight: 600; color: #1a237e;
+            margin-bottom: 0.75rem;
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+
+        .tab-row { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+        .tab-btn {
+            padding: 0.4rem 1rem;
+            border-radius: 6px;
+            border: 1.5px solid #1a237e;
+            cursor: pointer;
+            font-size: 0.88rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .tab-btn.active { background: #1a237e; color: #fff; }
+        .tab-btn:not(.active) { background: #fff; color: #1a237e; }
+
+        .drop-zone {
+            border: 2px dashed #b0bec5;
+            border-radius: 10px;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.2s, background 0.2s;
+            margin-bottom: 0.75rem;
+            position: relative;
+        }
+        .drop-zone:hover, .drop-zone.dragover { border-color: #1a237e; background: #f3f4ff; }
+        .drop-zone input[type="file"] {
+            position: absolute; inset: 0; opacity: 0; cursor: pointer;
+        }
+        .drop-zone-icon { font-size: 2.2rem; color: #90a4ae; margin-bottom: 0.5rem; }
+        .drop-zone-label { font-size: 0.9rem; color: #546e7a; font-weight: 500; }
+        .drop-zone-hint  { font-size: 0.78rem; color: #90a4ae; margin-top: 4px; }
+
+        textarea {
+            width: 100%; padding: 0.75rem; border: 1.5px solid #ccc;
+            border-radius: 8px; font-family: inherit; font-size: 0.9rem;
+            resize: vertical; min-height: 120px;
+            transition: border-color 0.2s;
+        }
+        textarea:focus { outline: none; border-color: #1a237e; }
+
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center;
+            gap: 0.5rem;
+            padding: 0.65rem 1.5rem;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: opacity 0.2s, transform 0.1s;
+        }
+        .btn:hover:not(:disabled) { opacity: 0.88; transform: translateY(-1px); }
+        .btn:disabled { opacity: 0.55; cursor: wait; }
+        .btn-primary { background: #1a237e; color: #fff; }
+        .btn-full { width: 100%; margin-top: 0.75rem; }
+
+        /* ── Result ── */
+        .result-box {
+            display: none;
+            border-radius: 12px;
+            padding: 1.25rem 1.5rem;
+            margin-top: 1.25rem;
+        }
+        .result-box.verified { background: #e8f5e9; border: 1.5px solid #66bb6a; }
+        .result-box.tampered { background: #ffebee; border: 1.5px solid #ef5350; }
+
+        .result-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .result-title { font-size: 1.15rem; font-weight: 700; margin-bottom: 4px; }
+        .result-box.verified .result-title { color: #2e7d32; }
+        .result-box.tampered .result-title { color: #c62828; }
+        .result-msg { font-size: 0.88rem; color: #555; }
+
+        .hash-compare { margin-top: 1rem; font-size: 0.8rem; }
+        .hash-compare p { font-weight: 500; color: #333; margin-bottom: 3px; }
+        .hash-compare code {
+            display: block; background: rgba(0,0,0,0.05);
+            border-radius: 6px; padding: 6px 10px;
+            font-family: monospace; word-break: break-all;
+            margin-bottom: 8px;
+        }
+
+        /* ── Loading spinner ── */
+        .spinner { display: none; text-align: center; padding: 1.5rem; }
+        .spinner i { font-size: 1.8rem; color: #1a237e; animation: spin 0.9s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ── Error ── */
+        .error-state { text-align: center; padding: 3rem 1rem; }
+        .error-state .error-icon { font-size: 3rem; color: #ef5350; margin-bottom: 1rem; }
+        .error-state h2 { color: #c62828; margin-bottom: 0.5rem; }
+        .error-state p { color: #666; }
+
+        /* ── Footer ── */
+        footer {
+            text-align: center;
+            padding: 1.25rem;
+            font-size: 0.8rem;
+            color: #90a4ae;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <span class="logo">🔒</span>
+    <h1>Data Integrity Platform — Document Verification</h1>
+</nav>
+
+<main>
+    <div class="card" id="mainCard">
+
+        <!-- Loading -->
+        <div class="spinner" id="loadingSpinner" style="display:flex;flex-direction:column;align-items:center;gap:1rem;">
+            <i class="fas fa-circle-notch"></i>
+            <p style="color:#666;">Loading record information…</p>
+        </div>
+
+        <!-- Error state (hidden by default) -->
+        <div class="error-state" id="errorState" style="display:none;">
+            <div class="error-icon"><i class="fas fa-exclamation-triangle"></i></div>
+            <h2>Record Not Found</h2>
+            <p>This verification link is invalid or the record has been deleted.</p>
+        </div>
+
+        <!-- Record content (hidden until loaded) -->
+        <div id="recordContent" style="display:none;">
+
+            <div class="record-info-header">
+                <div class="record-type-icon" id="typeIcon">📄</div>
+                <div>
+                    <div class="record-title" id="recordName">—</div>
+                    <div class="record-subtitle">Click below to verify this document's integrity</div>
+                </div>
+            </div>
+
+            <table class="meta-table">
+                <tr><td>File Type</td><td id="metaFileType">—</td></tr>
+                <tr><td>File Size</td><td id="metaFileSize">—</td></tr>
+                <tr><td>Upload Method</td><td id="metaMethod">—</td></tr>
+                <tr><td>Stored On</td><td id="metaDate">—</td></tr>
+                <tr><td>Verifications</td><td id="metaCount">—</td></tr>
+            </table>
+
+            <div>
+                <div style="font-size:0.85rem;font-weight:600;color:#555;margin-bottom:4px;">
+                    <i class="fas fa-fingerprint" style="color:#1a237e;"></i>&nbsp; Stored SHA-256 Hash
+                </div>
+                <div class="hash-box" id="storedHashBox">—</div>
+            </div>
+
+            <hr class="divider">
+
+            <div class="section-label">
+                <i class="fas fa-shield-alt"></i> Verify Integrity
+            </div>
+            <p style="font-size:0.88rem;color:#666;margin-bottom:1rem;">
+                Upload the document (or paste the text) to check whether it has been tampered with since it was stored.
+            </p>
+
+            <!-- Tab switcher (shown only for file records) -->
+            <div class="tab-row" id="methodTabRow">
+                <button class="tab-btn active" id="tabFile" onclick="setMethod('file')">
+                    <i class="fas fa-file-upload"></i> Upload File
+                </button>
+                <button class="tab-btn" id="tabText" onclick="setMethod('text')" style="display:none;">
+                    <i class="fas fa-align-left"></i> Paste Text
+                </button>
+            </div>
+
+            <!-- File panel -->
+            <div id="filePanel">
+                <div class="drop-zone" id="dropZone">
+                    <input type="file" id="fileInput" accept=".pdf,.docx,.xlsx,.jpg,.jpeg,.png,.txt"
+                           onchange="onFileSelected(this)">
+                    <div class="drop-zone-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+                    <div class="drop-zone-label" id="dropZoneLabel">Choose a file or drag it here</div>
+                    <div class="drop-zone-hint">PDF, DOCX, XLSX, JPG, PNG, TXT — max 10 MB</div>
+                </div>
+            </div>
+
+            <!-- Text panel (hidden by default) -->
+            <div id="textPanel" style="display:none;">
+                <textarea id="textInput" placeholder="Paste the original text here…"></textarea>
+            </div>
+
+            <button class="btn btn-primary btn-full" id="verifyBtn" onclick="runVerification()">
+                <i class="fas fa-search"></i> Verify Now
+            </button>
+
+            <!-- Result -->
+            <div class="result-box" id="resultBox">
+                <div class="result-icon" id="resultIcon">✅</div>
+                <div class="result-title" id="resultTitle">—</div>
+                <div class="result-msg"  id="resultMsg">—</div>
+                <div class="hash-compare" id="hashCompare">
+                    <p>Stored hash:</p><code id="storedHashCmp">—</code>
+                    <p>Computed hash:</p><code id="computedHashCmp">—</code>
+                </div>
+            </div>
+
+        </div><!-- /recordContent -->
+
+    </div><!-- /card -->
+</main>
+
+<footer>
+    &copy; 2026 Data Integrity Platform &nbsp;|&nbsp; BTech CSE Final Year Project
+</footer>
+
+<script>
+const API = 'http://localhost:5000';
+
+// ── Read verification_id from URL query param or path ─────────────────────────
+function getVerificationId() {
+    // Support both ?id=xxx and /verify/xxx
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('id')) return params.get('id');
+    // Try to extract from path: /verify/<uuid>
+    const parts = window.location.pathname.split('/');
+    return parts[parts.length - 1] || null;
+}
+
+let _uploadMethod = 'file';
+let _verificationId = null;
+
+function setMethod(m) {
+    _uploadMethod = m;
+    document.getElementById('filePanel').style.display = m === 'file' ? 'block' : 'none';
+    document.getElementById('textPanel').style.display = m === 'text' ? 'block' : 'none';
+    document.getElementById('tabFile').className = 'tab-btn' + (m === 'file' ? ' active' : '');
+    document.getElementById('tabText').className = 'tab-btn' + (m === 'text' ? ' active' : '');
+    document.getElementById('resultBox').style.display = 'none';
+}
+
+function onFileSelected(input) {
+    const label = document.getElementById('dropZoneLabel');
+    label.textContent = input.files.length ? input.files[0].name : 'Choose a file or drag it here';
+}
+
+function fmtSize(n) {
+    if (!n) return '—';
+    if (n < 1024) return n + ' B';
+    if (n < 1048576) return (n/1024).toFixed(1) + ' KB';
+    return (n/1048576).toFixed(1) + ' MB';
+}
+
+function fmtDate(iso) {
+    if (!iso) return '—';
+    return new Date(iso).toLocaleString('en-IN', {
+        year: 'numeric', month: 'short', day: 'numeric',
+        hour: '2-digit', minute: '2-digit'
+    });
+}
+
+const TYPE_ICONS = {
+    'PDF Document': '📕', 'Word Document': '📘', 'Excel Spreadsheet': '📗',
+    'JPEG Image': '🖼️', 'PNG Image': '🖼️', 'Text File': '📄', 'Text': '📝'
+};
+
+async function loadRecord() {
+    _verificationId = getVerificationId();
+    if (!_verificationId || _verificationId === 'verify.html') {
+        showError();
+        return;
+    }
+
+    try {
+        const res = await fetch(`${API}/api/public/verify/${_verificationId}`);
+        if (!res.ok) { showError(); return; }
+        const data = await res.json();
+
+        document.getElementById('loadingSpinner').style.display = 'none';
+        document.getElementById('recordContent').style.display = 'block';
+
+        // Populate
+        document.getElementById('recordName').textContent    = data.original_filename || '—';
+        document.getElementById('metaFileType').textContent  = data.file_type || '—';
+        document.getElementById('metaFileSize').textContent  = fmtSize(data.file_size);
+        document.getElementById('metaMethod').textContent    = (data.upload_method === 'file') ? 'File Upload' : 'Text Input';
+        document.getElementById('metaDate').textContent      = fmtDate(data.created_at);
+        document.getElementById('metaCount').textContent     = data.verification_count + ' times';
+        document.getElementById('storedHashBox').textContent = data.data_hash || '—';
+        document.getElementById('typeIcon').textContent      = TYPE_ICONS[data.file_type] || '📄';
+
+        // If text record, switch method and show text tab
+        if (data.upload_method === 'text') {
+            setMethod('text');
+            document.getElementById('tabText').style.display = 'inline-flex';
+            document.getElementById('tabFile').style.display = 'none';
+        }
+    } catch (err) {
+        showError();
+    }
+}
+
+function showError() {
+    document.getElementById('loadingSpinner').style.display = 'none';
+    document.getElementById('errorState').style.display = 'block';
+}
+
+async function runVerification() {
+    if (!_verificationId) return;
+    const btn = document.getElementById('verifyBtn');
+    const resultBox = document.getElementById('resultBox');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Verifying…';
+    resultBox.style.display = 'none';
+
+    try {
+        let res;
+        if (_uploadMethod === 'file') {
+            const fileInput = document.getElementById('fileInput');
+            if (!fileInput.files.length) {
+                alert('Please select a file first.');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-search"></i> Verify Now';
+                return;
+            }
+            const fd = new FormData();
+            fd.append('file', fileInput.files[0]);
+            res = await fetch(`${API}/api/public/verify/${_verificationId}`, {
+                method: 'POST', body: fd
+            });
+        } else {
+            const text = document.getElementById('textInput').value.trim();
+            if (!text) {
+                alert('Please paste the original text first.');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-search"></i> Verify Now';
+                return;
+            }
+            res = await fetch(`${API}/api/public/verify/${_verificationId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text })
+            });
+        }
+
+        const data = await res.json();
+        if (!res.ok) {
+            alert(data.error || 'Verification failed.');
+            return;
+        }
+
+        showResult(data);
+    } catch (err) {
+        alert('Backend unreachable. Ensure the server is running.');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-search"></i> Verify Now';
+    }
+}
+
+function showResult(data) {
+    const box = document.getElementById('resultBox');
+    const isVerified = data.status === 'verified';
+
+    box.className = 'result-box ' + (isVerified ? 'verified' : 'tampered');
+    document.getElementById('resultIcon').textContent  = isVerified ? '✅' : '⚠️';
+    document.getElementById('resultTitle').textContent = isVerified ? 'Integrity Verified' : 'Tampering Detected!';
+    document.getElementById('resultMsg').textContent   = data.message || '';
+
+    document.getElementById('storedHashCmp').textContent   = data.stored_hash   || '—';
+    document.getElementById('computedHashCmp').textContent = data.computed_hash || '—';
+
+    box.style.display = 'block';
+    box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+// Drag-and-drop styling
+const dz = document.getElementById('dropZone');
+if (dz) {
+    dz.addEventListener('dragover',  e => { e.preventDefault(); dz.classList.add('dragover'); });
+    dz.addEventListener('dragleave', () => dz.classList.remove('dragover'));
+    dz.addEventListener('drop',      e => {
+        e.preventDefault();
+        dz.classList.remove('dragover');
+        const dt = e.dataTransfer;
+        if (dt.files.length) {
+            document.getElementById('fileInput').files = dt.files;
+            onFileSelected(document.getElementById('fileInput'));
+        }
+    });
+}
+
+window.addEventListener('DOMContentLoaded', loadRecord);
+</script>
+</body>
+</html>

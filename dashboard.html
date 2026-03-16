@@ -139,6 +139,25 @@
                     </a>
                 </div>
             </div>
+
+            <!-- Profile Completion Banner (shown only if incomplete) -->
+            <div id="profileBanner" style="display:none;background:linear-gradient(135deg,#fff3e0,#ffe0b2);border:1.5px solid #ff9800;border-radius:12px;padding:1rem 1.5rem;margin-top:1.5rem;display:none;align-items:center;gap:1rem;">
+                <span style="font-size:1.8rem;">👤</span>
+                <div style="flex:1;">
+                    <strong style="color:#e65100;">Complete Your Profile</strong>
+                    <p style="font-size:0.85rem;color:#555;margin-top:2px;">Add your phone number and date of birth to unlock all platform features.</p>
+                </div>
+                <a href="profile.html" style="background:#e65100;color:#fff;padding:0.4rem 1rem;border-radius:6px;text-decoration:none;font-size:0.88rem;font-weight:600;">Complete Now</a>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="action-section" style="margin-top:2rem;">
+                <h2 class="section-title">Recent Activity</h2>
+                <div id="activityList" style="display:flex;flex-direction:column;gap:0.6rem;">
+                    <div style="text-align:center;padding:2rem;color:#999;">Loading activity…</div>
+                </div>
+            </div>
+
         </div>
     </main>
 
@@ -166,6 +185,11 @@
                     const user = data.user || {};
                     const name = user.name || user.email || 'User';
                     document.getElementById('welcomeName').textContent = name.split(' ')[0];
+                    // Profile completion banner
+                    if (!user.profile_completed) {
+                        const banner = document.getElementById('profileBanner');
+                        if (banner) banner.style.display = 'flex';
+                    }
                 } else {
                     const email = localStorage.getItem('user_email') || 'User';
                     document.getElementById('welcomeName').textContent = email.split('@')[0];
@@ -194,9 +218,56 @@
             }
         }
 
+        // Load recent activity feed from audit_logs
+        async function loadActivity() {
+            const container = document.getElementById('activityList');
+            if (!container) return;
+            try {
+                const res = await fetch(`${API_URL}/api/activity`, { headers: authHeaders() });
+                if (!res.ok) {
+                    container.innerHTML = '<div style="text-align:center;color:#999;padding:1rem;">No recent activity.</div>';
+                    return;
+                }
+                const data = await res.json();
+                const logs = data.activity || [];
+                if (!logs.length) {
+                    container.innerHTML = '<div style="text-align:center;color:#999;padding:1rem;">No activity yet. Start by uploading a record!</div>';
+                    return;
+                }
+                const ACTION_ICONS = {
+                    upload_record:   { icon: '📤', label: 'Uploaded record',   color: '#1976d2' },
+                    verify_record:   { icon: '🔍', label: 'Verified record',   color: '#388e3c' },
+                    login_success:   { icon: '🔑', label: 'Logged in',         color: '#7b1fa2' },
+                    otp_verified:    { icon: '✅', label: 'OTP Verified',      color: '#2e7d32' },
+                    otp_sent:        { icon: '📧', label: 'OTP Sent',          color: '#f57c00' },
+                    profile_update:  { icon: '👤', label: 'Profile Updated',   color: '#0288d1' },
+                    registration:    { icon: '🆕', label: 'Registered',        color: '#6a1b9a' },
+                };
+                container.innerHTML = logs.map(log => {
+                    const a = ACTION_ICONS[log.action] || { icon: '📌', label: log.action, color: '#555' };
+                    const ts = log.timestamp ? new Date(log.timestamp).toLocaleString('en-IN', {
+                        month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                    }) : '';
+                    const success = log.success !== false;
+                    return `<div style="display:flex;align-items:center;gap:0.75rem;background:${success ? '#fff' : '#fff8f8'};border:1px solid ${success ? '#e8eae6' : '#ffcdd2'};border-radius:10px;padding:0.6rem 1rem;">
+                        <span style="font-size:1.3rem;flex-shrink:0;">${a.icon}</span>
+                        <div style="flex:1;">
+                            <span style="font-weight:600;font-size:0.88rem;color:${a.color};">${a.label}</span>
+                            ${!success ? ' <span style="font-size:0.78rem;color:#c62828;">(Failed)</span>' : ''}
+                            ${log.details && log.details.status ? ` — <span style="font-size:0.78rem;color:${log.details.status==='tampered'?'#c62828':'#2e7d32'};">${log.details.status}</span>` : ''}
+                        </div>
+                        <span style="font-size:0.78rem;color:#999;flex-shrink:0;">${ts}</span>
+                    </div>`;
+                }).join('');
+            } catch (err) {
+                container.innerHTML = '<div style="text-align:center;color:#999;padding:1rem;">Could not load activity.</div>';
+            }
+        }
+
         window.addEventListener('DOMContentLoaded', () => {
             loadUserProfile();
             loadStatistics();
+            loadActivity();
         });
     </script>
 

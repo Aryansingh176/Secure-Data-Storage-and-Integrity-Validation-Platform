@@ -30,15 +30,28 @@ Security Checks Applied
 - Ownership enforcement     (users can only access their own records)
 """
 
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, make_response
 from werkzeug.utils import secure_filename
 import hashlib
+import io
 from datetime import datetime
 from bson import ObjectId
 
 from models.data_model import DataModel
 from models.audit_log_model import AuditLogModel, AuditAction
 from services.auth_service import token_required, get_client_ip, get_user_agent
+
+# PDF certificate generation
+try:
+    from reportlab.lib.pagesizes import A4
+    from reportlab.lib import colors
+    from reportlab.lib.units import cm
+    from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, HRFlowable
+    from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+    from reportlab.lib.enums import TA_CENTER, TA_LEFT
+    REPORTLAB_AVAILABLE = True
+except ImportError:
+    REPORTLAB_AVAILABLE = False
 
 # Blueprint prefix: /api
 integrity_bp = Blueprint('integrity', __name__, url_prefix='/api')
@@ -376,3 +389,236 @@ def _get_verification_count(record_id: str) -> int:
         return record.get('verification_count', 0) if record else 0
     except Exception:
         return 0
+
+
+# == GET /api/public/verify/<verification_id> ==================================
+
+@integrity_bp.route('/public/verify/<verification_id>', methods=['GET'])
+def public_record_info(verification_id):
+    """
+    Public endpoint — returns record metadata for the public verification page.
+    No authentication required; exposes only non-sensitive fields.
+    """
+    record = _data_model.get_record_by_verification_id(verification_id)
+    if not record:
+        return jsonify({'error': 'Record not found'}), 404
+
+    return jsonify({
+        'success':          True,
+        'original_filename': record.get('original_filename', ''),
+        'file_type':        record.get('file_type', ''),
+        'file_size':        record.get('file_size', 0),
+        'hash_algorithm':   record.get('hash_algorithm', 'SHA-256'),
+        'data_hash':        record.get('data_hash', ''),
+        'upload_method':    record.get('upload_method', ''),
+        'created_at':       record.get('created_at', ''),
+        'verification_count': record.get('verification_count', 0),
+        'last_verification_status': record.get('last_verification_status'),
+    }), 200
+
+
+# == POST /api/public/verify/<verification_id> =================================
+
+@integrity_bp.route('/public/verify/<verification_id>', methods=['POST'])
+def public_verify(verification_id):
+    """
+    Public endpoint — anyone can upload a file/text and check it against the
+    stored hash. No authentication required (public sharing).
+
+    File → multipart/form-data field: "file"
+    Text → application/json    field: "text"
+    """
+    record = _data_model.get_record_by_verification_id(verification_id)
+    if not record:
+        return jsonify({'error': 'Record not found'}), 404
+
+    record_id     = record['_id']
+    upload_method = record.get('upload_method', 'file')
+    stored_hash   = record.get('data_hash', '')
+    content_type  = request.content_type or ''
+    ip_address    = get_client_ip()
+
+    if 'multipart/form-data' in content_type:
+        if 'file' not in request.files or not request.files['file'].filename:
+            return jsonify({'error': 'No file provided'}), 400
+        file_bytes = request.files['file'].read()
+        if not file_bytes:
+            return jsonify({'error': 'File is empty'}), 400
+        computed = hashlib.sha256(file_bytes).hexdigest()
+    else:
+        body = request.get_json(silent=True) or {}
+        text = (body.get('text') or '').strip()
+        if not text:
+            return jsonify({'error': '"text" is required'}), 400
+        computed = hashlib.sha256(text.encode('utf-8')).hexdigest()
+
+    matched = (computed == stored_hash)
+    status  = 'verified' if matched else 'tampered'
+
+    # Update record stats (no user_id check — public verification)
+    _data_model._do_verify_public(record_id, computed)
+
+    # Log the attempt
+    _data_model.log_verification_attempt(record_id, status, ip_address)
+
+    return jsonify({
+        'status':        status,
+        'matched':       matched,
+        'message':       ('Integrity verified — No tampering detected'
+                          if matched else
+                          'TAMPERED — Hash mismatch detected!'),
+        'stored_hash':   stored_hash,
+        'computed_hash': computed,
+    }), 200
+
+
+# == GET /api/records/<id>/certificate =========================================
+
+@integrity_bp.route('/records/<record_id>/certificate', methods=['GET'])
+@token_required
+def download_certificate(record_id):
+    """
+    Generate and download a PDF integrity certificate for a verified record.
+    """
+    if not REPORTLAB_AVAILABLE:
+        return jsonify({'error': 'PDF generation not available. Install reportlab.'}), 500
+
+    user_id = request.user_id
+    record  = _data_model.get_record_by_id(record_id, user_id)
+    if not record:
+        return jsonify({'error': 'Record not found or access denied'}), 404
+
+    pdf_bytes = _generate_certificate_pdf(record)
+
+    filename = f"integrity_certificate_{record_id[:8]}.pdf"
+    response = make_response(pdf_bytes)
+    response.headers['Content-Type']        = 'application/pdf'
+    response.headers['Content-Disposition'] = f'attachment; filename="{filename}"'
+    return response
+
+
+def _generate_certificate_pdf(record: dict) -> bytes:
+    """Build and return the PDF bytes for an integrity certificate."""
+    buf    = io.BytesIO()
+    doc    = SimpleDocTemplate(buf, pagesize=A4,
+                               topMargin=2*cm, bottomMargin=2*cm,
+                               leftMargin=2.5*cm, rightMargin=2.5*cm)
+    styles = getSampleStyleSheet()
+
+    title_style = ParagraphStyle('title', parent=styles['Title'],
+                                 fontSize=22, spaceAfter=6, textColor=colors.HexColor('#1a237e'))
+    sub_style   = ParagraphStyle('sub', parent=styles['Normal'],
+                                 fontSize=11, spaceAfter=4, textColor=colors.HexColor('#555555'),
+                                 alignment=TA_CENTER)
+    label_style = ParagraphStyle('label', parent=styles['Normal'],
+                                 fontSize=10, textColor=colors.HexColor('#1565c0'), fontName='Helvetica-Bold')
+    value_style = ParagraphStyle('value', parent=styles['Normal'],
+                                 fontSize=10, textColor=colors.HexColor('#212121'))
+    hash_style  = ParagraphStyle('hash', parent=styles['Code'],
+                                 fontSize=8,  textColor=colors.HexColor('#37474f'),
+                                 backColor=colors.HexColor('#f5f5f5'), leading=14)
+
+    status = record.get('last_verification_status', 'not_verified')
+    if status == 'verified':
+        status_color, status_text = colors.HexColor('#2e7d32'), 'VERIFIED ✓'
+    elif status == 'tampered':
+        status_color, status_text = colors.HexColor('#c62828'), 'TAMPERED ✗'
+    else:
+        status_color, status_text = colors.HexColor('#757575'), 'NOT VERIFIED'
+
+    status_style = ParagraphStyle('status', parent=styles['Normal'],
+                                  fontSize=16, fontName='Helvetica-Bold',
+                                  textColor=status_color, alignment=TA_CENTER, spaceAfter=6)
+
+    created_at = record.get('created_at', '')
+    if created_at:
+        try:
+            dt = datetime.fromisoformat(str(created_at).replace('Z', ''))
+            created_at = dt.strftime('%d %B %Y, %H:%M UTC')
+        except Exception:
+            pass
+
+    elements = [
+        Paragraph('Data Integrity Platform', title_style),
+        Paragraph('Cryptographic Integrity Certificate', sub_style),
+        HRFlowable(width='100%', thickness=2, color=colors.HexColor('#1a237e')),
+        Spacer(1, 0.5*cm),
+        Paragraph(status_text, status_style),
+        Spacer(1, 0.4*cm),
+    ]
+
+    table_data = [
+        [Paragraph('File Name',       label_style), Paragraph(record.get('original_filename', '—'), value_style)],
+        [Paragraph('File Type',       label_style), Paragraph(record.get('file_type', '—'), value_style)],
+        [Paragraph('File Size',       label_style), Paragraph(_fmt_size(record.get('file_size', 0)), value_style)],
+        [Paragraph('Hash Algorithm',  label_style), Paragraph(record.get('hash_algorithm', 'SHA-256'), value_style)],
+        [Paragraph('Upload Date',     label_style), Paragraph(str(created_at), value_style)],
+        [Paragraph('Verifications',   label_style), Paragraph(str(record.get('verification_count', 0)), value_style)],
+    ]
+
+    t = Table(table_data, colWidths=[4.5*cm, 11*cm])
+    t.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (0, -1), colors.HexColor('#e8eaf6')),
+        ('VALIGN',     (0, 0), (-1, -1), 'TOP'),
+        ('ROWBACKGROUNDS', (0, 0), (-1, -1), [colors.white, colors.HexColor('#f8f9fa')]),
+        ('GRID',       (0, 0), (-1, -1), 0.5, colors.HexColor('#e0e0e0')),
+        ('TOPPADDING',    (0, 0), (-1, -1), 8),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 8),
+        ('LEFTPADDING',   (0, 0), (-1, -1), 10),
+    ]))
+    elements.append(t)
+    elements.append(Spacer(1, 0.5*cm))
+    elements.append(Paragraph('SHA-256 Hash', label_style))
+    elements.append(Spacer(1, 0.15*cm))
+    elements.append(Paragraph(record.get('data_hash', ''), hash_style))
+    elements.append(Spacer(1, 0.6*cm))
+    elements.append(HRFlowable(width='100%', thickness=1, color=colors.HexColor('#e0e0e0')))
+    elements.append(Spacer(1, 0.3*cm))
+    elements.append(Paragraph(
+        f'Generated on {datetime.utcnow().strftime("%d %B %Y, %H:%M UTC")} &nbsp;|&nbsp; Data Integrity Platform — BTech CSE Final Year Project',
+        ParagraphStyle('footer', parent=styles['Normal'], fontSize=8,
+                       textColor=colors.HexColor('#9e9e9e'), alignment=TA_CENTER)
+    ))
+
+    doc.build(elements)
+    return buf.getvalue()
+
+
+def _fmt_size(n: int) -> str:
+    if not n:
+        return '—'
+    if n < 1024:
+        return f'{n} B'
+    if n < 1024 * 1024:
+        return f'{n/1024:.1f} KB'
+    return f'{n/(1024*1024):.1f} MB'
+
+
+# == GET /api/activity =========================================================
+
+@integrity_bp.route('/activity', methods=['GET'])
+@token_required
+def recent_activity():
+    """Return recent audit_log entries for the authenticated user."""
+    user_id = request.user_id
+    try:
+        from bson import ObjectId as ObjId
+        logs = list(
+            _audit_model.collection
+            .find({'user_id': ObjId(user_id)})
+            .sort('timestamp', -1)
+            .limit(15)
+        )
+        result = []
+        for log in logs:
+            log['_id'] = str(log['_id'])
+            if log.get('user_id'):
+                log['user_id'] = str(log['user_id'])
+            if log.get('record_id'):
+                log['record_id'] = str(log['record_id'])
+            if log.get('timestamp') and hasattr(log['timestamp'], 'isoformat'):
+                log['timestamp'] = log['timestamp'].isoformat()
+            result.append(log)
+        return jsonify({'success': True, 'activity': result}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500

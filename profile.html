@@ -10,6 +10,63 @@
     <link rel="stylesheet" href="css/dashboard-style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="css/footer.css">
+    <style>
+        /* OTP shake animation */
+        @keyframes otp-shake {
+            0%,100% { transform: translateX(0); }
+            20% { transform: translateX(-6px); }
+            40% { transform: translateX(6px); }
+            60% { transform: translateX(-4px); }
+            80% { transform: translateX(4px); }
+        }
+        .otp-error-shake {
+            animation: otp-shake 0.4s ease;
+        }
+        .otp-error-digit {
+            border-color: #dc2626 !important;
+            background: #fff5f5 !important;
+        }
+        .otp-inline-error {
+            display: none;
+            margin-top: 10px;
+            padding: 9px 13px;
+            background: #fee2e2;
+            border: 1px solid #fca5a5;
+            border-radius: 8px;
+            color: #991b1b;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        .otp-inline-error.show { display: block; }
+        .otp-inline-success {
+            display: none;
+            margin-top: 10px;
+            padding: 9px 13px;
+            background: #dcfce7;
+            border: 1px solid #86efac;
+            border-radius: 8px;
+            color: #166534;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        .otp-inline-success.show { display: block; }
+        .email-verified-badge {
+            display: none;
+            align-items: center;
+            gap: 5px;
+            margin-top: 5px;
+            font-size: 12.5px;
+            font-weight: 600;
+            color: #166534;
+        }
+        .email-verified-badge.show { display: flex; }
+        .email-verified-badge svg { width: 15px; height: 15px; }
+        .form-input.verified-input {
+            border-color: #16a34a !important;
+            background: #f0fdf4 !important;
+            color: #166534;
+        }
+    </style>
     <script>
         // Check authentication
         window.addEventListener('DOMContentLoaded', () => {
@@ -74,7 +131,10 @@
                             <div class="form-group">
                                 <label for="email" class="form-label">Email Address *</label>
                                 <input type="email" id="email" name="email" class="form-input" placeholder="Enter your email" required>
-                                <small class="form-hint">Verified via Google OAuth</small>
+                                <div class="email-verified-badge" id="emailFieldVerifiedBadge">
+                                    <svg viewBox="0 0 20 20" fill="#16a34a" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                                    Email verified
+                                </div>
                             </div>
                         </div>
 
@@ -162,21 +222,23 @@
                             <!-- Step 2: OTP entry (hidden until sent) -->
                             <div id="emailVerifyStep" style="display:none;">
                                 <p style="font-size:13px;color:#555;margin-bottom:10px;">Enter the 6-digit OTP sent to your email:</p>
-                                <div style="display:flex;gap:8px;margin-bottom:12px;">
+                                <div id="emailOtpDigitRow" style="display:flex;gap:8px;margin-bottom:12px;">
                                     <input class="otp-digit" data-channel="email" type="text" maxlength="1" inputmode="numeric"
-                                           style="width:42px;height:48px;border:2px solid #e0e0e0;border-radius:8px;text-align:center;font-size:20px;font-weight:700;outline:none;">
+                                           style="width:42px;height:48px;border:2px solid #e0e0e0;border-radius:8px;text-align:center;font-size:20px;font-weight:700;outline:none;transition:border-color 0.2s,background 0.2s;">
                                     <input class="otp-digit" data-channel="email" type="text" maxlength="1" inputmode="numeric"
-                                           style="width:42px;height:48px;border:2px solid #e0e0e0;border-radius:8px;text-align:center;font-size:20px;font-weight:700;outline:none;">
+                                           style="width:42px;height:48px;border:2px solid #e0e0e0;border-radius:8px;text-align:center;font-size:20px;font-weight:700;outline:none;transition:border-color 0.2s,background 0.2s;">
                                     <input class="otp-digit" data-channel="email" type="text" maxlength="1" inputmode="numeric"
-                                           style="width:42px;height:48px;border:2px solid #e0e0e0;border-radius:8px;text-align:center;font-size:20px;font-weight:700;outline:none;">
+                                           style="width:42px;height:48px;border:2px solid #e0e0e0;border-radius:8px;text-align:center;font-size:20px;font-weight:700;outline:none;transition:border-color 0.2s,background 0.2s;">
                                     <input class="otp-digit" data-channel="email" type="text" maxlength="1" inputmode="numeric"
-                                           style="width:42px;height:48px;border:2px solid #e0e0e0;border-radius:8px;text-align:center;font-size:20px;font-weight:700;outline:none;">
+                                           style="width:42px;height:48px;border:2px solid #e0e0e0;border-radius:8px;text-align:center;font-size:20px;font-weight:700;outline:none;transition:border-color 0.2s,background 0.2s;">
                                     <input class="otp-digit" data-channel="email" type="text" maxlength="1" inputmode="numeric"
-                                           style="width:42px;height:48px;border:2px solid #e0e0e0;border-radius:8px;text-align:center;font-size:20px;font-weight:700;outline:none;">
+                                           style="width:42px;height:48px;border:2px solid #e0e0e0;border-radius:8px;text-align:center;font-size:20px;font-weight:700;outline:none;transition:border-color 0.2s,background 0.2s;">
                                     <input class="otp-digit" data-channel="email" type="text" maxlength="1" inputmode="numeric"
-                                           style="width:42px;height:48px;border:2px solid #e0e0e0;border-radius:8px;text-align:center;font-size:20px;font-weight:700;outline:none;">
+                                           style="width:42px;height:48px;border:2px solid #e0e0e0;border-radius:8px;text-align:center;font-size:20px;font-weight:700;outline:none;transition:border-color 0.2s,background 0.2s;">
                                 </div>
-                                <div style="display:flex;gap:10px;align-items:center;">
+                                <div id="emailOtpError" class="otp-inline-error"></div>
+                                <div id="emailOtpSuccess" class="otp-inline-success"></div>
+                                <div style="display:flex;gap:10px;align-items:center;margin-top:10px;">
                                     <button type="button" onclick="verifyOtp('email')" id="verifyEmailOtpBtn"
                                         style="background:#2563EB;color:#fff;border:none;
                                                border-radius:8px;padding:10px 22px;font-size:14px;font-weight:600;cursor:pointer;">
@@ -302,7 +364,12 @@
                         const b = document.getElementById('emailVerifyBadge');
                         b.textContent = 'VERIFIED ✓'; b.style.background = '#d4edda'; b.style.color = '#155724';
                         document.getElementById('emailVerifyHint').textContent = 'Your email has been verified.';
-                        document.getElementById('emailSendStep').innerHTML = '<p style="color:#155724;font-size:13px;font-weight:600;">✅ Email is verified</p>';
+                        document.getElementById('emailSendStep').innerHTML = '<p style="color:#166534;font-size:13px;font-weight:600;background:#dcfce7;padding:9px 13px;border-radius:8px;border:1px solid #86efac;">✅ Email is verified</p>';
+                        // Green indicator on email field
+                        const emailInput = document.getElementById('email');
+                        if (emailInput) emailInput.classList.add('verified-input');
+                        const verifiedBadge = document.getElementById('emailFieldVerifiedBadge');
+                        if (verifiedBadge) verifiedBadge.classList.add('show');
                     }
                     if (user.phone_verified) {
                         const b = document.getElementById('phoneVerifyBadge');
@@ -434,7 +501,7 @@
                 const res = await fetch(`${API_URL}/api/auth/resend-otp`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                    body: JSON.stringify({ identifier, channel, purpose: 'verification' })
+                    body: JSON.stringify({ identifier, channel, purpose: 'registration' })
                 });
                 const data = await res.json();
 
@@ -479,16 +546,66 @@
                 const data = await res.json();
 
                 if (res.ok && data.success) {
-                    // Mark as verified in UI
+                    // Mark badge as verified
                     const badge = document.getElementById(`${channel}VerifyBadge`);
                     badge.textContent = 'VERIFIED ✓';
                     badge.style.background = '#d4edda';
                     badge.style.color = '#155724';
-                    document.getElementById(`${channel}VerifyStep`).style.display = 'none';
                     document.getElementById(`${channel}VerifyHint`).textContent = `Your ${channel} has been verified successfully.`;
+
+                    if (channel === 'email') {
+                        // Show inline success inside OTP step
+                        const successEl = document.getElementById('emailOtpSuccess');
+                        successEl.textContent = '✅ Email verified successfully!';
+                        successEl.classList.add('show');
+                        const errEl = document.getElementById('emailOtpError');
+                        if (errEl) errEl.classList.remove('show');
+
+                        // Green indicator on the email input field
+                        const emailInput = document.getElementById('email');
+                        emailInput.classList.add('verified-input');
+                        const verifiedBadge = document.getElementById('emailFieldVerifiedBadge');
+                        if (verifiedBadge) verifiedBadge.classList.add('show');
+
+                        // Hide the verify buttons row, keep success message
+                        setTimeout(() => {
+                            document.getElementById('emailVerifyStep').style.display = 'none';
+                            document.getElementById('emailSendStep').innerHTML =
+                                '<p style="color:#166534;font-size:13px;font-weight:600;background:#dcfce7;padding:9px 13px;border-radius:8px;border:1px solid #86efac;">✅ Email verified successfully!</p>';
+                        }, 1500);
+                    } else {
+                        document.getElementById(`${channel}VerifyStep`).style.display = 'none';
+                        document.getElementById(`${channel}SendStep`).innerHTML =
+                            '<p style="color:#166534;font-size:13px;font-weight:600;background:#dcfce7;padding:9px 13px;border-radius:8px;border:1px solid #86efac;">✅ Phone verified successfully!</p>';
+                    }
                     showMessage(`${channel === 'email' ? 'Email' : 'Phone'} verified successfully!`, 'success');
                 } else {
-                    showMessage(data.error || data.message || 'Invalid OTP.', 'error');
+                    const errorMsg = data.error || data.message || 'Invalid OTP. Please try again.';
+                    if (channel === 'email') {
+                        // Show inline error
+                        const errEl = document.getElementById('emailOtpError');
+                        errEl.textContent = '❌ ' + errorMsg;
+                        errEl.classList.add('show');
+                        const successEl = document.getElementById('emailOtpSuccess');
+                        if (successEl) successEl.classList.remove('show');
+                        // Shake and highlight OTP digits red
+                        const digitRow = document.getElementById('emailOtpDigitRow');
+                        const digits = digitRow.querySelectorAll('.otp-digit');
+                        digits.forEach(d => d.classList.add('otp-error-digit'));
+                        digitRow.classList.remove('otp-error-shake');
+                        void digitRow.offsetWidth; // reflow to restart animation
+                        digitRow.classList.add('otp-error-shake');
+                        // Remove error styling after 2s so user can retry
+                        setTimeout(() => {
+                            digits.forEach(d => {
+                                d.classList.remove('otp-error-digit');
+                                d.value = '';
+                            });
+                            digits[0].focus();
+                        }, 1200);
+                    } else {
+                        showMessage(errorMsg, 'error');
+                    }
                     btn.disabled = false;
                     btn.textContent = `Verify ${channel === 'email' ? 'Email' : 'Phone'}`;
                 }

@@ -197,7 +197,7 @@ class User:
         """Update whitelisted profile fields"""
         try:
             update_data = {'updated_at': datetime.utcnow()}
-            for field in ['name', 'date_of_birth']:
+            for field in ['name', 'date_of_birth', 'phone']:
                 if field in profile_data:
                     update_data[field] = profile_data[field]
             result = self.collection.update_one(
@@ -217,6 +217,11 @@ class User:
         """Convert MongoDB doc to JSON-safe dict. Never expose sensitive fields."""
         if not user:
             return None
+        profile_completed = bool(
+            user.get('name') and
+            user.get('phone') and
+            user.get('date_of_birth')
+        )
         return {
             'id': str(user['_id']),
             'name': user.get('name'),
@@ -227,6 +232,7 @@ class User:
             'email_verified': user.get('email_verified', False),
             'phone_verified': user.get('phone_verified', False),
             'registration_completed': user.get('registration_completed', False),
+            'profile_completed': profile_completed,
             'is_active': user.get('is_active', True),
             'created_at': user['created_at'].isoformat() if user.get('created_at') else None,
             'last_login': user['last_login'].isoformat() if user.get('last_login') else None,

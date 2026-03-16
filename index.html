@@ -57,32 +57,87 @@
                     <h3>Store New Data</h3>
                     <span class="security-badge">🔐 Secure</span>
                 </div>
-                
-                <!-- Data Entry Form -->
-                <form id="dataForm" class="card-content">
-                    <div class="form-group">
-                        <label for="dataInput">Your Data:</label>
-                        <textarea 
-                            id="dataInput" 
-                            class="form-control" 
-                            rows="6" 
-                            placeholder="Enter any text data you want to store securely..."
-                            required
-                        ></textarea>
-                        <small class="form-text">This data will be stored and you can verify its integrity later.</small>
-                    </div>
 
-                    <div class="form-actions">
-                        <button type="submit" class="btn btn-primary">
-                            <span class="btn-icon">💾</span>
-                            Save & Generate Hash
-                        </button>
-                        <div class="form-info">
-                            <span class="info-icon">ℹ️</span>
-                            <span>Your data will be secured with SHA-256 hash</span>
+                <!-- Tab Switcher -->
+                <div class="upload-tabs" style="display:flex;gap:0;border-bottom:2px solid #e2e8f0;margin-bottom:0;">
+                    <button type="button" id="tabFile" class="upload-tab-btn active-tab" onclick="switchTab('file')"
+                        style="flex:1;padding:12px 0;border:none;background:none;cursor:pointer;font-size:0.97rem;font-weight:600;color:#6366f1;border-bottom:3px solid #6366f1;transition:all .2s;">
+                        <i class="fas fa-file-upload"></i> Upload File
+                    </button>
+                    <button type="button" id="tabText" class="upload-tab-btn" onclick="switchTab('text')"
+                        style="flex:1;padding:12px 0;border:none;background:none;cursor:pointer;font-size:0.97rem;font-weight:600;color:#94a3b8;border-bottom:3px solid transparent;transition:all .2s;">
+                        <i class="fas fa-keyboard"></i> Enter Text
+                    </button>
+                </div>
+
+                <!-- File Upload Panel -->
+                <div id="filePanel" class="card-content">
+                    <form id="fileUploadForm">
+                        <div class="upload-panel" id="dropZone"
+                            style="text-align:center;border:2px dashed #c7d2fe;cursor:pointer;"
+                            ondragover="event.preventDefault();this.classList.add('drag-over')"
+                            ondragleave="this.classList.remove('drag-over')"
+                            ondrop="handleHomeDrop(event)">
+                            <div class="upload-info-icon" style="font-size:2.5rem;margin-bottom:8px;color:#6366f1;"><i class="fas fa-cloud-upload-alt"></i></div>
+                            <p class="upload-instructions">Drag &amp; drop any file here, or click to browse</p>
+                            <p style="font-size:0.82rem;color:#94a3b8;margin:4px 0 16px;">Supports all file types &bull; Max 10 MB</p>
+                            <div class="file-upload-wrapper" style="justify-content:center;">
+                                <div class="custom-file-input">
+                                    <input type="file" id="homeFileInput" onchange="updateHomeFileLabel(this)">
+                                    <div class="custom-file-label">
+                                        <i class="fas fa-folder-open"></i>
+                                        <span id="homeFileName">Choose a file or drag it here</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </form>
+                        <div class="form-group" style="margin-top:16px;">
+                            <label for="homeFileLabel">Label (optional):</label>
+                            <input type="text" id="homeFileLabel" class="form-control" placeholder="e.g. Contract, Invoice, Research Paper…">
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary btn-upload">
+                                <i class="fas fa-lock"></i> Secure &amp; Upload
+                            </button>
+                            <div class="form-info">
+                                <span class="info-icon">ℹ️</span>
+                                <span>SHA-256 hash generated automatically</span>
+                            </div>
+                        </div>
+                        <div id="homeFileStatus" class="upload-status" style="display:none;"></div>
+                    </form>
+                </div>
+
+                <!-- Text Entry Panel -->
+                <div id="textPanel" class="card-content" style="display:none;">
+                    <form id="dataForm">
+                        <div class="form-group">
+                            <label for="dataInput">Your Text Data:</label>
+                            <textarea 
+                                id="dataInput" 
+                                class="form-control" 
+                                rows="6" 
+                                placeholder="Enter any text data you want to store securely..."
+                            ></textarea>
+                            <small class="form-text">This data will be stored and you can verify its integrity later.</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="homeTextLabel">Label (optional):</label>
+                            <input type="text" id="homeTextLabel" class="form-control" placeholder="e.g. Meeting Notes, Secret Message…">
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">
+                                <span class="btn-icon">💾</span>
+                                Save &amp; Generate Hash
+                            </button>
+                            <div class="form-info">
+                                <span class="info-icon">ℹ️</span>
+                                <span>Your data will be secured with SHA-256 hash</span>
+                            </div>
+                        </div>
+                        <div id="homeTextStatus" class="upload-status" style="display:none;"></div>
+                    </form>
+                </div>
             </section>
 
             <!-- Security Features Section -->
@@ -157,13 +212,146 @@
 
     <!-- JavaScript -->
     <script>
-        // Logout handler
-        document.getElementById('logoutBtn').addEventListener('click', (e) => {
+        const API = 'http://localhost:5000';
+
+        function getToken() {
+            return localStorage.getItem('auth_token');
+        }
+        function authHeaders() {
+            return { 'Authorization': 'Bearer ' + getToken() };
+        }
+
+        /* ---- Tab switching ---- */
+        function switchTab(tab) {
+            const isFile = tab === 'file';
+            document.getElementById('filePanel').style.display = isFile ? '' : 'none';
+            document.getElementById('textPanel').style.display = isFile ? 'none' : '';
+
+            const tabFile = document.getElementById('tabFile');
+            const tabText = document.getElementById('tabText');
+            tabFile.style.color         = isFile ? '#6366f1' : '#94a3b8';
+            tabFile.style.borderBottom  = isFile ? '3px solid #6366f1' : '3px solid transparent';
+            tabText.style.color         = isFile ? '#94a3b8' : '#6366f1';
+            tabText.style.borderBottom  = isFile ? '3px solid transparent' : '3px solid #6366f1';
+        }
+
+        /* ---- File input label update ---- */
+        function updateHomeFileLabel(input) {
+            const name = input.files[0] ? input.files[0].name : 'Choose a file or drag it here';
+            document.getElementById('homeFileName').textContent = name;
+        }
+
+        /* ---- Drag-and-drop ---- */
+        function handleHomeDrop(e) {
             e.preventDefault();
-            localStorage.removeItem('auth_token');
-            localStorage.removeItem('user_email');
-            window.location.href = 'login.html';
+            document.getElementById('dropZone').classList.remove('drag-over');
+            const file = e.dataTransfer.files[0];
+            if (!file) return;
+            const dt = new DataTransfer();
+            dt.items.add(file);
+            const input = document.getElementById('homeFileInput');
+            input.files = dt.files;
+            document.getElementById('homeFileName').textContent = file.name;
+        }
+
+        /* ---- File upload ---- */
+        document.addEventListener('DOMContentLoaded', () => {
+            // Logout
+            document.getElementById('logoutBtn').addEventListener('click', (e) => {
+                e.preventDefault();
+                localStorage.removeItem('auth_token');
+                localStorage.removeItem('user_email');
+                window.location.href = 'login.html';
+            });
+
+            // File form
+            document.getElementById('fileUploadForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const fileInput = document.getElementById('homeFileInput');
+                const label     = document.getElementById('homeFileLabel').value.trim();
+                const status    = document.getElementById('homeFileStatus');
+
+                if (!fileInput.files[0]) {
+                    showStatus(status, 'error', 'Please select a file first.');
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append('file', fileInput.files[0]);
+                if (label) formData.append('label', label);
+
+                showStatus(status, 'info', '⏳ Uploading and hashing your file…');
+
+                try {
+                    const res  = await fetch(API + '/api/data/upload', {
+                        method: 'POST',
+                        headers: authHeaders(),
+                        body: formData
+                    });
+                    const json = await res.json();
+                    if (!res.ok) throw new Error(json.error || 'Upload failed');
+
+                    showStatus(status, 'success',
+                        '✅ File secured! SHA-256: <code style="word-break:break-all">'
+                        + json.record.sha256_hash + '</code>');
+                    fileInput.value = '';
+                    document.getElementById('homeFileName').textContent = '';
+                    document.getElementById('homeFileLabel').value = '';
+
+                    setTimeout(() => window.location.href = 'records.html', 2500);
+                } catch (err) {
+                    showStatus(status, 'error', '❌ ' + err.message);
+                }
+            });
+
+            // Text form
+            document.getElementById('dataForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const text   = document.getElementById('dataInput').value.trim();
+                const label  = document.getElementById('homeTextLabel').value.trim();
+                const status = document.getElementById('homeTextStatus');
+
+                if (!text) {
+                    showStatus(status, 'error', 'Please enter some text first.');
+                    return;
+                }
+
+                showStatus(status, 'info', '⏳ Hashing and storing your text…');
+
+                try {
+                    const res  = await fetch(API + '/api/data/text', {
+                        method: 'POST',
+                        headers: { ...authHeaders(), 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ text, label })
+                    });
+                    const json = await res.json();
+                    if (!res.ok) throw new Error(json.error || 'Failed to save');
+
+                    showStatus(status, 'success',
+                        '✅ Text secured! SHA-256: <code style="word-break:break-all">'
+                        + json.record.sha256_hash + '</code>');
+                    document.getElementById('dataInput').value = '';
+                    document.getElementById('homeTextLabel').value = '';
+
+                    setTimeout(() => window.location.href = 'records.html', 2500);
+                } catch (err) {
+                    showStatus(status, 'error', '❌ ' + err.message);
+                }
+            });
         });
+
+        function showStatus(el, type, html) {
+            el.style.display = 'block';
+            const colors = { success: '#dcfce7', error: '#fee2e2', info: '#e0e7ff' };
+            const border  = { success: '#16a34a', error: '#dc2626', info: '#6366f1' };
+            el.style.background   = colors[type] || '#f1f5f9';
+            el.style.borderColor  = border[type]  || '#94a3b8';
+            el.style.borderLeft   = '4px solid ' + (border[type] || '#94a3b8');
+            el.style.padding      = '12px 16px';
+            el.style.borderRadius = '8px';
+            el.style.marginTop    = '12px';
+            el.innerHTML = html;
+        }
     </script>
     <script src="js/script.js"></script>
 

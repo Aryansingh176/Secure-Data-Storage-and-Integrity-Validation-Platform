@@ -67,19 +67,28 @@
                 </div>
 
                 <!-- File Upload Panel -->
-                <div id="filePanel">
-                    <p style="color:#555;font-size:0.9rem;margin-bottom:0.75rem;">
-                        Allowed types: PDF, DOCX, XLSX, JPG, PNG, TXT &nbsp;|&nbsp; Max size: 10 MB<br>
-                        <em>The file is NOT stored — only its SHA-256 hash is saved.</em>
-                    </p>
+                <div id="filePanel" class="upload-panel">
+                    <div class="upload-instructions">
+                        <p class="upload-types">
+                            <i class="fas fa-info-circle upload-info-icon"></i> 
+                            Allowed types: PDF, DOCX, XLSX, JPG, PNG, TXT <span class="divider">|</span> Max size: 10 MB
+                        </p>
+                    </div>
+
                     <form id="fileUploadForm">
-                        <div style="display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;">
-                            <input type="file" id="fileInput"
-                                   accept=".pdf,.docx,.xlsx,.jpg,.jpeg,.png,.txt"
-                                   style="flex:1;min-width:200px;padding:0.5rem;border:1px solid #ccc;border-radius:6px;">
-                            <button type="submit" class="btn btn-primary">Store Fingerprint</button>
+                        <div class="file-upload-wrapper">
+                            <div class="custom-file-input">
+                                <input type="file" id="fileInput" accept=".pdf,.docx,.xlsx,.jpg,.jpeg,.png,.txt">
+                                <div class="custom-file-label" id="fileDropZone">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <span id="fileNameDisplay">Choose a file or drag it here</span>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-upload">
+                                <i class="fas fa-fingerprint"></i> Store Fingerprint
+                            </button>
                         </div>
-                        <div id="fileUploadStatus" style="margin-top:0.5rem;font-size:0.85rem;"></div>
+                        <div id="fileUploadStatus" class="upload-status"></div>
                     </form>
                 </div>
 
@@ -322,6 +331,9 @@
 
                 tbody.innerHTML = '';
                 records.forEach(r => {
+                    const verifyLink = r.verification_id
+                        ? `${window.location.origin}/verify.html?id=${r.verification_id}`
+                        : null;
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td title="${r.original_filename || ''}">${(r.original_filename || 'Unnamed').substring(0, 30)}</td>
@@ -335,10 +347,22 @@
                                     onclick="openVerifyModal('${r._id}', '${r.upload_method}', '${(r.original_filename||'').replace(/'/g,"\\'")}')">
                                 🔍 Verify
                             </button>
+                            ${verifyLink ? `<button class="btn btn-secondary" style="font-size:0.78rem;padding:0.3rem 0.6rem;margin-bottom:0.25rem;"
+                                    onclick="copyShareLink('${verifyLink}')">
+                                🔗 Share
+                            </button>` : ''}
+                            <button class="btn btn-secondary" style="font-size:0.78rem;padding:0.3rem 0.6rem;margin-bottom:0.25rem;"
+                                    onclick="downloadCertificate('${r._id}')">
+                                📄 Certificate
+                            </button>
                             <button class="btn btn-danger" style="font-size:0.78rem;padding:0.3rem 0.6rem;"
                                     onclick="deleteRecord('${r._id}')">
                                 🗑️
                             </button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
                         </td>
                     `;
                     tbody.appendChild(row);
@@ -547,6 +571,42 @@
                 .catch(() => {});
         }
 
+        // ── Copy public share link ─────────────────────────────────────────────
+        function copyShareLink(link) {
+            navigator.clipboard.writeText(link)
+                .then(() => showNotification('Verification link copied! Share it with anyone.', 'success'))
+                .catch(() => {
+                    prompt('Copy this link:', link);
+                });
+        }
+
+        // ── Download PDF Certificate ───────────────────────────────────────────
+        async function downloadCertificate(recordId) {
+            showNotification('Generating certificate…', 'info');
+            try {
+                const res = await fetch(API + '/api/records/' + recordId + '/certificate', {
+                    headers: authHeaders()
+                });
+                if (!res.ok) {
+                    const err = await res.json().catch(() => ({}));
+                    showNotification('❌ ' + (err.error || 'Failed to generate certificate'), 'error');
+                    return;
+                }
+                const blob = await res.blob();
+                const url  = URL.createObjectURL(blob);
+                const a    = document.createElement('a');
+                a.href     = url;
+                a.download = `integrity_certificate_${recordId.substring(0,8)}.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                showNotification('✅ Certificate downloaded!', 'success');
+            } catch (err) {
+                showNotification('❌ Backend unreachable.', 'error');
+            }
+        }
+
         // ── Refresh button ─────────────────────────────────────────────────────
         document.getElementById('refreshBtn').addEventListener('click', loadRecords);
 
@@ -554,6 +614,31 @@
         document.getElementById('verifyModal').addEventListener('click', (e) => {
             if (e.target === document.getElementById('verifyModal')) closeModal();
         });
+
+        // ── File Upload UI Logic ───────────────────────────────────────────────
+        const fileInput = document.getElementById('fileInput');
+        const fileNameDisplay = document.getElementById('fileNameDisplay');
+        const fileDropZone = document.getElementById('fileDropZone');
+
+        if (fileInput) {
+            fileInput.addEventListener('change', (e) => {
+                if (fileInput.files.length > 0) {
+                    if (fileNameDisplay) fileNameDisplay.textContent = fileInput.files[0].name;
+                    if (fileDropZone) {
+                        fileDropZone.style.borderColor = 'var(--primary-color)';
+                        fileDropZone.style.backgroundColor = 'var(--bg-light)';
+                        fileDropZone.style.color = 'var(--primary-dark)';
+                    }
+                } else {
+                    if (fileNameDisplay) fileNameDisplay.textContent = 'Choose a file or drag it here';
+                    if (fileDropZone) {
+                        fileDropZone.style.borderColor = '';
+                        fileDropZone.style.backgroundColor = '';
+                        fileDropZone.style.color = '';
+                    }
+                }
+            });
+        }
 
         // ── Init ───────────────────────────────────────────────────────────────
         window.addEventListener('DOMContentLoaded', loadRecords);

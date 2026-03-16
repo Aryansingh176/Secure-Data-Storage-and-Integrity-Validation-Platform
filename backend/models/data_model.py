@@ -26,6 +26,7 @@ Schema:
 from datetime import datetime
 from bson import ObjectId
 import hashlib
+import uuid
 
 
 class DataModel:
@@ -50,10 +51,15 @@ class DataModel:
 
     def __init__(self, db):
         self.collection = db['data_records']
+        self.verification_logs = db['verification_logs']
         # Compound index: user-scoped queries sorted by newest first
         self.collection.create_index([('user_id', 1), ('created_at', -1)])
         # Index on hash for quick duplicate detection
         self.collection.create_index('data_hash')
+        # Index on verification_id for public link lookups
+        self.collection.create_index('verification_id', unique=True, sparse=True)
+        # Index for verification_logs
+        self.verification_logs.create_index([('record_id', 1), ('verified_at', -1)])
 
     # ── Validation ────────────────────────────────────────────────────────────
 
@@ -152,6 +158,7 @@ class DataModel:
             'last_verification_status': None,
             'last_verified_at':         None,
             'created_at':               datetime.utcnow(),
+            'verification_id':          str(uuid.uuid4()),
         }
 
         try:
@@ -188,6 +195,7 @@ class DataModel:
             'last_verification_status': None,
             'last_verified_at':         None,
             'created_at':               datetime.utcnow(),
+            'verification_id':          str(uuid.uuid4()),
         }
 
         try:
@@ -240,6 +248,19 @@ class DataModel:
             'filename':      record.get('original_filename', ''),
             'upload_method': record.get('upload_method', ''),
         }
+
+    def _do_verify_public(self, record_id, computed_hash):
+        """Update verification stats for a public (no-auth) verification."""
+        record = self.collection.find_one({'_id': ObjectId(record_id) if isinstance(record_id, str) else record_id})
+        if not record:
+            return
+        matched = (computed_hash == record.get('data_hash', ''))
+        status  = 'verified' if matched else 'tampered'
+        self.collection.update_one(
+            {'_id': record['_id']},
+            {'$inc': {'verification_count': 1},
+             '$set': {'last_verification_status': status, 'last_verified_at': datetime.utcnow()}}
+        )
 
     def verify_file(self, record_id, user_id, file_bytes):
         """
@@ -322,6 +343,41 @@ class DataModel:
             return self._serialize(record) if record else None
         except Exception:
             return None
+
+    def get_record_by_verification_id(self, verification_id):
+        """Lookup a record by its public verification_id UUID."""
+        record = self.collection.find_one({'verification_id': verification_id})
+        return self._serialize(record) if record else None
+
+    def log_verification_attempt(self, record_id, result, ip_address):
+        """Save a verification attempt to the verification_logs collection."""
+        try:
+            self.verification_logs.insert_one({
+                'record_id':   ObjectId(record_id) if isinstance(record_id, str) else record_id,
+                'verified_at': datetime.utcnow(),
+                'result':      result,       # 'verified' | 'tampered'
+                'ip_address':  ip_address,
+            })
+        except Exception as e:
+            print(f'[DataModel] verification_log write failed: {e}')
+
+    def get_verification_logs(self, record_id, limit=20):
+        """Return recent verification attempts for a record."""
+        try:
+            logs = list(
+                self.verification_logs
+                .find({'record_id': ObjectId(record_id)})
+                .sort('verified_at', -1)
+                .limit(limit)
+            )
+            for log in logs:
+                log['_id'] = str(log['_id'])
+                log['record_id'] = str(log['record_id'])
+                if log.get('verified_at'):
+                    log['verified_at'] = log['verified_at'].isoformat()
+            return logs
+        except Exception:
+            return []
 
     def get_all_records(self):
         """Legacy: return all records without user filter (newest first)."""

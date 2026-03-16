@@ -1144,3 +1144,104 @@ body {
 .hidden {
     display: none;
 }
+
+/* ===================================
+   FILE UPLOAD COMPONENT
+   =================================== */
+.upload-panel {
+    border: 1px solid var(--border-color);
+    background: var(--bg-white);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: var(--spacing-lg);
+}
+
+.upload-instructions p {
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-xs);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.upload-info-icon {
+    color: var(--primary-light);
+    font-size: 1rem;
+}
+
+.file-upload-wrapper {
+    display: flex;
+    gap: var(--spacing-md);
+    align-items: stretch;
+    flex-wrap: wrap;
+    margin-top: var(--spacing-md);
+}
+
+.custom-file-input {
+    flex: 1;
+    min-width: 250px;
+    position: relative;
+    height: 3rem; /* Fixed height for alignment */
+}
+
+.custom-file-input input[type="file"] {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.custom-file-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    padding: 0 var(--spacing-md);
+    background: var(--bg-gray);
+    border: 2px dashed var(--border-color);
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    font-weight: 500;
+    transition: all 0.2s;
+    text-align: center;
+    gap: var(--spacing-sm);
+}
+
+.custom-file-input input[type="file"]:hover + .custom-file-label {
+    border-color: var(--primary-color);
+    background: var(--bg-light);
+    color: var(--primary-dark);
+}
+
+.custom-file-input input[type="file"]:focus + .custom-file-label {
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+    border-color: var(--primary-color);
+}
+
+.btn-upload {
+    height: 3rem; /* Match input height */
+    padding: 0 var(--spacing-xl);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+}
+
+.upload-status {
+    margin-top: var(--spacing-sm);
+    font-size: var(--font-size-sm);
+    min-height: 20px;
+}
+
+.upload-panel.drag-over {
+    border-color: var(--primary-color);
+    background: var(--bg-light);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
