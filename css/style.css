@@ -1240,8 +1240,53 @@ body {
     min-height: 20px;
 }
 
+.file-actions-row {
+    margin-top: var(--spacing-sm);
+    display: flex;
+    justify-content: flex-start;
+}
+
+.btn-clear-file {
+    font-size: var(--font-size-sm);
+    padding: 0.4rem 0.9rem;
+}
+
 .upload-panel.drag-over {
     border-color: var(--primary-color);
     background: var(--bg-light);
     box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
 }
+/* ===================================
+   MODAL & FORMS (Added for Records Update)
+   =================================== */
+.form-group { margin-bottom: var(--spacing-md); }
+.form-label { display: block; margin-bottom: var(--spacing-xs); font-weight: 500; color: var(--text-primary); font-size: var(--font-size-sm); }
+.form-control {
+    width: 100%;
+    padding: 0.75rem var(--spacing-sm);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    font-family: inherit;
+    font-size: var(--font-size-md);
+    color: var(--text-primary);
+    transition: all 0.2s ease;
+    background: var(--bg-white);
+}
+.form-control:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
+.text-muted { color: var(--text-secondary); font-size: var(--font-size-sm); }
+
+.modal-overlay {
+    display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.7); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(4px);
+}
+.modal-content {
+    background: var(--bg-white); border-radius: var(--radius-lg); padding: var(--spacing-xl); max-width: 520px; width: 90%; position: relative; box-shadow: var(--shadow-xl); border: 1px solid var(--border-color);
+}
+.modal-close {
+    position: absolute; top: var(--spacing-md); right: var(--spacing-md); background: none; border: none; font-size: 1.25rem; cursor: pointer; color: var(--text-muted); transition: color 0.2s;
+}
+.modal-close:hover { color: var(--error); }
+.modal-title { margin-top: 0; margin-bottom: var(--spacing-xs); font-size: 1.25rem; color: var(--text-primary); }
+.modal-desc { color: var(--text-secondary); font-size: 0.95rem; margin-bottom: var(--spacing-lg); }
+.modal-actions { margin-top: var(--spacing-xl); display: flex; gap: var(--spacing-sm); justify-content: flex-end; }
+.alert-success { background: var(--success-light); border: 1px solid var(--success); color: var(--success-dark); padding: var(--spacing-md); border-radius: var(--radius-md); }
+.alert-error { background: var(--error-light); border: 1px solid var(--error); color: var(--error); padding: var(--spacing-md); border-radius: var(--radius-md); }

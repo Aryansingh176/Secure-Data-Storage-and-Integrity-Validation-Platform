@@ -48,9 +48,6 @@
                     <h2>Data Records</h2>
                     <p>Store cryptographic fingerprints and verify file or text integrity</p>
                 </div>
-                <div class="header-actions">
-                    <button id="refreshBtn" class="btn btn-secondary">🔄 Refresh</button>
-                </div>
             </section>
 
             <!-- ── Store New Fingerprint ─────────────────────────────── -->
@@ -84,27 +81,32 @@
                                     <span id="fileNameDisplay">Choose a file or drag it here</span>
                                 </div>
                             </div>
-                            <button type="submit" class="btn btn-primary btn-upload">
+                            <button type="submit" id="fileUploadBtn" class="btn btn-primary btn-upload">
                                 <i class="fas fa-fingerprint"></i> Store Fingerprint
                             </button>
+                        </div>
+                        <div class="file-actions-row">
+                            <button type="button" id="clearFileBtn" class="btn btn-secondary btn-clear-file hidden">Remove selected file</button>
                         </div>
                         <div id="fileUploadStatus" class="upload-status"></div>
                     </form>
                 </div>
 
                 <!-- Text Input Panel -->
-                <div id="textPanel" style="display:none;">
-                    <p style="color:#555;font-size:0.9rem;margin-bottom:0.75rem;">
+                <div id="textPanel" style="display:none;" class="upload-panel">
+                    <p class="text-muted" style="margin-bottom: var(--spacing-md);">
                         Enter any text — contract clauses, notes, code snippets.<br>
                         <em>The text is NOT stored — only its SHA-256 hash is saved.</em>
                     </p>
                     <form id="textHashForm">
-                        <input type="text" id="textLabel" placeholder="Label (optional, e.g. Contract v1)"
-                               style="width:100%;padding:0.5rem;border:1px solid #ccc;border-radius:6px;margin-bottom:0.5rem;box-sizing:border-box;">
-                        <textarea id="textInput" rows="4" placeholder="Paste or type your text here..."
-                                  style="width:100%;padding:0.5rem;border:1px solid #ccc;border-radius:6px;box-sizing:border-box;font-family:inherit;resize:vertical;"></textarea>
+                        <div class="form-group">
+                            <input type="text" id="textLabel" class="form-control" placeholder="Label (optional, e.g. Contract v1)">
+                        </div>
+                        <div class="form-group">
+                            <textarea id="textInput" rows="4" class="form-control" placeholder="Paste or type your text here..."></textarea>
+                        </div>
                         <div style="margin-top:0.5rem;">
-                            <button type="submit" class="btn btn-primary">Store Fingerprint</button>
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-fingerprint"></i> Store Fingerprint</button>
                         </div>
                         <div id="textHashStatus" style="margin-top:0.5rem;font-size:0.85rem;"></div>
                     </form>
@@ -126,11 +128,11 @@
                     </div>
                     <div class="stat-item">
                         <span class="stat-label">✅ Verified:</span>
-                        <span id="verifiedRecords" class="stat-value" style="color:#2e7d32;">0</span>
+                        <span id="verifiedRecords" class="stat-value" style="color: var(--success-dark);">0</span>
                     </div>
                     <div class="stat-item">
                         <span class="stat-label">⚠️ Tampered:</span>
-                        <span id="tamperedRecords" class="stat-value" style="color:#c62828;">0</span>
+                        <span id="tamperedRecords" class="stat-value" style="color: var(--error);">0</span>
                     </div>
                     <div class="stat-item">
                         <span class="stat-label">🔢 Verifications:</span>
@@ -205,32 +207,29 @@
         </div>
     </main>
 
-    <!-- ── Verification Modal ─────────────────────────────────────────── -->
-    <div id="verifyModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:1000;align-items:center;justify-content:center;">
-        <div style="background:#fff;border-radius:12px;padding:2rem;max-width:520px;width:90%;position:relative;box-shadow:0 4px 32px rgba(0,0,0,0.25);">
-            <button onclick="closeModal()" style="position:absolute;top:1rem;right:1rem;background:none;border:none;font-size:1.4rem;cursor:pointer;color:#555;">✕</button>
-            <h3 id="modalTitle" style="margin-top:0;">Verify Integrity</h3>
-            <p id="modalDesc" style="color:#555;font-size:0.9rem;"></p>
+            <!-- ── Verification Modal ─────────────────────────────────────────── -->
+    <div id="verifyModal" class="modal-overlay">
+        <div class="modal-content">
+            <button onclick="closeModal()" class="modal-close">✕</button>
+            <h3 id="modalTitle" class="modal-title">Verify Integrity</h3>
+            <p id="modalDesc" class="modal-desc"></p>
 
             <!-- File verification form -->
-            <div id="modalFileSection" style="display:none;">
-                <p style="font-size:0.85rem;color:#666;">Re-upload the <strong>same original file</strong>. The system will recompute its SHA-256 hash and compare.</p>
-                <input type="file" id="verifyFileInput" accept=".pdf,.docx,.xlsx,.jpg,.jpeg,.png,.txt"
-                       style="width:100%;padding:0.5rem;border:1px solid #ccc;border-radius:6px;box-sizing:border-box;">
+            <div id="modalFileSection" style="display:none;" class="form-group">
+                <p class="text-muted" style="margin-bottom: var(--spacing-sm);">Re-upload the <strong>same original file</strong>. The system will recompute its SHA-256 hash and compare.</p>
+                <input type="file" id="verifyFileInput" accept=".pdf,.docx,.xlsx,.jpg,.jpeg,.png,.txt" class="form-control">
             </div>
 
             <!-- Text verification form -->
-            <div id="modalTextSection" style="display:none;">
-                <p style="font-size:0.85rem;color:#666;">Re-enter the <strong>exact original text</strong>. The system will recompute its SHA-256 hash and compare.</p>
-                <textarea id="verifyTextInput" rows="5"
-                          style="width:100%;padding:0.5rem;border:1px solid #ccc;border-radius:6px;box-sizing:border-box;font-family:inherit;resize:vertical;"
-                          placeholder="Paste the original text here..."></textarea>
+            <div id="modalTextSection" style="display:none;" class="form-group">
+                <p class="text-muted" style="margin-bottom: var(--spacing-sm);">Re-enter the <strong>exact original text</strong>. The system will recompute its SHA-256 hash and compare.</p>
+                <textarea id="verifyTextInput" rows="5" class="form-control" placeholder="Paste the original text here..."></textarea>
             </div>
 
             <!-- Result area -->
             <div id="verifyResult" style="display:none;margin-top:1rem;padding:1rem;border-radius:8px;font-size:0.9rem;"></div>
 
-            <div style="margin-top:1.25rem;display:flex;gap:0.75rem;">
+            <div class="modal-actions">
                 <button id="verifySubmitBtn" class="btn btn-primary" onclick="submitVerification()">🔍 Verify Now</button>
                 <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
             </div>
@@ -249,6 +248,11 @@
 
     <!-- JavaScript -->
     <script>
+        if (window.location.hostname === '127.0.0.1') {
+            const localUrl = window.location.href.replace('://127.0.0.1', '://localhost');
+            window.location.replace(localUrl);
+        }
+
         const API = 'http://localhost:5000';
         let currentVerifyRecord = null;
 
@@ -363,10 +367,6 @@
                     `;
                     tbody.appendChild(row);
                 });
-                        </td>
-                    `;
-                    tbody.appendChild(row);
-                });
             } catch (err) {
                 console.error(err);
                 tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:red;padding:1rem;">⚠️ Could not load records. Ensure backend is running.</td></tr>';
@@ -374,10 +374,11 @@
         }
 
         // ── File upload ────────────────────────────────────────────────────────
-        document.getElementById('fileUploadForm').addEventListener('submit', async (e) => {
+        async function handleFileUploadSubmit(e) {
             e.preventDefault();
             const fileInput = document.getElementById('fileInput');
             const statusEl  = document.getElementById('fileUploadStatus');
+            const uploadBtn = document.getElementById('fileUploadBtn');
 
             if (!fileInput.files.length) {
                 statusEl.innerHTML = '<span style="color:red;">Select a file first.</span>';
@@ -389,15 +390,27 @@
             statusEl.innerHTML = '⏳ Computing SHA-256 and storing fingerprint…';
 
             try {
+                if (uploadBtn) {
+                    uploadBtn.disabled = true;
+                    uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
+                }
+
                 const res  = await fetch(API + '/api/data/upload', {
                     method:  'POST',
                     headers: authHeaders(),
                     body:    formData,
                 });
+
+                if (res.status === 401) {
+                    statusEl.innerHTML = '<span style="color:red;">❌ Session expired. Please login again.</span>';
+                    setTimeout(() => { window.location.href = 'login.html'; }, 900);
+                    return;
+                }
+
                 const data = await res.json();
                 if (res.ok) {
                     statusEl.innerHTML = `<span style="color:green;">✅ Stored! Hash: <code>${data.record.data_hash.substring(0,32)}…</code></span>`;
-                    fileInput.value = '';
+                    clearSelectedFile();
                     showNotification('File fingerprint stored successfully!', 'success');
                     loadRecords();
                 } else {
@@ -405,8 +418,18 @@
                 }
             } catch (err) {
                 statusEl.innerHTML = '<span style="color:red;">❌ Backend unreachable.</span>';
+            } finally {
+                if (uploadBtn) {
+                    uploadBtn.disabled = false;
+                    uploadBtn.innerHTML = '<i class="fas fa-fingerprint"></i> Store Fingerprint';
+                }
             }
-        });
+        }
+
+        const fileUploadForm = document.getElementById('fileUploadForm');
+        if (fileUploadForm) {
+            fileUploadForm.addEventListener('submit', handleFileUploadSubmit);
+        }
 
         // ── Text hash ──────────────────────────────────────────────────────────
         document.getElementById('textHashForm').addEventListener('submit', async (e) => {
@@ -518,16 +541,16 @@
                     resultEl.style.border = '1px solid #4caf50';
                     resultEl.innerHTML = `
                         <strong style="color:#2e7d32;font-size:1.1rem;">✅ VERIFIED — No Tampering Detected</strong><br><br>
-                        <span style="color:#555;">Stored hash &nbsp;&nbsp;: <code>${data.stored_hash}</code></span><br>
-                        <span style="color:#555;">Computed hash: <code>${data.computed_hash}</code></span>`;
+                        <div style="color:#555; word-break: break-all; margin-bottom: 0.5rem;"><strong>Stored hash:</strong><br> <code>${data.stored_hash}</code></div>
+                        <div style="color:#555; word-break: break-all;"><strong>Computed hash:</strong><br> <code>${data.computed_hash}</code></div>`;
                     showNotification('✅ Integrity verified!', 'success');
                 } else if (res.ok && data.status === 'tampered') {
                     resultEl.style.background = '#ffebee';
                     resultEl.style.border = '1px solid #f44336';
                     resultEl.innerHTML = `
                         <strong style="color:#c62828;font-size:1.1rem;">⚠️ TAMPERED — Hash Mismatch!</strong><br><br>
-                        <span style="color:#555;">Stored hash &nbsp;&nbsp;: <code>${data.stored_hash}</code></span><br>
-                        <span style="color:#555;">Computed hash: <code>${data.computed_hash}</code></span>`;
+                        <div style="color:#555; word-break: break-all; margin-bottom: 0.5rem;"><strong>Stored hash:</strong><br> <code>${data.stored_hash}</code></div>
+                        <div style="color:#555; word-break: break-all;"><strong>Computed hash:</strong><br> <code>${data.computed_hash}</code></div>`;
                     showNotification('⚠️ Tampering detected!', 'error');
                 } else {
                     resultEl.style.background = '#fff3e0';
@@ -607,9 +630,6 @@
             }
         }
 
-        // ── Refresh button ─────────────────────────────────────────────────────
-        document.getElementById('refreshBtn').addEventListener('click', loadRecords);
-
         // Close modal when clicking backdrop
         document.getElementById('verifyModal').addEventListener('click', (e) => {
             if (e.target === document.getElementById('verifyModal')) closeModal();
@@ -619,23 +639,77 @@
         const fileInput = document.getElementById('fileInput');
         const fileNameDisplay = document.getElementById('fileNameDisplay');
         const fileDropZone = document.getElementById('fileDropZone');
+        const clearFileBtn = document.getElementById('clearFileBtn');
+
+        function resetFileDropZoneStyles() {
+            if (!fileDropZone) return;
+            fileDropZone.style.borderColor = '';
+            fileDropZone.style.backgroundColor = '';
+            fileDropZone.style.color = '';
+        }
+
+        function applyFileSelectedStyles() {
+            if (!fileDropZone) return;
+            fileDropZone.style.borderColor = 'var(--primary-color)';
+            fileDropZone.style.backgroundColor = 'var(--bg-light)';
+            fileDropZone.style.color = 'var(--primary-dark)';
+        }
+
+        function setSelectedFile(file) {
+            if (!fileInput || !file) return;
+
+            const dt = new DataTransfer();
+            dt.items.add(file);
+            fileInput.files = dt.files;
+
+            if (fileNameDisplay) fileNameDisplay.textContent = file.name;
+            applyFileSelectedStyles();
+            if (clearFileBtn) clearFileBtn.classList.remove('hidden');
+        }
+
+        function clearSelectedFile() {
+            if (!fileInput) return;
+            fileInput.value = '';
+            if (fileNameDisplay) fileNameDisplay.textContent = 'Choose a file or drag it here';
+            resetFileDropZoneStyles();
+            if (clearFileBtn) clearFileBtn.classList.add('hidden');
+        }
 
         if (fileInput) {
-            fileInput.addEventListener('change', (e) => {
+            fileInput.addEventListener('change', () => {
                 if (fileInput.files.length > 0) {
                     if (fileNameDisplay) fileNameDisplay.textContent = fileInput.files[0].name;
-                    if (fileDropZone) {
-                        fileDropZone.style.borderColor = 'var(--primary-color)';
-                        fileDropZone.style.backgroundColor = 'var(--bg-light)';
-                        fileDropZone.style.color = 'var(--primary-dark)';
-                    }
+                    applyFileSelectedStyles();
+                    if (clearFileBtn) clearFileBtn.classList.remove('hidden');
                 } else {
-                    if (fileNameDisplay) fileNameDisplay.textContent = 'Choose a file or drag it here';
-                    if (fileDropZone) {
-                        fileDropZone.style.borderColor = '';
-                        fileDropZone.style.backgroundColor = '';
-                        fileDropZone.style.color = '';
-                    }
+                    clearSelectedFile();
+                }
+            });
+        }
+
+        if (clearFileBtn) {
+            clearFileBtn.addEventListener('click', clearSelectedFile);
+        }
+
+        if (fileDropZone && fileInput) {
+            fileDropZone.addEventListener('click', () => fileInput.click());
+
+            fileDropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                applyFileSelectedStyles();
+            });
+
+            fileDropZone.addEventListener('dragleave', (e) => {
+                e.preventDefault();
+                if (!fileInput.files.length) {
+                    resetFileDropZoneStyles();
+                }
+            });
+
+            fileDropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                    setSelectedFile(e.dataTransfer.files[0]);
                 }
             });
         }
