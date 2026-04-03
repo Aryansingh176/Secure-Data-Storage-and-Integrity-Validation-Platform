@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+<<<<<<< HEAD
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile Settings - Data Integrity Platform</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -296,10 +297,565 @@
                             <div class="form-group-ud">
                                 <label for="dateOfBirth" class="form-label-ud">Date of Birth</label>
                                 <input type="date" id="dateOfBirth" name="dateOfBirth" class="form-input-ud">
+=======
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Profile • SHA-256 Vault</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-light: #6366f1;
+            --primary-dark: #4338ca;
+            --neutral-50: #f8fafc;
+            --neutral-100: #f1f5f9;
+            --neutral-200: #e2e8f0;
+            --neutral-700: #334155;
+            --neutral-900: #0f172a;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%);
+            color: var(--neutral-900);
+            line-height: 1.6;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        #particles-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.35;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Navbar (same style as records.html) */
+        .navbar {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--neutral-200);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: all 0.2s;
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.25rem 0;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 1.65rem;
+            color: var(--neutral-900);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: var(--neutral-700);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--primary);
+        }
+
+        .logout-btn {
+            background: var(--danger);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 9999px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .logout-btn:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+        }
+
+        /* Profile specific cards */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 28px;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--neutral-200);
+            overflow: hidden;
+            margin-bottom: 2rem;
+            transition: transform 0.2s ease;
+        }
+
+        .card-header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--neutral-100);
+            background: #fafcff;
+        }
+
+        .card-header h2 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #0f172a, #4f46e5);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .card-body {
+            padding: 2rem;
+        }
+
+        /* Avatar & summary */
+        .profile-summary {
+            display: flex;
+            align-items: center;
+            gap: 1.8rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--neutral-200);
+        }
+
+        .avatar-circle {
+            width: 96px;
+            height: 96px;
+            background: linear-gradient(135deg, #4f46e5, #818cf8);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: white;
+            box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3);
+        }
+
+        .profile-stats {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .stat-badge {
+            background: var(--neutral-100);
+            padding: 8px 18px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        /* Form styling */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: block;
+            color: var(--neutral-700);
+        }
+
+        .required-star {
+            color: var(--danger);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--neutral-200);
+            border-radius: 18px;
+            background: white;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: 0.2s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15);
+        }
+
+        .verified-input {
+            border-color: var(--success) !important;
+            background: rgba(16, 185, 129, 0.05) !important;
+        }
+
+        .email-verified-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+            font-size: 0.75rem;
+            color: var(--success);
+            font-weight: 500;
+        }
+
+        /* Verification cards (style aligned with SHA-256 Vault) */
+        .verify-card {
+            background: white;
+            border-radius: 24px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--neutral-200);
+            transition: all 0.2s;
+        }
+
+        .verify-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+
+        .verify-title-group {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .verify-icon {
+            font-size: 1.6rem;
+        }
+
+        .verify-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .verify-badge {
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .verify-badge.verified {
+            background: #d1fae5;
+            color: #10b981;
+        }
+
+        .otp-inputs {
+            display: flex;
+            gap: 0.6rem;
+            margin: 1rem 0;
+            flex-wrap: wrap;
+        }
+
+        .otp-digit {
+            width: 52px;
+            height: 58px;
+            text-align: center;
+            font-size: 1.6rem;
+            font-weight: 700;
+            border: 1px solid var(--neutral-200);
+            border-radius: 16px;
+            background: white;
+            transition: 0.1s;
+        }
+
+        .otp-digit:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+            outline: none;
+        }
+
+        .otp-error-digit {
+            border-color: var(--danger);
+            background: #fef2f2;
+        }
+
+        .otp-message {
+            padding: 0.6rem 1rem;
+            border-radius: 16px;
+            font-size: 0.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .otp-success {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .otp-error {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            padding: 10px 24px;
+            border-radius: 9999px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 14px rgba(79, 70, 229, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--neutral-100);
+            color: var(--neutral-700);
+            padding: 10px 20px;
+            border-radius: 9999px;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-secondary:hover {
+            background: var(--neutral-200);
+            transform: translateY(-1px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 8px 20px;
+            border-radius: 9999px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-outline:hover {
+            background: rgba(79, 70, 229, 0.08);
+        }
+
+        .save-btn {
+            background: linear-gradient(105deg, #4f46e5, #6366f1);
+            border: none;
+            padding: 12px 32px;
+            border-radius: 40px;
+            font-weight: 700;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .save-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.4);
+        }
+
+        .message-box {
+            padding: 1rem;
+            border-radius: 20px;
+            margin-bottom: 1.5rem;
+            display: none;
+            font-weight: 500;
+        }
+
+        .message-success {
+            background: #dcfce7;
+            color: #166534;
+            border-left: 4px solid var(--success);
+        }
+
+        .message-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border-left: 4px solid var(--danger);
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid var(--neutral-200);
+            margin: 1.5rem 0;
+        }
+
+        footer {
+            background: #0f172a;
+            color: #cbd5e1;
+            padding: 2rem 0;
+            text-align: center;
+            margin-top: 3rem;
+        }
+
+        @media (max-width: 768px) {
+            .nav-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            .profile-summary {
+                flex-direction: column;
+                text-align: center;
+            }
+            .card-body {
+                padding: 1.2rem;
+            }
+            .otp-digit {
+                width: 45px;
+                height: 50px;
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="particles-canvas"></canvas>
+
+    <nav class="navbar">
+        <div class="container nav-content">
+            <div class="logo">
+                <i class="fas fa-shield-alt"></i>
+                SHA-256 Vault
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="records.html">Records</a></li>
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="profile.html" class="active">Profile</a></li>
+            </ul>
+            <button class="logout-btn" id="logoutBtn">Logout</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Profile Main Card -->
+        <div class="glass-card">
+            <div class="card-header">
+                <h2><i class="fas fa-user-astronaut"></i> My Identity Vault</h2>
+                <p style="color:#475569;">Manage your personal information and security credentials</p>
+            </div>
+            <div class="card-body">
+                <div id="globalMessage" class="message-box"></div>
+
+                <!-- Profile summary -->
+                <div class="profile-summary">
+                    <div class="avatar-circle" id="avatarInitials">U</div>
+                    <div class="profile-stats">
+                        <div class="stat-badge"><i class="fas fa-calendar-alt"></i> <span id="memberSinceSpan">—</span></div>
+                        <div class="stat-badge"><i class="fas fa-clock"></i> Last login: <span id="lastLoginSpan">—</span></div>
+                        <div class="stat-badge"><i class="fab fa-google"></i> Google: <span id="googleIdSpan">Not linked</span></div>
+                    </div>
+                </div>
+
+                <form id="profileForm">
+                    <!-- Personal information section -->
+                    <h3 style="margin-bottom: 1rem; font-weight: 700;"><i class="fas fa-address-card"></i> Basic Information</h3>
+                    <div class="form-group">
+                        <label class="form-label">Full Name <span class="required-star">*</span></label>
+                        <input type="text" id="fullName" class="form-control" placeholder="Your full name" maxlength="60">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email Address <span class="required-star">*</span></label>
+                        <input type="email" id="email" class="form-control" placeholder="your@email.com">
+                        <div id="emailFieldVerifiedBadge" class="email-verified-badge" style="display: none;">
+                            <i class="fas fa-check-circle"></i> Email address verified
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Date of Birth</label>
+                        <input type="date" id="dateOfBirth" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Phone Number</label>
+                        <input type="tel" id="phoneNumber" class="form-control" placeholder="+91 9876543210">
+                    </div>
+
+                    <hr>
+
+                    <!-- Security & Verification Section (inspired by modern OTP flow) -->
+                    <h3 style="margin-bottom: 1.5rem; font-weight: 700;"><i class="fas fa-shield-alt"></i> Identity Verification</h3>
+                    
+                    <!-- Email Verification Card -->
+                    <div class="verify-card" id="emailVerifyCard">
+                        <div class="verify-header">
+                            <div class="verify-title-group">
+                                <span class="verify-icon">✉️</span>
+                                <div>
+                                    <div class="verify-title">Email verification</div>
+                                    <div class="verify-subtitle" id="emailVerifyHint">Secure your account with email confirmation</div>
+                                </div>
+                            </div>
+                            <span id="emailVerifyBadge" class="verify-badge">PENDING</span>
+                        </div>
+                        <div id="emailSendStep">
+                            <button type="button" onclick="sendOtp('email')" id="sendEmailOtpBtn" class="btn-secondary"><i class="fas fa-paper-plane"></i> Send verification code</button>
+                        </div>
+                        <div id="emailVerifyStep" style="display: none;">
+                            <div class="otp-inputs" id="emailOtpDigitRow">
+                                <input class="otp-digit" data-channel="email" type="text" maxlength="1" inputmode="numeric">
+                                <input class="otp-digit" data-channel="email" type="text" maxlength="1" inputmode="numeric">
+                                <input class="otp-digit" data-channel="email" type="text" maxlength="1" inputmode="numeric">
+                                <input class="otp-digit" data-channel="email" type="text" maxlength="1" inputmode="numeric">
+                                <input class="otp-digit" data-channel="email" type="text" maxlength="1" inputmode="numeric">
+                                <input class="otp-digit" data-channel="email" type="text" maxlength="1" inputmode="numeric">
+                            </div>
+                            <div id="emailOtpMessage" class="otp-message" style="display: none;"></div>
+                            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                                <button type="button" onclick="verifyOtp('email')" class="btn-primary">Verify code</button>
+                                <button type="button" onclick="resetOtpStep('email')" class="btn-outline">Resend code</button>
+>>>>>>> 8f6b515 (UI update)
                             </div>
                         </div>
                     </div>
 
+<<<<<<< HEAD
                     <!-- Contact Details -->
                     <div class="udemy-card" id="section-contact">
                         <div class="udemy-card-header">
@@ -310,10 +866,41 @@
                             <div class="form-group-ud">
                                 <label for="phoneNumber" class="form-label-ud">Phone Number</label>
                                 <input type="tel" id="phoneNumber" name="phoneNumber" class="form-input-ud" placeholder="+91 XXXXX XXXXX">
+=======
+                    <!-- Phone Verification Card -->
+                    <div class="verify-card" id="phoneVerifyCard">
+                        <div class="verify-header">
+                            <div class="verify-title-group">
+                                <span class="verify-icon">📱</span>
+                                <div>
+                                    <div class="verify-title">Phone verification</div>
+                                    <div class="verify-subtitle" id="phoneVerifyHint">Add phone number to enhance security</div>
+                                </div>
+                            </div>
+                            <span id="phoneVerifyBadge" class="verify-badge">PENDING</span>
+                        </div>
+                        <div id="phoneSendStep">
+                            <button type="button" onclick="sendOtp('phone')" id="sendPhoneOtpBtn" class="btn-secondary"><i class="fas fa-mobile-alt"></i> Send verification code</button>
+                        </div>
+                        <div id="phoneVerifyStep" style="display: none;">
+                            <div class="otp-inputs" id="phoneOtpDigitRow">
+                                <input class="otp-digit" data-channel="phone" type="text" maxlength="1" inputmode="numeric">
+                                <input class="otp-digit" data-channel="phone" type="text" maxlength="1" inputmode="numeric">
+                                <input class="otp-digit" data-channel="phone" type="text" maxlength="1" inputmode="numeric">
+                                <input class="otp-digit" data-channel="phone" type="text" maxlength="1" inputmode="numeric">
+                                <input class="otp-digit" data-channel="phone" type="text" maxlength="1" inputmode="numeric">
+                                <input class="otp-digit" data-channel="phone" type="text" maxlength="1" inputmode="numeric">
+                            </div>
+                            <div id="phoneOtpMessage" class="otp-message" style="display: none;"></div>
+                            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                                <button type="button" onclick="verifyOtp('phone')" class="btn-primary">Verify code</button>
+                                <button type="button" onclick="resetOtpStep('phone')" class="btn-outline">Resend code</button>
+>>>>>>> 8f6b515 (UI update)
                             </div>
                         </div>
                     </div>
 
+<<<<<<< HEAD
                     <!-- System Information -->
                     <div class="udemy-card" id="section-account">
                         <div class="udemy-card-header">
@@ -417,11 +1004,18 @@
                         <button type="submit" class="udemy-save-btn" id="saveBtn">
                             <span id="saveBtnText">Save Settings</span>
                             <span id="saveBtnLoader" style="display:none;"><i class="fas fa-spinner fa-spin"></i></span>
+=======
+                    <div style="text-align: right; margin-top: 2rem;">
+                        <button type="submit" class="save-btn" id="saveBtn">
+                            <span id="saveBtnText"><i class="fas fa-save"></i> Save Profile Changes</span>
+                            <span id="saveBtnLoader" style="display: none;"><i class="fas fa-spinner fa-pulse"></i></span>
+>>>>>>> 8f6b515 (UI update)
                         </button>
                     </div>
                 </form>
             </div>
         </div>
+<<<<<<< HEAD
     </main>
     <script>
         function activateLink(element) {
@@ -464,6 +1058,24 @@
         const API_URL = 'http://localhost:5000';
 
         // Logout handler
+=======
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>© 2026 Data Integrity Platform • Final Year BTech CSE Project • Built with SHA-256 Security</p>
+        </div>
+    </footer>
+
+    <script>
+        const API = 'http://localhost:5000';
+        let currentUser = {};
+
+        function getToken() { return localStorage.getItem('auth_token'); }
+        function authHeaders() { return { 'Authorization': 'Bearer ' + getToken() }; }
+
+        // Logout
+>>>>>>> 8f6b515 (UI update)
         document.getElementById('logoutBtn').addEventListener('click', (e) => {
             e.preventDefault();
             localStorage.removeItem('auth_token');
@@ -471,6 +1083,7 @@
             window.location.href = 'login.html';
         });
 
+<<<<<<< HEAD
         // Show message
         function showMessage(message, type = 'success') {
             const messageBox = document.getElementById('messageBox');
@@ -562,11 +1175,102 @@
             
             const token = localStorage.getItem('auth_token');
             const profileData = {
+=======
+        function showMessage(msg, type = 'success') {
+            const box = document.getElementById('globalMessage');
+            box.textContent = msg;
+            box.className = `message-box message-${type}`;
+            box.style.display = 'block';
+            setTimeout(() => { box.style.display = 'none'; }, 5000);
+        }
+
+        function updateAvatar(name) {
+            const avatar = document.getElementById('avatarInitials');
+            if (!name) name = 'User';
+            let initials = name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0,2);
+            if (!initials) initials = 'U';
+            avatar.textContent = initials;
+        }
+
+        // Load full profile
+        async function loadUserProfile() {
+            try {
+                const res = await fetch(`${API}/api/auth/user/profile`, { headers: authHeaders() });
+                if (res.status === 401) { window.location.href = 'login.html'; return; }
+                if (!res.ok) throw new Error('Failed fetch');
+                const data = await res.json();
+                const user = data.user;
+                currentUser = user;
+                document.getElementById('fullName').value = user.name || '';
+                document.getElementById('email').value = user.email || '';
+                document.getElementById('dateOfBirth').value = user.date_of_birth || '';
+                document.getElementById('phoneNumber').value = user.phone || user.phone_number || '';
+                document.getElementById('memberSinceSpan').innerHTML = user.created_at ? new Date(user.created_at).toLocaleDateString() : '—';
+                document.getElementById('lastLoginSpan').innerHTML = user.last_login ? new Date(user.last_login).toLocaleString() : '—';
+                document.getElementById('googleIdSpan').innerHTML = user.google_id ? 'Connected' : 'Not linked';
+                updateAvatar(user.name || user.email);
+                
+                // Update email verification UI
+                const emailVerified = user.email_verified === true;
+                const emailBadge = document.getElementById('emailVerifyBadge');
+                const emailHint = document.getElementById('emailVerifyHint');
+                if (emailVerified) {
+                    emailBadge.textContent = 'VERIFIED ✓';
+                    emailBadge.classList.add('verified');
+                    emailHint.textContent = 'Your email is verified.';
+                    document.getElementById('emailSendStep').innerHTML = '<p style="color:#10b981; font-size:0.85rem;"><i class="fas fa-check-circle"></i> Email verified</p>';
+                    document.getElementById('emailFieldVerifiedBadge').style.display = 'flex';
+                    document.getElementById('email').classList.add('verified-input');
+                } else {
+                    emailBadge.textContent = 'PENDING';
+                    emailBadge.classList.remove('verified');
+                    emailHint.textContent = 'Verify your email to unlock full features';
+                    document.getElementById('emailSendStep').innerHTML = '<button type="button" onclick="sendOtp(\'email\')" id="sendEmailOtpBtn" class="btn-secondary"><i class="fas fa-paper-plane"></i> Send verification code</button>';
+                    document.getElementById('emailFieldVerifiedBadge').style.display = 'none';
+                    document.getElementById('email').classList.remove('verified-input');
+                }
+                
+                // Phone verification UI
+                const phoneVerified = user.phone_verified === true;
+                const phoneBadge = document.getElementById('phoneVerifyBadge');
+                const phoneHint = document.getElementById('phoneVerifyHint');
+                if (phoneVerified) {
+                    phoneBadge.textContent = 'VERIFIED ✓';
+                    phoneBadge.classList.add('verified');
+                    phoneHint.textContent = 'Phone number verified.';
+                    document.getElementById('phoneSendStep').innerHTML = '<p style="color:#10b981; font-size:0.85rem;"><i class="fas fa-check-circle"></i> Phone verified</p>';
+                } else {
+                    phoneBadge.textContent = 'PENDING';
+                    phoneBadge.classList.remove('verified');
+                    phoneHint.textContent = 'Verify your phone number for extra security';
+                    document.getElementById('phoneSendStep').innerHTML = '<button type="button" onclick="sendOtp(\'phone\')" id="sendPhoneOtpBtn" class="btn-secondary"><i class="fas fa-mobile-alt"></i> Send verification code</button>';
+                }
+                // Reset OTP steps visibility
+                document.getElementById('emailVerifyStep').style.display = 'none';
+                document.getElementById('phoneVerifyStep').style.display = 'none';
+            } catch (err) {
+                showMessage('Error loading profile data', 'error');
+            }
+        }
+
+        // Update profile
+        document.getElementById('profileForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const saveBtn = document.getElementById('saveBtn');
+            const btnText = document.getElementById('saveBtnText');
+            const loader = document.getElementById('saveBtnLoader');
+            saveBtn.disabled = true;
+            btnText.style.display = 'none';
+            loader.style.display = 'inline';
+            
+            const payload = {
+>>>>>>> 8f6b515 (UI update)
                 name: document.getElementById('fullName').value,
                 email: document.getElementById('email').value,
                 date_of_birth: document.getElementById('dateOfBirth').value || null,
                 phone_number: document.getElementById('phoneNumber').value || null
             };
+<<<<<<< HEAD
             
             try {
                 const response = await fetch(`${API_URL}/api/auth/user/profile`, {
@@ -610,6 +1314,38 @@
                 const channelInputs = Array.from(all).filter(i => i.dataset.channel === input.dataset.channel);
                 const localIdx = channelInputs.indexOf(input);
 
+=======
+            try {
+                const res = await fetch(`${API}/api/auth/user/profile`, {
+                    method: 'PUT',
+                    headers: { ...authHeaders(), 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    showMessage('Profile updated successfully!', 'success');
+                    localStorage.setItem('user_email', payload.email);
+                    updateAvatar(payload.name);
+                    await loadUserProfile(); // refresh verification status
+                } else {
+                    showMessage(data.error || 'Update failed', 'error');
+                }
+            } catch (err) {
+                showMessage('Server error', 'error');
+            } finally {
+                saveBtn.disabled = false;
+                btnText.style.display = 'inline';
+                loader.style.display = 'none';
+            }
+        });
+
+        // OTP shared logic
+        function initOtpBoxes() {
+            document.querySelectorAll('.otp-digit').forEach((input, idx, all) => {
+                const channel = input.dataset.channel;
+                const channelInputs = Array.from(all).filter(i => i.dataset.channel === channel);
+                const localIdx = channelInputs.indexOf(input);
+>>>>>>> 8f6b515 (UI update)
                 input.addEventListener('input', function () {
                     this.value = this.value.replace(/\D/g, '');
                     if (this.value && localIdx < channelInputs.length - 1) channelInputs[localIdx + 1].focus();
@@ -628,6 +1364,7 @@
         }
 
         async function sendOtp(channel) {
+<<<<<<< HEAD
             const identifier = channel === 'email'
                 ? document.getElementById('email').value.trim().toLowerCase()
                 : document.getElementById('phoneNumber').value.trim();
@@ -664,6 +1401,39 @@
                 showMessage('Cannot reach server.', 'error');
                 btn.disabled = false;
                 btn.textContent = `Send ${channel === 'email' ? 'Email' : 'Phone'} OTP`;
+=======
+            const identifier = channel === 'email' ? document.getElementById('email').value.trim() : document.getElementById('phoneNumber').value.trim();
+            if (!identifier) {
+                showMessage(`Please enter your ${channel === 'email' ? 'email address' : 'phone number'} first and save.`, 'error');
+                return;
+            }
+            const btn = document.getElementById(channel === 'email' ? 'sendEmailOtpBtn' : 'sendPhoneOtpBtn');
+            if (!btn) return;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Sending...';
+            btn.disabled = true;
+            try {
+                const res = await fetch(`${API}/api/auth/resend-otp`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` },
+                    body: JSON.stringify({ identifier, channel, purpose: 'registration' })
+                });
+                const data = await res.json();
+                if (res.ok && data.success) {
+                    document.getElementById(`${channel}SendStep`).style.display = 'none';
+                    document.getElementById(`${channel}VerifyStep`).style.display = 'block';
+                    const firstDigit = document.querySelector(`.otp-digit[data-channel="${channel}"]`);
+                    if (firstDigit) firstDigit.focus();
+                    showMessage(`OTP sent to your ${channel}!`, 'success');
+                } else {
+                    showMessage(data.error || `Failed to send OTP.`, 'error');
+                }
+            } catch (err) {
+                showMessage('Network error. Could not send OTP.', 'error');
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+>>>>>>> 8f6b515 (UI update)
             }
         }
 
@@ -671,6 +1441,7 @@
             const digits = Array.from(document.querySelectorAll(`.otp-digit[data-channel="${channel}"]`)).map(i => i.value);
             const otp = digits.join('');
             if (otp.length !== 6) { showMessage('Enter all 6 digits.', 'error'); return; }
+<<<<<<< HEAD
 
             const identifier = channel === 'email'
                 ? document.getElementById('email').value.trim().toLowerCase()
@@ -758,6 +1529,57 @@
                 showMessage('Network error.', 'error');
                 btn.disabled = false;
                 btn.textContent = `Verify ${channel === 'email' ? 'Email' : 'Phone'}`;
+=======
+            const identifier = channel === 'email' ? document.getElementById('email').value.trim() : document.getElementById('phoneNumber').value.trim();
+            const btn = document.getElementById(channel === 'email' ? 'verifyEmailOtpBtn' : 'verifyPhoneOtpBtn');
+            if (btn) btn.disabled = true;
+            try {
+                const endpoint = channel === 'email' ? '/api/auth/verify-email' : '/api/auth/verify-phone';
+                const res = await fetch(`${API}${endpoint}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` },
+                    body: JSON.stringify({ identifier, otp })
+                });
+                const data = await res.json();
+                if (res.ok && data.success) {
+                    // update UI to verified state
+                    const badge = document.getElementById(`${channel}VerifyBadge`);
+                    badge.textContent = 'VERIFIED ✓';
+                    badge.classList.add('verified');
+                    if (channel === 'email') {
+                        document.getElementById('emailFieldVerifiedBadge').style.display = 'flex';
+                        document.getElementById('email').classList.add('verified-input');
+                        document.getElementById('emailVerifyHint').textContent = 'Email verified successfully.';
+                    } else {
+                        document.getElementById('phoneVerifyHint').textContent = 'Phone verified successfully.';
+                    }
+                    document.getElementById(`${channel}VerifyStep`).style.display = 'none';
+                    document.getElementById(`${channel}SendStep`).innerHTML = `<p style="color:#10b981; font-size:0.85rem;"><i class="fas fa-check-circle"></i> ${channel === 'email' ? 'Email' : 'Phone'} verified!</p>`;
+                    showMessage(`${channel === 'email' ? 'Email' : 'Phone'} verified!`, 'success');
+                } else {
+                    const errorMsg = data.error || 'Invalid OTP code.';
+                    const msgDiv = document.getElementById(`${channel}OtpMessage`);
+                    msgDiv.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${errorMsg}`;
+                    msgDiv.className = 'otp-message otp-error';
+                    msgDiv.style.display = 'block';
+                    const row = document.getElementById(`${channel}OtpDigitRow`);
+                    row.classList.add('otp-error-shake');
+                    document.querySelectorAll(`.otp-digit[data-channel="${channel}"]`).forEach(d => d.classList.add('otp-error-digit'));
+                    setTimeout(() => {
+                        row.classList.remove('otp-error-shake');
+                        document.querySelectorAll(`.otp-digit[data-channel="${channel}"]`).forEach(d => {
+                            d.classList.remove('otp-error-digit');
+                            d.value = '';
+                        });
+                        const first = document.querySelector(`.otp-digit[data-channel="${channel}"]`);
+                        if (first) first.focus();
+                    }, 1500);
+                }
+            } catch (err) {
+                showMessage('Verification request failed', 'error');
+            } finally {
+                if (btn) btn.disabled = false;
+>>>>>>> 8f6b515 (UI update)
             }
         }
 
@@ -765,6 +1587,7 @@
             document.getElementById(`${channel}SendStep`).style.display = 'block';
             document.getElementById(`${channel}VerifyStep`).style.display = 'none';
             document.querySelectorAll(`.otp-digit[data-channel="${channel}"]`).forEach(i => i.value = '');
+<<<<<<< HEAD
             const btn = document.getElementById(channel === 'email' ? 'sendEmailOtpBtn' : 'sendPhoneOtpBtn');
             btn.disabled = false;
             btn.textContent = `Send ${channel === 'email' ? 'Email' : 'Phone'} OTP`;
@@ -851,3 +1674,55 @@
 </body>
 </html>
 
+=======
+            const msgDiv = document.getElementById(`${channel}OtpMessage`);
+            if (msgDiv) msgDiv.style.display = 'none';
+        }
+
+        // Particle animation (same as records page)
+        (function() {
+            const canvas = document.getElementById('particles-canvas');
+            const ctx = canvas.getContext('2d');
+            let width, height, particles = [];
+            const PARTICLE_COUNT = 80;
+            const CONNECTION_DIST = 130;
+            function resize() { width = window.innerWidth; height = window.innerHeight; canvas.width = width; canvas.height = height; }
+            function random(min,max) { return Math.random()*(max-min)+min; }
+            function initParticles() {
+                particles = [];
+                for(let i=0;i<PARTICLE_COUNT;i++) particles.push({ x: Math.random()*width, y: Math.random()*height, vx: random(-0.2,0.2), vy: random(-0.2,0.2), radius: random(1.5,3), alpha: random(0.2,0.5) });
+            }
+            function draw() {
+                if(!ctx) return;
+                ctx.clearRect(0,0,width,height);
+                for(let p of particles) { p.x+=p.vx; p.y+=p.vy; if(p.x<0) p.x=width; if(p.x>width) p.x=0; if(p.y<0) p.y=height; if(p.y>height) p.y=0; }
+                for(let i=0;i<particles.length;i++) {
+                    for(let j=i+1;j<particles.length;j++) {
+                        const dx = particles[i].x-particles[j].x, dy = particles[i].y-particles[j].y, dist = Math.hypot(dx,dy);
+                        if(dist<CONNECTION_DIST) {
+                            ctx.beginPath(); ctx.moveTo(particles[i].x,particles[i].y); ctx.lineTo(particles[j].x,particles[j].y);
+                            ctx.strokeStyle = `rgba(79, 70, 229, ${(1-dist/CONNECTION_DIST)*0.12})`;
+                            ctx.lineWidth = 0.6; ctx.stroke();
+                        }
+                    }
+                }
+                for(let p of particles) {
+                    ctx.beginPath(); ctx.arc(p.x,p.y,p.radius,0,Math.PI*2);
+                    ctx.fillStyle = `rgba(79, 70, 229, ${p.alpha*0.7})`;
+                    ctx.fill();
+                }
+                requestAnimationFrame(draw);
+            }
+            window.addEventListener('resize', () => { resize(); initParticles(); });
+            resize(); initParticles(); draw();
+        })();
+
+        window.addEventListener('DOMContentLoaded', () => {
+            if (!getToken()) window.location.href = 'login.html';
+            loadUserProfile();
+            initOtpBoxes();
+        });
+    </script>
+</body>
+</html>
+>>>>>>> 8f6b515 (UI update)

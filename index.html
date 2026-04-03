@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<<<<<<< HEAD
     <title>Data Integrity Platform - Home</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -434,3 +435,459 @@
     </footer>
 </body>
 </html>
+=======
+    <title>SHA-256 Vault • Data Integrity</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-light: #6366f1;
+            --neutral-50: #f8fafc;
+            --neutral-100: #f1f5f9;
+            --neutral-700: #334155;
+            --neutral-900: #0f172a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%);
+            color: var(--neutral-900);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* ====================== NAVBAR ====================== */
+        .navbar {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid #e2e8f0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.25rem 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 1.65rem;
+            color: var(--neutral-900);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--neutral-700);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--primary);
+        }
+
+        .logout-btn {
+            background: #ef4444;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 9999px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+        }
+
+        .logout-btn:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+        }
+
+        /* ====================== HERO ====================== */
+        .hero {
+            text-align: center;
+            padding: 6rem 0 4rem;
+        }
+
+        .hero h1 {
+            font-size: 3.4rem;
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 1.2rem;
+            color: var(--neutral-900);
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            color: #475569;
+            max-width: 620px;
+            margin: 0 auto 2rem;
+        }
+
+        .cta-btn {
+            background: var(--primary);
+            color: white;
+            padding: 14px 32px;
+            border-radius: 9999px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
+        }
+
+        .cta-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 25px -5px rgba(79, 70, 229, 0.4);
+        }
+
+        /* ====================== MAIN CARD ====================== */
+        .main-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+            margin-bottom: 5rem;
+        }
+
+        .card-header {
+            padding: 1.75rem 2rem;
+            border-bottom: 1px solid #f1f5f9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8fafc;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 1.25rem;
+            background: none;
+            border: none;
+            font-weight: 600;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            color: var(--primary);
+            border-bottom: 3px solid var(--primary);
+        }
+
+        .card-body {
+            padding: 2.5rem;
+        }
+
+        .upload-area {
+            border: 2px dashed #cbd5e1;
+            border-radius: 16px;
+            padding: 3.5rem 2rem;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary-light);
+            background: #f8fafc;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px 18px;
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            background: white;
+            font-size: 1rem;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15);
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            padding: 14px 32px;
+            border-radius: 9999px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        /* ====================== FEATURES ====================== */
+        .section-title {
+            text-align: center;
+            font-size: 2.1rem;
+            font-weight: 700;
+            margin: 4rem 0 2.5rem;
+            color: var(--neutral-900);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 2.5rem 2rem;
+            border-radius: 16px;
+            border: 1px solid #f1f5f9;
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* ====================== WORKFLOW ====================== */
+        .workflow {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin: 3rem 0;
+        }
+
+        .step {
+            text-align: center;
+            max-width: 200px;
+        }
+
+        .step-number {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0 auto 1rem;
+        }
+
+        /* Footer */
+        footer {
+            background: #0f172a;
+            color: #cbd5e1;
+            padding: 3rem 0 1.5rem;
+            text-align: center;
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container nav-content">
+            <div class="logo">
+                <i class="fas fa-shield-alt"></i>
+                SHA-256 Vault
+            </div>
+            <ul class="nav-links">
+                <li><a href="#" class="active">Home</a></li>
+                <li><a href="records.html">Records</a></li>
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="profile.html">Profile</a></li>
+            </ul>
+            <button class="logout-btn" id="logoutBtn">Logout</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Hero -->
+        <section class="hero">
+            <h1>Secure Data.<br>Verify Integrity.</h1>
+            <p>Enterprise-grade SHA-256 hashing platform. Protect your files and data with cryptographic confidence.</p>
+            <button class="cta-btn" onclick="document.getElementById('main-card').scrollIntoView({ behavior: 'smooth' })">
+                Start Securing Data
+            </button>
+        </section>
+
+        <!-- Main Upload Card -->
+        <div class="main-card" id="main-card">
+            <div class="card-header">
+                <h2 style="font-size: 1.6rem; font-weight: 600;">
+                    <i class="fas fa-lock"></i> Store New Data
+                </h2>
+                <span style="background: #e0e7ff; color: #4f46e5; padding: 6px 16px; border-radius: 9999px; font-size: 0.9rem; font-weight: 500;">
+                    SHA-256 • Tamper Proof
+                </span>
+            </div>
+
+            <div class="tabs">
+                <button class="tab-btn active" id="tabFile" onclick="switchTab('file')">📁 Upload File</button>
+                <button class="tab-btn" id="tabText" onclick="switchTab('text')">⌨️ Enter Text</button>
+            </div>
+
+            <!-- File Tab -->
+            <div class="card-body" id="filePanel">
+                <form id="fileUploadForm">
+                    <div class="upload-area" id="dropZone">
+                        <i class="fas fa-cloud-upload-alt" style="font-size: 3.8rem; color: #64748b; margin-bottom: 1rem;"></i>
+                        <h3>Drag & drop your file</h3>
+                        <p style="color: #64748b; margin: 8px 0;">or click to browse • Max 10MB</p>
+                        <input type="file" id="homeFileInput" hidden onchange="updateHomeFileLabel(this)">
+                        <div id="homeFileName" style="margin-top: 1rem; font-weight: 500; color: #334155;">No file selected</div>
+                    </div>
+
+                    <div style="margin-top: 2rem;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 500;">Label (Optional)</label>
+                        <input type="text" id="homeFileLabel" class="form-control" placeholder="e.g., Contract_Final.pdf">
+                    </div>
+
+                    <button type="submit" class="btn" style="margin-top: 2rem;">
+                        <i class="fas fa-lock"></i> Secure & Upload
+                    </button>
+                </form>
+            </div>
+
+            <!-- Text Tab -->
+            <div class="card-body" id="textPanel" style="display: none;">
+                <form id="dataForm">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 500;">Your Text Data</label>
+                    <textarea id="dataInput" class="form-control" rows="6" placeholder="Enter your text here..."></textarea>
+
+                    <div style="margin-top: 2rem;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 500;">Label (Optional)</label>
+                        <input type="text" id="homeTextLabel" class="form-control" placeholder="e.g., Meeting Notes">
+                    </div>
+
+                    <button type="submit" class="btn" style="margin-top: 2rem;">
+                        <i class="fas fa-database"></i> Generate Hash & Save
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Features -->
+        <h2 class="section-title">Why Teams Trust Us</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <i class="fas fa-shield-alt" style="font-size: 2.2rem; color: #4f46e5; margin-bottom: 1rem;"></i>
+                <h3 style="font-size: 1.4rem; margin-bottom: 0.5rem;">Cryptographic Security</h3>
+                <p style="color: #475569;">SHA-256 hashing with industry-standard integrity verification.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-bolt" style="font-size: 2.2rem; color: #4f46e5; margin-bottom: 1rem;"></i>
+                <h3 style="font-size: 1.4rem; margin-bottom: 0.5rem;">Instant Verification</h3>
+                <p style="color: #475569;">Detect any modification in real time.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-history" style="font-size: 2.2rem; color: #4f46e5; margin-bottom: 1rem;"></i>
+                <h3 style="font-size: 1.4rem; margin-bottom: 0.5rem;">Complete Audit Trail</h3>
+                <p style="color: #475569;">Track every upload and verification.</p>
+            </div>
+        </div>
+
+        <!-- Workflow -->
+        <h2 class="section-title" style="margin-top: 5rem;">How It Works</h2>
+        <div class="workflow">
+            <div class="step">
+                <div class="step-number">1</div>
+                <h4>Upload</h4>
+                <p style="color:#64748b;">File or text data</p>
+            </div>
+            <div class="step">
+                <div class="step-number">2</div>
+                <h4>Hash</h4>
+                <p style="color:#64748b;">SHA-256 generated</p>
+            </div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <h4>Verify</h4>
+                <p style="color:#64748b;">Anytime on dashboard</p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Data Integrity Platform • Final Year BTech CSE Project</p>
+        </div>
+    </footer>
+
+    <script>
+        // Tab Switching
+        function switchTab(tab) {
+            document.getElementById('filePanel').style.display = tab === 'file' ? 'block' : 'none';
+            document.getElementById('textPanel').style.display = tab === 'text' ? 'block' : 'none';
+            
+            document.getElementById('tabFile').classList.toggle('active', tab === 'file');
+            document.getElementById('tabText').classList.toggle('active', tab === 'text');
+        }
+
+        function updateHomeFileLabel(input) {
+            const nameEl = document.getElementById('homeFileName');
+            nameEl.textContent = input.files[0] ? input.files[0].name : "No file selected";
+        }
+
+        // Logout
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            if (confirm("Logout from your account?")) {
+                window.location.href = "login.html";
+            }
+        });
+
+        // Form submissions (demo)
+        document.getElementById('fileUploadForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert("✅ File successfully secured with SHA-256!");
+        });
+
+        document.getElementById('dataForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert("✅ Text data secured successfully!");
+        });
+
+        console.log("%c✅ Production-Ready UI Loaded Successfully", "color:#4f46e5; font-weight:600");
+    </script>
+</body>
+</html>
+>>>>>>> 8f6b515 (UI update)

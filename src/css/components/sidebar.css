@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 .sidebar {
     width: 250px;
     background-color: #2c3e50;
@@ -32,4 +33,130 @@
 
 .sidebar ul li a:hover {
     text-decoration: underline;
+=======
+/* 🌙 NAVBAR BASE */
+.premium-navbar {
+    position: sticky;
+    top: 15px;
+    margin: 15px 20px;
+    padding: 12px 25px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(20px);
+
+    border-radius: 18px;
+    border: 1px solid rgba(255,255,255,0.08);
+
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    z-index: 1000;
+}
+
+/* LOGO */
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.logo-text {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
+/* NAV LINKS */
+.nav-center {
+    display: flex;
+    gap: 30px;
+}
+
+.nav-link {
+    text-decoration: none;
+    color: #94a3b8;
+    font-weight: 500;
+    position: relative;
+    transition: 0.3s;
+}
+
+/* UNDERLINE ANIMATION */
+.nav-link::after {
+    content: "";
+    position: absolute;
+    width: 0%;
+    height: 2px;
+    bottom: -6px;
+    left: 0;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    transition: 0.3s;
+}
+
+.nav-link:hover::after,
+.nav-link.active::after {
+    width: 100%;
+}
+
+.nav-link:hover {
+    color: white;
+}
+
+/* RIGHT SECTION */
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* AVATAR */
+.avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+
+    transition: 0.3s;
+}
+
+.avatar:hover {
+    transform: scale(1.1);
+}
+
+/* LOGOUT BUTTON */
+.logout-btn {
+    background: transparent;
+    border: 1px solid #ef4444;
+    color: #ef4444;
+    padding: 6px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.logout-btn:hover {
+    background: #ef4444;
+    color: white;
+}
+
+/* ✨ FLOATING EFFECT */
+.premium-navbar {
+    animation: floatNav 5s ease-in-out infinite;
+}
+
+@keyframes floatNav {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(4px); }
+>>>>>>> 8f6b515 (UI update)
 }

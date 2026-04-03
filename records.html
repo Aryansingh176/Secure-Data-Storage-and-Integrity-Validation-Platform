@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+<<<<<<< HEAD
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Data Integrity Platform - Records</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -231,11 +232,714 @@
 
             <div class="modal-actions">
                 <button id="verifySubmitBtn" class="btn btn-primary" onclick="submitVerification()">🔍 Verify Now</button>
+=======
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Records • SHA-256 Vault</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-light: #6366f1;
+            --primary-dark: #4338ca;
+            --neutral-50: #f8fafc;
+            --neutral-100: #f1f5f9;
+            --neutral-200: #e2e8f0;
+            --neutral-700: #334155;
+            --neutral-900: #0f172a;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%);
+            color: var(--neutral-900);
+            line-height: 1.6;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Subtle animated particle background */
+        #particles-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.3;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ====================== NAVBAR ====================== */
+        .navbar {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--neutral-200);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: all 0.2s;
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.25rem 0;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 1.65rem;
+            color: var(--neutral-900);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: var(--neutral-700);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--primary);
+        }
+
+        .logout-btn {
+            background: var(--danger);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 9999px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .logout-btn:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+        }
+
+        /* ====================== PAGE HEADER ====================== */
+        .page-header {
+            text-align: center;
+            padding: 3rem 0 2rem;
+        }
+
+        .page-header h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 0.8rem;
+            background: linear-gradient(135deg, #0f172a, black);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .page-header p {
+            font-size: 1.1rem;
+            color: #475569;
+        }
+
+        /* ====================== CARDS ====================== */
+        .card {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
+            border: 1px solid var(--neutral-200);
+            overflow: hidden;
+            margin-bottom: 2.5rem;
+            transition: transform 0.25s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-header {
+            padding: 1.25rem 2rem;
+            border-bottom: 1px solid var(--neutral-100);
+            background: #fafcff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+
+        .card-header h2 {
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+
+        .badge {
+            background: #e0e7ff;
+            color: var(--primary);
+            padding: 6px 16px;
+            border-radius: 9999px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        /* ====================== TABS ====================== */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--neutral-200);
+            background: #ffffff;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 1rem;
+            background: none;
+            border: none;
+            font-weight: 600;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.95rem;
+        }
+
+        .tab-btn.active {
+            color: var(--primary);
+            border-bottom: 3px solid var(--primary);
+            background: rgba(79, 70, 229, 0.02);
+        }
+
+        /* ====================== FORMS ====================== */
+        .card-body {
+            padding: 2rem;
+        }
+
+        .upload-area {
+            border: 2px dashed var(--neutral-200);
+            border-radius: 20px;
+            padding: 2.5rem;
+            text-align: center;
+            transition: all 0.25s ease;
+            cursor: pointer;
+            background: #fefefe;
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary-light);
+            background: #f8fafc;
+            transform: scale(0.99);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--neutral-700);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--neutral-200);
+            border-radius: 14px;
+            background: white;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: 0.2s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15);
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            padding: 12px 28px;
+            border-radius: 9999px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.25s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            background: var(--primary-dark);
+            box-shadow: 0 8px 20px -6px rgba(79, 70, 229, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--neutral-100);
+            color: var(--neutral-700);
+        }
+
+        .btn-secondary:hover {
+            background: var(--neutral-200);
+            transform: translateY(-2px);
+            box-shadow: none;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        /* ====================== STATS BAR ====================== */
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+            padding: 1.2rem 2rem;
+            background: #f8fafc;
+            border-bottom: 1px solid var(--neutral-200);
+        }
+
+        .stat-card {
+            text-align: center;
+            background: white;
+            border-radius: 16px;
+            padding: 1rem;
+            transition: all 0.2s;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 20px -8px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--neutral-900);
+            letter-spacing: -0.02em;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #475569;
+            margin-top: 4px;
+        }
+
+        /* ====================== TABLE ====================== */
+        .table-wrapper {
+            overflow-x: auto;
+            padding: 0 1rem 1rem;
+            scrollbar-width: thin;
+        }
+
+        .records-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 0.85rem;
+        }
+
+        .records-table th {
+            font-size: 1rem;
+            text-align: left;
+            padding: 1rem 0.8rem;
+            color: black;
+            font-weight: bold;
+            border-bottom: 1px solid var(--neutral-200);
+        }
+
+        .records-table td {
+            padding: 1rem 0.8rem;
+            border-bottom: 1px solid var(--neutral-100);
+            vertical-align: middle;
+            color: #1e293b;
+        }
+
+        .records-table tr {
+            transition: background 0.15s;
+        }
+
+        .records-table tr:hover {
+            background: #f8fafc;
+        }
+
+        code {
+            background: var(--neutral-100);
+            padding: 2px 6px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            color: var(--primary);
+            transition: background 0.2s;
+        }
+
+        code:hover {
+            background: #e2e8f0;
+        }
+
+        .badge-status {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .badge-verified {
+            background: #dcfce7;
+            color: #16a34a;
+        }
+
+        .badge-tampered {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .badge-pending {
+            background: #fef9c3;
+            color: #ca8a04;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #64748b;
+        }
+
+        /* ====================== VERIFICATION INFO ====================== */
+        .verification-info {
+            background: white;
+            border-radius: 20px;
+            padding: 1.8rem;
+            border: 1px solid var(--neutral-200);
+            margin-top: 1rem;
+        }
+
+        .legend-items {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin: 1rem 0;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        /* ====================== MODAL ====================== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 28px;
+            max-width: 500px;
+            width: 90%;
+            padding: 1.8rem;
+            position: relative;
+            animation: modalFadeIn 0.3s ease;
+            box-shadow: 0 25px 40px -12px rgba(0,0,0,0.25);
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: #94a3b8;
+            transition: color 0.2s;
+        }
+
+        .modal-close:hover {
+            color: var(--danger);
+        }
+
+        .modal-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 1.5rem;
+        }
+
+        /* ====================== FOOTER ====================== */
+        footer {
+            background: #0f172a;
+            color: #cbd5e1;
+            padding: 2rem 0;
+            text-align: center;
+            margin-top: 3rem;
+        }
+
+        /* ====================== RESPONSIVE ====================== */
+        @media (max-width: 768px) {
+            .nav-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            .nav-links {
+                justify-content: center;
+                gap: 1rem;
+            }
+            .page-header h1 {
+                font-size: 2rem;
+            }
+            .stats-bar {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.8rem;
+                padding: 1rem;
+            }
+            .card-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            .tab-btn {
+                font-size: 0.85rem;
+                padding: 0.8rem;
+            }
+            .card-body {
+                padding: 1.2rem;
+            }
+            .upload-area {
+                padding: 1.5rem;
+            }
+            .btn {
+                padding: 8px 18px;
+                font-size: 0.85rem;
+            }
+            .records-table th, .records-table td {
+                padding: 0.6rem;
+                font-size: 0.75rem;
+            }
+            .records-table td .btn-secondary,
+            .records-table td .btn-danger {
+                font-size: 0.7rem;
+                padding: 0.2rem 0.5rem;
+            }
+            .legend-items {
+                flex-direction: column;
+                gap: 0.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 16px;
+            }
+            .stat-value {
+                font-size: 1.4rem;
+            }
+            .stat-card {
+                padding: 0.6rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="particles-canvas"></canvas>
+
+    <nav class="navbar">
+        <div class="container nav-content">
+            <div class="logo">
+                <i class="fas fa-shield-alt"></i>
+                SHA-256 Vault
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="records.html" class="active">Records</a></li>
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="profile.html">Profile</a></li>
+            </ul>
+            <button class="logout-btn" id="logoutBtn">Logout</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>Data Records</h1>
+            <p>Store cryptographic fingerprints and verify file/text integrity</p>
+        </div>
+
+        <!-- Store New Fingerprint Card -->
+        <div class="card">
+           <div class="card-header">
+                <h2 style="font-size: 1.6rem; font-weight: 600;">
+                    <i class="fas fa-lock"></i> Store New Data
+                </h2>
+                <span style="background: #e0e7ff; color: #4f46e5; padding: 6px 16px; border-radius: 9999px; font-size: 0.9rem; font-weight: 500;">
+                    SHA-256 • Tamper Proof
+                </span>
+            </div>
+            <div class="tabs">
+                <button class="tab-btn active" id="tabFileBtn" onclick="switchTab('file')">📄 Upload File</button>
+                <button class="tab-btn" id="tabTextBtn" onclick="switchTab('text')">📝 Enter Text</button>
+            </div>
+
+            <!-- File Upload Panel -->
+            <div id="filePanel" class="card-body">
+                <form id="fileUploadForm">
+                    <div class="upload-area" id="dropZone">
+                        <i class="fas fa-cloud-upload-alt" style="font-size: 3rem; color: #64748b;"></i>
+                        <h3 style="margin-top: 1rem;">Drag & drop any file</h3>
+                        <p style="color: #64748b;">or click to browse • Max 10 MB</p>
+                        <input type="file" id="fileInput" hidden accept=".pdf,.docx,.xlsx,.jpg,.jpeg,.png,.txt">
+                        <div id="fileNameDisplay" style="margin-top: 1rem; font-weight: 500;">No file selected</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Label (optional)</label>
+                        <input type="text" id="fileLabel" class="form-control" placeholder="e.g., Contract, Invoice, Photo...">
+                    </div>
+
+                    <button type="submit" class="btn" id="fileUploadBtn"><i class="fas fa-lock"></i> Secure & Upload</button>
+                    <div id="fileUploadStatus" style="margin-top: 1rem; font-size: 0.85rem;"></div>
+                </form>
+            </div>
+
+            <!-- Text Input Panel -->
+            <div id="textPanel" class="card-body" style="display: none;">
+                <form id="textHashForm">
+                    <div class="form-group">
+                        <label class="form-label">Your Text Data</label>
+                        <textarea id="textInput" class="form-control" rows="5" placeholder="Paste or type your text here..."></textarea>
+                        <small style="color: #64748b;">Only the SHA-256 hash is stored.</small>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Label (optional)</label>
+                        <input type="text" id="textLabel" class="form-control" placeholder="e.g., Meeting notes, Secret message">
+                    </div>
+                    <button type="submit" class="btn"><i class="fas fa-database"></i> Save & Generate Hash</button>
+                    <div id="textHashStatus" style="margin-top: 1rem; font-size: 0.85rem;"></div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Records List Card -->
+        <div class="card">
+            <div class="card-header">
+                <h2><i class="fas fa-database"></i> My Integrity Records</h2>
+                <span class="badge">🔐 Secure</span>
+            </div>
+            <div class="stats-bar">
+                <div class="stat-card"><div class="stat-value" id="totalRecords">0</div><div class="stat-label">Total Records</div></div>
+                <div class="stat-card"><div class="stat-value" id="verifiedRecords" style="color:#16a34a;">0</div><div class="stat-label">Verified</div></div>
+                <div class="stat-card"><div class="stat-value" id="tamperedRecords" style="color:#dc2626;">0</div><div class="stat-label">Tampered</div></div>
+                <div class="stat-card"><div class="stat-value" id="totalVerifications">0</div><div class="stat-label">Verifications</div></div>
+            </div>
+            <div class="table-wrapper">
+                <table class="records-table">
+                    <thead>
+                        <tr><th>Name / Label</th><th>Type</th><th>Size</th><th>SHA-256 Hash</th><th>Stored On</th><th>Status</th><th>Actions</th></tr>
+                    </thead>
+                    <tbody id="recordsTableBody">
+                        <tr><td colspan="7" class="empty-state"><div class="empty-state">📭 No records yet. Use the form above.</div></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Verification Guide -->
+        <div class="verification-info">
+            <h3 style="margin-bottom: 1rem;"><i class="fas fa-info-circle"></i> Verification Status Guide</h3>
+            <div class="legend-items">
+                <div class="legend-item"><span class="badge-status badge-pending">⏳ Not Verified</span></div>
+                <div class="legend-item"><span class="badge-status badge-verified">✅ Verified</span></div>
+                <div class="legend-item"><span class="badge-status badge-tampered">⚠️ Tampered</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Verification Modal -->
+    <div id="verifyModal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+            <h3 class="modal-title" id="modalTitle">Verify Integrity</h3>
+            <p id="modalDesc" style="margin-bottom: 1rem;"></p>
+            <div id="modalFileSection" style="display:none;">
+                <label class="form-label">Re-upload the original file</label>
+                <input type="file" id="verifyFileInput" class="form-control">
+            </div>
+            <div id="modalTextSection" style="display:none;">
+                <label class="form-label">Re-enter the original text</label>
+                <textarea id="verifyTextInput" class="form-control" rows="4"></textarea>
+            </div>
+            <div id="verifyResult" style="display:none; margin-top: 1rem; padding: 0.75rem; border-radius: 12px;"></div>
+            <div class="modal-actions">
+                <button class="btn" id="verifySubmitBtn" onclick="submitVerification()">Verify Now</button>
+>>>>>>> 8f6b515 (UI update)
                 <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
             </div>
         </div>
     </div>
 
+<<<<<<< HEAD
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
@@ -265,6 +969,22 @@
         }
 
         // ── Logout ─────────────────────────────────────────────────────────────
+=======
+    <footer>
+        <div class="container">
+            <p>© 2026 Data Integrity Platform • Final Year BTech CSE Project • Built with SHA-256 Security</p>
+        </div>
+    </footer>
+
+    <script>
+        const API = 'http://localhost:5000';
+        let currentVerifyRecord = null;
+
+        function getToken() { return localStorage.getItem('auth_token'); }
+        function authHeaders() { return { 'Authorization': 'Bearer ' + getToken() }; }
+
+        // Logout
+>>>>>>> 8f6b515 (UI update)
         document.getElementById('logoutBtn').addEventListener('click', (e) => {
             e.preventDefault();
             localStorage.removeItem('auth_token');
@@ -272,6 +992,7 @@
             window.location.href = 'login.html';
         });
 
+<<<<<<< HEAD
         // ── Notification ───────────────────────────────────────────────────────
         function showNotification(msg, type = 'success') {
             const el = document.getElementById('notification');
@@ -289,6 +1010,24 @@
         }
 
         // ── Format helpers ─────────────────────────────────────────────────────
+=======
+        // Tab switching
+        window.switchTab = function(tab) {
+            document.getElementById('filePanel').style.display = tab === 'file' ? 'block' : 'none';
+            document.getElementById('textPanel').style.display = tab === 'text' ? 'block' : 'none';
+            const fileBtn = document.getElementById('tabFileBtn');
+            const textBtn = document.getElementById('tabTextBtn');
+            if (tab === 'file') {
+                fileBtn.classList.add('active');
+                textBtn.classList.remove('active');
+            } else {
+                textBtn.classList.add('active');
+                fileBtn.classList.remove('active');
+            }
+        }
+
+        // Format helpers
+>>>>>>> 8f6b515 (UI update)
         function formatDate(iso) {
             if (!iso) return '—';
             return new Date(iso).toLocaleString('en-IN', { year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
@@ -296,6 +1035,7 @@
         function formatSize(bytes) {
             if (!bytes) return '—';
             if (bytes < 1024) return bytes + ' B';
+<<<<<<< HEAD
             if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
             return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
         }
@@ -363,11 +1103,61 @@
                                     onclick="deleteRecord('${r._id}')">
                                 🗑️
                             </button>
+=======
+            if (bytes < 1024*1024) return (bytes/1024).toFixed(1) + ' KB';
+            return (bytes/(1024*1024)).toFixed(1) + ' MB';
+        }
+        function truncateHash(hash) {
+            return hash ? hash.substring(0,16)+'…' : '—';
+        }
+        function statusBadge(status) {
+            if (status === 'verified') return '<span class="badge-status badge-verified">✅ Verified</span>';
+            if (status === 'tampered') return '<span class="badge-status badge-tampered">⚠️ Tampered</span>';
+            return '<span class="badge-status badge-pending">⏳ Not Verified</span>';
+        }
+
+        // Load records
+        async function loadRecords() {
+            const tbody = document.getElementById('recordsTableBody');
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:2rem;">Loading...</td></tr>';
+            try {
+                const res = await fetch(API+'/api/data/my-records', { headers: authHeaders() });
+                if (res.status === 401) { window.location.href='login.html'; return; }
+                const data = await res.json();
+                const s = data.statistics || {};
+                document.getElementById('totalRecords').textContent = s.total_records || 0;
+                document.getElementById('verifiedRecords').textContent = s.verified_count || 0;
+                document.getElementById('tamperedRecords').textContent = s.tampered_count || 0;
+                document.getElementById('totalVerifications').textContent = s.total_verifications || 0;
+
+                const records = data.records || [];
+                if (!records.length) {
+                    tbody.innerHTML = '<tr><td colspan="7" class="empty-state"><div class="empty-state">📭 No records yet. Use the form above.</div></td></tr>';
+                    return;
+                }
+                tbody.innerHTML = '';
+                records.forEach(r => {
+                    const verifyLink = r.verification_id ? `${window.location.origin}/verify.html?id=${r.verification_id}` : null;
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td title="${r.original_filename||''}">${(r.original_filename||'Unnamed').substring(0,30)}</td>
+                        <td>${r.file_type||'—'}</td>
+                        <td>${formatSize(r.file_size)}</td>
+                        <td><code title="${r.data_hash}" onclick="copyToClipboard('${r.data_hash}')">${truncateHash(r.data_hash)}</code></td>
+                        <td>${formatDate(r.created_at)}</td>
+                        <td>${statusBadge(r.last_verification_status)}<br><small style="color:#64748b;">${r.verification_count||0}x verified</small></td>
+                        <td>
+                            <button class="btn btn-secondary" style="font-size:0.75rem;padding:0.3rem 0.8rem;margin-bottom:0.25rem;" onclick="openVerifyModal('${r._id}','${r.upload_method}','${(r.original_filename||'').replace(/'/g,"\\'")}')">🔍 Verify</button>
+                            ${verifyLink ? `<button class="btn btn-secondary" style="font-size:0.75rem;padding:0.3rem 0.8rem;margin-bottom:0.25rem;" onclick="copyShareLink('${verifyLink}')">🔗 Share</button>` : ''}
+                            <button class="btn btn-secondary" style="font-size:0.75rem;padding:0.3rem 0.8rem;margin-bottom:0.25rem;" onclick="downloadCertificate('${r._id}')">📄 Certificate</button>
+                            <button class="btn btn-danger" style="font-size:0.75rem;padding:0.3rem 0.8rem;" onclick="deleteRecord('${r._id}')">🗑️</button>
+>>>>>>> 8f6b515 (UI update)
                         </td>
                     `;
                     tbody.appendChild(row);
                 });
             } catch (err) {
+<<<<<<< HEAD
                 console.error(err);
                 tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:red;padding:1rem;">⚠️ Could not load records. Ensure backend is running.</td></tr>';
             }
@@ -451,11 +1241,72 @@
                     headers: { ...authHeaders(), 'Content-Type': 'application/json' },
                     body:    JSON.stringify({ text, label }),
                 });
+=======
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:red;">⚠️ Could not load records. Ensure backend is running.</td></tr>';
+            }
+        }
+
+        // File upload UI
+        const fileInput = document.getElementById('fileInput');
+        const fileNameDisplay = document.getElementById('fileNameDisplay');
+        const dropZone = document.getElementById('dropZone');
+        function updateFileLabel() {
+            fileNameDisplay.textContent = fileInput.files[0] ? fileInput.files[0].name : 'No file selected';
+        }
+        fileInput.addEventListener('change', updateFileLabel);
+        dropZone.addEventListener('click', () => fileInput.click());
+        dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.style.borderColor = '#4f46e5'; });
+        dropZone.addEventListener('dragleave', () => { dropZone.style.borderColor = '#cbd5e1'; });
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            if (e.dataTransfer.files.length) {
+                fileInput.files = e.dataTransfer.files;
+                updateFileLabel();
+            }
+            dropZone.style.borderColor = '#cbd5e1';
+        });
+
+        // File upload handler
+        document.getElementById('fileUploadForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const statusEl = document.getElementById('fileUploadStatus');
+            if (!fileInput.files.length) { statusEl.innerHTML = '<span style="color:red;">Select a file first.</span>'; return; }
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+            const label = document.getElementById('fileLabel').value.trim();
+            if (label) formData.append('label', label);
+            statusEl.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Computing SHA-256...';
+            try {
+                const res = await fetch(API+'/api/data/upload', { method:'POST', headers: authHeaders(), body: formData });
+                const data = await res.json();
+                if (res.ok) {
+                    statusEl.innerHTML = `<span style="color:green;">✅ Stored! Hash: <code>${data.record.data_hash.substring(0,32)}…</code></span>`;
+                    fileInput.value = ''; updateFileLabel();
+                    document.getElementById('fileLabel').value = '';
+                    loadRecords();
+                } else {
+                    statusEl.innerHTML = `<span style="color:red;">❌ ${data.error||'Upload failed'}</span>`;
+                }
+            } catch { statusEl.innerHTML = '<span style="color:red;">❌ Backend unreachable.</span>'; }
+        });
+
+        // Text upload handler
+        document.getElementById('textHashForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const text = document.getElementById('textInput').value.trim();
+            const label = document.getElementById('textLabel').value.trim();
+            const statusEl = document.getElementById('textHashStatus');
+            if (!text) { statusEl.innerHTML = '<span style="color:red;">Enter some text first.</span>'; return; }
+            statusEl.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Computing SHA-256...';
+            try {
+                const res = await fetch(API+'/api/data/text', { method:'POST', headers: {...authHeaders(), 'Content-Type':'application/json'}, body: JSON.stringify({ text, label }) });
+>>>>>>> 8f6b515 (UI update)
                 const data = await res.json();
                 if (res.ok) {
                     statusEl.innerHTML = `<span style="color:green;">✅ Stored! Hash: <code>${data.record.data_hash.substring(0,32)}…</code></span>`;
                     document.getElementById('textInput').value = '';
                     document.getElementById('textLabel').value = '';
+<<<<<<< HEAD
                     showNotification('Text fingerprint stored successfully!', 'success');
                     loadRecords();
                 } else {
@@ -474,6 +1325,20 @@
                 uploadMethod === 'file'
                     ? 'Re-upload the original file to check if it has been tampered with.'
                     : 'Re-enter the original text to check if it has been tampered with.';
+=======
+                    loadRecords();
+                } else {
+                    statusEl.innerHTML = `<span style="color:red;">❌ ${data.error||'Failed'}</span>`;
+                }
+            } catch { statusEl.innerHTML = '<span style="color:red;">❌ Backend unreachable.</span>'; }
+        });
+
+        // Verification modal
+        function openVerifyModal(recordId, uploadMethod, filename) {
+            currentVerifyRecord = { recordId, uploadMethod, filename };
+            document.getElementById('modalTitle').textContent = 'Verify: ' + (filename || recordId);
+            document.getElementById('modalDesc').textContent = uploadMethod === 'file' ? 'Re-upload the original file.' : 'Re-enter the original text.';
+>>>>>>> 8f6b515 (UI update)
             document.getElementById('modalFileSection').style.display = uploadMethod === 'file' ? 'block' : 'none';
             document.getElementById('modalTextSection').style.display = uploadMethod === 'text' ? 'block' : 'none';
             document.getElementById('verifyResult').style.display = 'none';
@@ -481,28 +1346,39 @@
             document.getElementById('verifyTextInput').value = '';
             document.getElementById('verifyModal').style.display = 'flex';
         }
+<<<<<<< HEAD
 
         function closeModal() {
             document.getElementById('verifyModal').style.display = 'none';
             currentVerifyRecord = null;
         }
 
+=======
+        function closeModal() { document.getElementById('verifyModal').style.display = 'none'; currentVerifyRecord = null; }
+>>>>>>> 8f6b515 (UI update)
         async function submitVerification() {
             if (!currentVerifyRecord) return;
             const { recordId, uploadMethod } = currentVerifyRecord;
             const resultEl = document.getElementById('verifyResult');
             const submitBtn = document.getElementById('verifySubmitBtn');
+<<<<<<< HEAD
 
             submitBtn.disabled = true;
             submitBtn.textContent = '⏳ Verifying…';
             resultEl.style.display = 'none';
 
+=======
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Verifying...';
+            resultEl.style.display = 'none';
+>>>>>>> 8f6b515 (UI update)
             try {
                 let res, data;
                 if (uploadMethod === 'file') {
                     const fileInput = document.getElementById('verifyFileInput');
                     if (!fileInput.files.length) {
                         resultEl.style.display = 'block';
+<<<<<<< HEAD
                         resultEl.style.background = '#fff3e0';
                         resultEl.innerHTML = '⚠️ Please select a file.';
                         submitBtn.disabled = false;
@@ -516,10 +1392,19 @@
                         headers: authHeaders(),
                         body:    fd,
                     });
+=======
+                        resultEl.innerHTML = '⚠️ Please select a file.';
+                        submitBtn.disabled=false; submitBtn.textContent='Verify Now'; return;
+                    }
+                    const fd = new FormData();
+                    fd.append('file', fileInput.files[0]);
+                    res = await fetch(API+'/api/data/'+recordId+'/verify', { method:'POST', headers: authHeaders(), body: fd });
+>>>>>>> 8f6b515 (UI update)
                 } else {
                     const text = document.getElementById('verifyTextInput').value;
                     if (!text.trim()) {
                         resultEl.style.display = 'block';
+<<<<<<< HEAD
                         resultEl.style.background = '#fff3e0';
                         resultEl.innerHTML = '⚠️ Please enter the text.';
                         submitBtn.disabled = false;
@@ -558,12 +1443,33 @@
                     resultEl.innerHTML = '❌ ' + (data.message || data.error || 'Verification failed.');
                 }
                 loadRecords(); // Refresh table to update status
+=======
+                        resultEl.innerHTML = '⚠️ Please enter the text.';
+                        submitBtn.disabled=false; submitBtn.textContent='Verify Now'; return;
+                    }
+                    res = await fetch(API+'/api/data/'+recordId+'/verify', { method:'POST', headers: {...authHeaders(), 'Content-Type':'application/json'}, body: JSON.stringify({ text }) });
+                }
+                data = await res.json();
+                resultEl.style.display = 'block';
+                if (res.ok && data.status === 'verified') {
+                    resultEl.style.background = '#e8f5e9';
+                    resultEl.innerHTML = `<strong style="color:#2e7d32;">✅ VERIFIED — No Tampering Detected</strong><br><br><div><strong>Stored hash:</strong><br><code>${data.stored_hash}</code></div><div><strong>Computed hash:</strong><br><code>${data.computed_hash}</code></div>`;
+                } else if (res.ok && data.status === 'tampered') {
+                    resultEl.style.background = '#ffebee';
+                    resultEl.innerHTML = `<strong style="color:#c62828;">⚠️ TAMPERED — Hash Mismatch!</strong><br><br><div><strong>Stored hash:</strong><br><code>${data.stored_hash}</code></div><div><strong>Computed hash:</strong><br><code>${data.computed_hash}</code></div>`;
+                } else {
+                    resultEl.style.background = '#fff3e0';
+                    resultEl.innerHTML = '❌ ' + (data.message || data.error || 'Verification failed.');
+                }
+                loadRecords();
+>>>>>>> 8f6b515 (UI update)
             } catch (err) {
                 resultEl.style.display = 'block';
                 resultEl.style.background = '#ffebee';
                 resultEl.innerHTML = '❌ Backend unreachable.';
             } finally {
                 submitBtn.disabled = false;
+<<<<<<< HEAD
                 submitBtn.textContent = '🔍 Verify Now';
             }
         }
@@ -797,3 +1703,102 @@
     </footer>
 </body>
 </html>
+=======
+                submitBtn.textContent = 'Verify Now';
+            }
+        }
+
+        // Other actions
+        async function deleteRecord(recordId) { if (confirm('Delete this record?')) { try { const res = await fetch(API+'/api/data/'+recordId, { method:'DELETE', headers: authHeaders() }); if (res.ok) { loadRecords(); alert('Record deleted.'); } else alert('Delete failed.'); } catch { alert('Backend unreachable.'); } } }
+        function copyToClipboard(text) { navigator.clipboard.writeText(text).then(() => alert('Hash copied!')).catch(()=>{}); }
+        function copyShareLink(link) { navigator.clipboard.writeText(link).then(() => alert('Verification link copied!')).catch(()=>prompt('Copy this link:', link)); }
+        async function downloadCertificate(recordId) { try { const res = await fetch(API+'/api/records/'+recordId+'/certificate', { headers: authHeaders() }); if (!res.ok) throw new Error(); const blob = await res.blob(); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `integrity_certificate_${recordId.substring(0,8)}.pdf`; a.click(); URL.revokeObjectURL(url); alert('Certificate downloaded!'); } catch { alert('Failed to generate certificate.'); } }
+
+        // Init
+        window.addEventListener('DOMContentLoaded', () => {
+            if (!getToken()) window.location.href = 'login.html';
+            loadRecords();
+        });
+
+        // Light particle animation (enhanced)
+        (function() {
+            const canvas = document.getElementById('particles-canvas');
+            const ctx = canvas.getContext('2d');
+            let width, height, particles = [];
+            const PARTICLE_COUNT = 70;
+            const CONNECTION_DIST = 120;
+
+            function resize() {
+                width = window.innerWidth;
+                height = window.innerHeight;
+                canvas.width = width;
+                canvas.height = height;
+            }
+
+            function random(min, max) {
+                return Math.random() * (max - min) + min;
+            }
+
+            function initParticles() {
+                particles = [];
+                for (let i = 0; i < PARTICLE_COUNT; i++) {
+                    particles.push({
+                        x: Math.random() * width,
+                        y: Math.random() * height,
+                        vx: random(-0.2, 0.2),
+                        vy: random(-0.2, 0.2),
+                        radius: random(1.2, 2.8),
+                        alpha: random(0.2, 0.5)
+                    });
+                }
+            }
+
+            function draw() {
+                if (!ctx) return;
+                ctx.clearRect(0, 0, width, height);
+                for (let p of particles) {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    if (p.x < 0) p.x = width;
+                    if (p.x > width) p.x = 0;
+                    if (p.y < 0) p.y = height;
+                    if (p.y > height) p.y = 0;
+                }
+                // Draw connections
+                for (let i = 0; i < particles.length; i++) {
+                    for (let j = i + 1; j < particles.length; j++) {
+                        const dx = particles[i].x - particles[j].x;
+                        const dy = particles[i].y - particles[j].y;
+                        const dist = Math.hypot(dx, dy);
+                        if (dist < CONNECTION_DIST) {
+                            ctx.beginPath();
+                            ctx.moveTo(particles[i].x, particles[i].y);
+                            ctx.lineTo(particles[j].x, particles[j].y);
+                            ctx.strokeStyle = `rgba(79, 70, 229, ${(1 - dist / CONNECTION_DIST) * 0.15})`;
+                            ctx.lineWidth = 0.6;
+                            ctx.stroke();
+                        }
+                    }
+                }
+                // Draw particles
+                for (let p of particles) {
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(79, 70, 229, ${p.alpha * 0.8})`;
+                    ctx.fill();
+                }
+                requestAnimationFrame(draw);
+            }
+
+            window.addEventListener('resize', () => {
+                resize();
+                initParticles();
+            });
+            resize();
+            initParticles();
+            draw();
+        })();
+    </script>
+</body>
+</html>
+>>>>>>> 8f6b515 (UI update)

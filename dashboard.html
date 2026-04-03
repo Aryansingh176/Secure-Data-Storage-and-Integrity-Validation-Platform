@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+<<<<<<< HEAD
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Data Integrity Platform</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -160,11 +161,491 @@
 
         </div>
     </main>
+=======
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Dashboard • SHA-256 Vault</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-light: #6366f1;
+            --primary-dark: #4338ca;
+            --neutral-50: #f8fafc;
+            --neutral-100: #f1f5f9;
+            --neutral-200: #e2e8f0;
+            --neutral-700: #334155;
+            --neutral-900: #0f172a;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%);
+            color: var(--neutral-900);
+            line-height: 1.5;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        #particles-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.35;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Navbar (consistent with records/profile) */
+        .navbar {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--neutral-200);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: all 0.2s;
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.25rem 0;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 1.65rem;
+            color: var(--neutral-900);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: var(--neutral-700);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--primary);
+        }
+
+        .logout-btn {
+            background: var(--danger);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 9999px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .logout-btn:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+        }
+
+        /* Welcome section */
+        .welcome-section {
+            text-align: center;
+            padding: 2rem 0 1rem;
+        }
+
+        .welcome-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #0f172a, black);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .welcome-subtitle {
+            color: #475569;
+            margin-top: 0.5rem;
+        }
+
+        /* Cards & stats grid (consistent with records stats bar) */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 1.2rem;
+            margin: 2rem 0 2.5rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 24px;
+            padding: 1.2rem 1rem;
+            text-align: center;
+            box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.03), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+            border: 1px solid var(--neutral-200);
+            transition: all 0.25s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 30px -12px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary-light);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--neutral-900);
+            letter-spacing: -0.02em;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #475569;
+            margin-top: 6px;
+            font-weight: 500;
+        }
+
+        .stat-card.special .stat-value {
+            background: linear-gradient(135deg, #4f46e5, #818cf8);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            font-size: 1.5rem;
+            font-weight: 800;
+        }
+
+        /* Action section */
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 1.5rem 0 1rem;
+            color: var(--neutral-900);
+        }
+
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .action-card {
+            background: white;
+            border-radius: 24px;
+            padding: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            text-decoration: none;
+            border: 1px solid var(--neutral-200);
+            transition: all 0.25s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .action-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--primary);
+            box-shadow: 0 12px 20px -12px rgba(79, 70, 229, 0.2);
+        }
+
+        .action-icon {
+            width: 52px;
+            height: 52px;
+            background: var(--neutral-100);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            color: var(--primary);
+        }
+
+        .action-content {
+            flex: 1;
+        }
+
+        .action-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--neutral-900);
+        }
+
+        .action-description {
+            font-size: 0.8rem;
+            color: #475569;
+            margin-top: 2px;
+        }
+
+        /* Profile banner */
+        .profile-banner {
+            background: #fefce8;
+            border-left: 4px solid #f59e0b;
+            border-radius: 20px;
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin: 1.5rem 0;
+            border: 1px solid #fde68a;
+        }
+
+        .profile-banner-icon {
+            font-size: 1.8rem;
+        }
+
+        .profile-banner-text strong {
+            color: #b45309;
+        }
+
+        .profile-banner-btn {
+            background: #f59e0b;
+            color: white;
+            padding: 6px 20px;
+            border-radius: 40px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.8rem;
+            transition: 0.2s;
+        }
+
+        .profile-banner-btn:hover {
+            background: #d97706;
+            transform: translateY(-2px);
+        }
+
+        /* Activity list */
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            margin-top: 0.5rem;
+        }
+
+        .activity-item {
+            background: white;
+            border-radius: 20px;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border: 1px solid var(--neutral-200);
+            transition: all 0.2s;
+        }
+
+        .activity-item:hover {
+            background: var(--neutral-50);
+            transform: translateX(4px);
+        }
+
+        .activity-icon {
+            font-size: 1.3rem;
+            width: 40px;
+            text-align: center;
+        }
+
+        .activity-details {
+            flex: 1;
+        }
+
+        .activity-action {
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .activity-detail-text {
+            font-size: 0.75rem;
+            color: #475569;
+        }
+
+        .activity-time {
+            font-size: 0.7rem;
+            color: #64748b;
+            white-space: nowrap;
+        }
+
+        /* Footer */
+        footer {
+            background: #0f172a;
+            color: #cbd5e1;
+            padding: 2rem 0;
+            text-align: center;
+            margin-top: 3rem;
+        }
+
+        @media (max-width: 768px) {
+            .nav-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            .nav-links {
+                justify-content: center;
+                gap: 1rem;
+            }
+            .stats-grid {
+                gap: 0.8rem;
+            }
+            .stat-value {
+                font-size: 1.6rem;
+            }
+            .action-grid {
+                grid-template-columns: 1fr;
+            }
+            .profile-banner {
+                flex-direction: column;
+                text-align: center;
+            }
+            .activity-time {
+                white-space: normal;
+                font-size: 0.65rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="particles-canvas"></canvas>
+
+    <nav class="navbar">
+        <div class="container nav-content">
+            <div class="logo">
+                <i class="fas fa-shield-alt"></i>
+                SHA-256 Vault
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="records.html">Records</a></li>
+                <li><a href="dashboard.html" class="active">Dashboard</a></li>
+                <li><a href="profile.html">Profile</a></li>
+            </ul>
+            <button class="logout-btn" id="logoutBtn">Logout</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="welcome-section">
+            <h1 class="welcome-title">Welcome back, <span id="welcomeName">User</span></h1>
+            <p class="welcome-subtitle">Monitor integrity status and manage your cryptographic vault</p>
+        </div>
+
+        <!-- Stats Grid - clean numbers -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" id="totalRecords">0</div>
+                <div class="stat-label">Total Records</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="verifiedRecords">0</div>
+                <div class="stat-label">Verified</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="tamperedRecords">0</div>
+                <div class="stat-label">Tampered</div>
+            </div>
+            <div class="stat-card special">
+                <div class="stat-value">SHA-256</div>
+                <div class="stat-label">Cryptographic Hash</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="totalVerifications">0</div>
+                <div class="stat-label">Verifications</div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <h2 class="section-title"><i class="fas fa-bolt"></i> Quick Actions</h2>
+        <div class="action-grid">
+            <a href="index.html" class="action-card">
+                <div class="action-icon"><i class="fas fa-upload"></i></div>
+                <div class="action-content">
+                    <div class="action-title">Store New Data</div>
+                    <div class="action-description">Upload file or enter text, generate SHA-256 fingerprint</div>
+                </div>
+            </a>
+            <a href="records.html" class="action-card">
+                <div class="action-icon"><i class="fas fa-database"></i></div>
+                <div class="action-content">
+                    <div class="action-title">View Records</div>
+                    <div class="action-description">Browse all stored integrity records</div>
+                </div>
+            </a>
+            <a href="profile.html" class="action-card">
+                <div class="action-icon"><i class="fas fa-user-cog"></i></div>
+                <div class="action-content">
+                    <div class="action-title">Profile Settings</div>
+                    <div class="action-description">Manage account & verification methods</div>
+                </div>
+            </a>
+        </div>
+
+        <!-- Profile completion reminder -->
+        <div id="profileBanner" class="profile-banner" style="display: none;">
+            <div class="profile-banner-icon"><i class="fas fa-id-card"></i></div>
+            <div class="profile-banner-text">
+                <strong>Complete your profile</strong> — Add your phone number and date of birth to unlock full platform features.
+            </div>
+            <a href="profile.html" class="profile-banner-btn">Update now →</a>
+        </div>
+
+        <!-- Recent Activity -->
+        <h2 class="section-title"><i class="fas fa-history"></i> Recent Activity</h2>
+        <div id="activityList" class="activity-list">
+            <div style="text-align: center; padding: 2rem; color: #64748b;"><i class="fas fa-spinner fa-pulse"></i> Loading activity...</div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>© 2026 Data Integrity Platform • Final Year BTech CSE Project • Built with SHA-256 Security</p>
+        </div>
+    </footer>
+>>>>>>> 8f6b515 (UI update)
 
     <script>
         const API_URL = 'http://localhost:5000';
 
+<<<<<<< HEAD
         // Logout handler
+=======
+        function getToken() { return localStorage.getItem('auth_token'); }
+        function authHeaders() { return { 'Authorization': 'Bearer ' + getToken() }; }
+
+        // Logout
+>>>>>>> 8f6b515 (UI update)
         document.getElementById('logoutBtn').addEventListener('click', (e) => {
             e.preventDefault();
             localStorage.removeItem('auth_token');
@@ -172,11 +653,28 @@
             window.location.href = 'login.html';
         });
 
+<<<<<<< HEAD
         function authHeaders() {
             return { 'Authorization': 'Bearer ' + localStorage.getItem('auth_token') };
         }
 
         // Load user profile display name
+=======
+        // Check auth on load
+        window.addEventListener('DOMContentLoaded', () => {
+            if (!getToken()) window.location.href = 'login.html';
+            loadDashboardData();
+        });
+
+        async function loadDashboardData() {
+            try {
+                await Promise.all([loadUserProfile(), loadStatistics(), loadActivity()]);
+            } catch (err) {
+                console.error("Dashboard load error", err);
+            }
+        }
+
+>>>>>>> 8f6b515 (UI update)
         async function loadUserProfile() {
             try {
                 const res = await fetch(`${API_URL}/api/auth/user/profile`, { headers: authHeaders() });
@@ -185,27 +683,45 @@
                     const user = data.user || {};
                     const name = user.name || user.email || 'User';
                     document.getElementById('welcomeName').textContent = name.split(' ')[0];
+<<<<<<< HEAD
                     // Profile completion banner
                     if (!user.profile_completed) {
                         const banner = document.getElementById('profileBanner');
                         if (banner) banner.style.display = 'flex';
+=======
+                    // Show banner if profile incomplete (missing phone or dob)
+                    const hasPhone = user.phone || user.phone_number;
+                    const hasDob = user.date_of_birth;
+                    if (!hasPhone || !hasDob) {
+                        document.getElementById('profileBanner').style.display = 'flex';
+                    } else {
+                        document.getElementById('profileBanner').style.display = 'none';
+>>>>>>> 8f6b515 (UI update)
                     }
                 } else {
                     const email = localStorage.getItem('user_email') || 'User';
                     document.getElementById('welcomeName').textContent = email.split('@')[0];
                 }
+<<<<<<< HEAD
             } catch {
+=======
+            } catch (err) {
+>>>>>>> 8f6b515 (UI update)
                 const email = localStorage.getItem('user_email') || 'User';
                 document.getElementById('welcomeName').textContent = email.split('@')[0];
             }
         }
 
+<<<<<<< HEAD
         // Load per-user statistics from the new endpoint
+=======
+>>>>>>> 8f6b515 (UI update)
         async function loadStatistics() {
             try {
                 const res = await fetch(`${API_URL}/api/data/my-statistics`, { headers: authHeaders() });
                 if (res.status === 401) { window.location.href = 'login.html'; return; }
                 if (!res.ok) return;
+<<<<<<< HEAD
 
                 const data = await res.json();
                 const s = data.statistics || {};
@@ -350,3 +866,145 @@
     </footer>
 </body>
 </html>
+=======
+                const data = await res.json();
+                const s = data.statistics || {};
+                document.getElementById('totalRecords').textContent = s.total_records || 0;
+                document.getElementById('verifiedRecords').textContent = s.verified_count || 0;
+                document.getElementById('tamperedRecords').textContent = s.tampered_count || 0;
+                document.getElementById('totalVerifications').textContent = s.total_verifications || 0;
+            } catch (err) {
+                console.error('Stats error', err);
+                // fallback values
+                document.getElementById('totalRecords').textContent = '—';
+                document.getElementById('verifiedRecords').textContent = '—';
+                document.getElementById('tamperedRecords').textContent = '—';
+                document.getElementById('totalVerifications').textContent = '—';
+            }
+        }
+
+        async function loadActivity() {
+            const container = document.getElementById('activityList');
+            try {
+                const res = await fetch(`${API_URL}/api/activity`, { headers: authHeaders() });
+                if (!res.ok) throw new Error();
+                const data = await res.json();
+                const logs = data.activity || [];
+                if (!logs.length) {
+                    container.innerHTML = '<div style="text-align:center;padding:2rem;color:#64748b;"><i class="fas fa-inbox"></i> No recent activity. Start by uploading a record.</div>';
+                    return;
+                }
+                // Map activity types to human readable + icons
+                const actionMeta = {
+                    upload_record:   { icon: '📄', label: 'Record uploaded', color: '#4f46e5' },
+                    verify_record:   { icon: '🔍', label: 'Integrity verification', color: '#10b981' },
+                    login_success:   { icon: '🔑', label: 'Login', color: '#6366f1' },
+                    otp_verified:    { icon: '✅', label: 'OTP verified', color: '#10b981' },
+                    otp_sent:        { icon: '📧', label: 'Verification code sent', color: '#f59e0b' },
+                    profile_update:  { icon: '👤', label: 'Profile updated', color: '#3b82f6' },
+                    registration:    { icon: '🆕', label: 'Account created', color: '#8b5cf6' },
+                };
+                const html = logs.slice(0, 8).map(log => {
+                    const meta = actionMeta[log.action] || { icon: '📌', label: log.action || 'Activity', color: '#64748b' };
+                    const timestamp = log.timestamp ? new Date(log.timestamp).toLocaleString('en-IN', {
+                        month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                    }) : '';
+                    const statusDetail = log.success === false ? ' ❌ Failed' : (log.details?.status ? ` — ${log.details.status}` : '');
+                    return `
+                        <div class="activity-item">
+                            <div class="activity-icon">${meta.icon}</div>
+                            <div class="activity-details">
+                                <div class="activity-action" style="color:${meta.color};">${meta.label}${statusDetail}</div>
+                                <div class="activity-detail-text">${log.details?.message || ''}</div>
+                            </div>
+                            <div class="activity-time">${timestamp}</div>
+                        </div>
+                    `;
+                }).join('');
+                container.innerHTML = html;
+            } catch (err) {
+                container.innerHTML = '<div style="text-align:center;padding:2rem;color:#64748b;"><i class="fas fa-exclamation-triangle"></i> Could not load activity history.</div>';
+            }
+        }
+
+        // Particle network background (same as records.html)
+        (function() {
+            const canvas = document.getElementById('particles-canvas');
+            const ctx = canvas.getContext('2d');
+            let width, height, particles = [];
+            const PARTICLE_COUNT = 70;
+            const CONNECTION_DIST = 130;
+
+            function resize() {
+                width = window.innerWidth;
+                height = window.innerHeight;
+                canvas.width = width;
+                canvas.height = height;
+            }
+
+            function random(min, max) {
+                return Math.random() * (max - min) + min;
+            }
+
+            function initParticles() {
+                particles = [];
+                for (let i = 0; i < PARTICLE_COUNT; i++) {
+                    particles.push({
+                        x: Math.random() * width,
+                        y: Math.random() * height,
+                        vx: random(-0.2, 0.2),
+                        vy: random(-0.2, 0.2),
+                        radius: random(1.2, 2.8),
+                        alpha: random(0.2, 0.5)
+                    });
+                }
+            }
+
+            function draw() {
+                if (!ctx) return;
+                ctx.clearRect(0, 0, width, height);
+                for (let p of particles) {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    if (p.x < 0) p.x = width;
+                    if (p.x > width) p.x = 0;
+                    if (p.y < 0) p.y = height;
+                    if (p.y > height) p.y = 0;
+                }
+                // Draw connections
+                for (let i = 0; i < particles.length; i++) {
+                    for (let j = i + 1; j < particles.length; j++) {
+                        const dx = particles[i].x - particles[j].x;
+                        const dy = particles[i].y - particles[j].y;
+                        const dist = Math.hypot(dx, dy);
+                        if (dist < CONNECTION_DIST) {
+                            ctx.beginPath();
+                            ctx.moveTo(particles[i].x, particles[i].y);
+                            ctx.lineTo(particles[j].x, particles[j].y);
+                            ctx.strokeStyle = `rgba(79, 70, 229, ${(1 - dist / CONNECTION_DIST) * 0.15})`;
+                            ctx.lineWidth = 0.6;
+                            ctx.stroke();
+                        }
+                    }
+                }
+                for (let p of particles) {
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(79, 70, 229, ${p.alpha * 0.8})`;
+                    ctx.fill();
+                }
+                requestAnimationFrame(draw);
+            }
+
+            window.addEventListener('resize', () => {
+                resize();
+                initParticles();
+            });
+            resize();
+            initParticles();
+            draw();
+        })();
+    </script>
+</body>
+</html>
+>>>>>>> 8f6b515 (UI update)
