@@ -2,166 +2,6 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-<<<<<<< HEAD
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Data Integrity Platform</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/dashboard-style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="stylesheet" href="css/footer.css">
-    <script>
-        // Check authentication
-        window.addEventListener('DOMContentLoaded', () => {
-            const token = localStorage.getItem('auth_token');
-            if (!token) {
-                window.location.href = 'login.html';
-            }
-        });
-    </script>
-</head>
-<body>
-    <!-- Top Navigation Bar -->
-    <nav class="top-navbar">
-        <div class="navbar-container">
-            <div class="navbar-left">
-                <div class="logo-section">
-                    <span class="logo-icon">🔒</span>
-                    <span class="logo-text">Data Integrity Platform</span>
-                </div>
-            </div>
-            <div class="navbar-right">
-                <ul class="nav-links">
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="records.html">View Records</a></li>
-                    <li><a href="dashboard.html" class="active">Dashboard</a></li>
-                    <li><a href="profile.html">Profile</a></li>
-                    <li><a href="#" id="logoutBtn" style="color: #ff6b6b;">Logout</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Main Content -->
-    <main class="dashboard-main">
-        <div class="dashboard-container">
-            <!-- Welcome Section -->
-            <div class="welcome-section">
-                <h1 class="welcome-title">Welcome, <span id="welcomeName">User</span></h1>
-                <p class="welcome-subtitle">Manage your data with cryptographic integrity verification</p>
-            </div>
-
-            <!-- Quick Stats Cards -->
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-icon" style="background: #e3f2fd;">
-                        <span style="color: #1976d2;">📊</span>
-                    </div>
-                    <div class="stat-content">
-                        <div class="stat-value" id="totalRecords">0</div>
-                        <div class="stat-label">Total Records</div>
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-icon" style="background: #e8f5e9;">
-                        <span style="color: #388e3c;">✅</span>
-                    </div>
-                    <div class="stat-content">
-                        <div class="stat-value" id="verifiedRecords">0</div>
-                        <div class="stat-label">Verified</div>
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-icon" style="background: #ffebee;">
-                        <span style="color: #c62828;">⚠️</span>
-                    </div>
-                    <div class="stat-content">
-                        <div class="stat-value" id="tamperedRecords">0</div>
-                        <div class="stat-label">Tampered</div>
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-icon" style="background: #fff3e0;">
-                        <span style="color: #f57c00;">🔐</span>
-                    </div>
-                    <div class="stat-content">
-                        <div class="stat-value">SHA-256</div>
-                        <div class="stat-label">Algorithm</div>
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-icon" style="background: #f3e5f5;">
-                        <span style="color: #7b1fa2;">⚡</span>
-                    </div>
-                    <div class="stat-content">
-                        <div class="stat-value" id="totalVerifications">0</div>
-                        <div class="stat-label">Total Verifications</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Action Cards -->
-            <div class="action-section">
-                <h2 class="section-title">Quick Actions</h2>
-                <div class="action-grid">
-                    <a href="index.html" class="action-card">
-                        <div class="action-icon" style="background: #e3f2fd; color: #1976d2;">
-                            <span>➕</span>
-                        </div>
-                        <div class="action-content">
-                            <h3 class="action-title">Store New Data</h3>
-                            <p class="action-description">Add and secure new data records</p>
-                        </div>
-                    </a>
-
-                    <a href="records.html" class="action-card">
-                        <div class="action-icon" style="background: #e8f5e9; color: #388e3c;">
-                            <span>📋</span>
-                        </div>
-                        <div class="action-content">
-                            <h3 class="action-title">View Records</h3>
-                            <p class="action-description">Browse all stored records</p>
-                        </div>
-                    </a>
-
-                    <a href="profile.html" class="action-card">
-                        <div class="action-icon" style="background: #f3e5f5; color: #7b1fa2;">
-                            <span>⚙️</span>
-                        </div>
-                        <div class="action-content">
-                            <h3 class="action-title">Profile Settings</h3>
-                            <p class="action-description">Manage your account details</p>
-                        </div>
-                    </a>
-                </div>
-            </div>
-
-            <!-- Profile Completion Banner (shown only if incomplete) -->
-            <div id="profileBanner" style="display:none;background:linear-gradient(135deg,#fff3e0,#ffe0b2);border:1.5px solid #ff9800;border-radius:12px;padding:1rem 1.5rem;margin-top:1.5rem;display:none;align-items:center;gap:1rem;">
-                <span style="font-size:1.8rem;">👤</span>
-                <div style="flex:1;">
-                    <strong style="color:#e65100;">Complete Your Profile</strong>
-                    <p style="font-size:0.85rem;color:#555;margin-top:2px;">Add your phone number and date of birth to unlock all platform features.</p>
-                </div>
-                <a href="profile.html" style="background:#e65100;color:#fff;padding:0.4rem 1rem;border-radius:6px;text-decoration:none;font-size:0.88rem;font-weight:600;">Complete Now</a>
-            </div>
-
-            <!-- Recent Activity -->
-            <div class="action-section" style="margin-top:2rem;">
-                <h2 class="section-title">Recent Activity</h2>
-                <div id="activityList" style="display:flex;flex-direction:column;gap:0.6rem;">
-                    <div style="text-align:center;padding:2rem;color:#999;">Loading activity…</div>
-                </div>
-            </div>
-
-        </div>
-    </main>
-=======
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Dashboard • SHA-256 Vault</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -290,7 +130,7 @@
         .welcome-title {
             font-size: 2.2rem;
             font-weight: 800;
-            background: linear-gradient(135deg, #0f172a, black);
+            background: linear-gradient(135deg, #0f172a, #4f46e5);
             background-clip: text;
             -webkit-background-clip: text;
             color: transparent;
@@ -301,7 +141,7 @@
             margin-top: 0.5rem;
         }
 
-        /* Cards & stats grid (consistent with records stats bar) */
+        /* Cards & stats grid */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
@@ -633,19 +473,14 @@
             <p>© 2026 Data Integrity Platform • Final Year BTech CSE Project • Built with SHA-256 Security</p>
         </div>
     </footer>
->>>>>>> 8f6b515 (UI update)
 
     <script>
         const API_URL = 'http://localhost:5000';
 
-<<<<<<< HEAD
-        // Logout handler
-=======
         function getToken() { return localStorage.getItem('auth_token'); }
         function authHeaders() { return { 'Authorization': 'Bearer ' + getToken() }; }
 
         // Logout
->>>>>>> 8f6b515 (UI update)
         document.getElementById('logoutBtn').addEventListener('click', (e) => {
             e.preventDefault();
             localStorage.removeItem('auth_token');
@@ -653,13 +488,6 @@
             window.location.href = 'login.html';
         });
 
-<<<<<<< HEAD
-        function authHeaders() {
-            return { 'Authorization': 'Bearer ' + localStorage.getItem('auth_token') };
-        }
-
-        // Load user profile display name
-=======
         // Check auth on load
         window.addEventListener('DOMContentLoaded', () => {
             if (!getToken()) window.location.href = 'login.html';
@@ -674,7 +502,6 @@
             }
         }
 
->>>>>>> 8f6b515 (UI update)
         async function loadUserProfile() {
             try {
                 const res = await fetch(`${API_URL}/api/auth/user/profile`, { headers: authHeaders() });
@@ -683,12 +510,6 @@
                     const user = data.user || {};
                     const name = user.name || user.email || 'User';
                     document.getElementById('welcomeName').textContent = name.split(' ')[0];
-<<<<<<< HEAD
-                    // Profile completion banner
-                    if (!user.profile_completed) {
-                        const banner = document.getElementById('profileBanner');
-                        if (banner) banner.style.display = 'flex';
-=======
                     // Show banner if profile incomplete (missing phone or dob)
                     const hasPhone = user.phone || user.phone_number;
                     const hasDob = user.date_of_birth;
@@ -696,177 +517,22 @@
                         document.getElementById('profileBanner').style.display = 'flex';
                     } else {
                         document.getElementById('profileBanner').style.display = 'none';
->>>>>>> 8f6b515 (UI update)
                     }
                 } else {
                     const email = localStorage.getItem('user_email') || 'User';
                     document.getElementById('welcomeName').textContent = email.split('@')[0];
                 }
-<<<<<<< HEAD
-            } catch {
-=======
             } catch (err) {
->>>>>>> 8f6b515 (UI update)
                 const email = localStorage.getItem('user_email') || 'User';
                 document.getElementById('welcomeName').textContent = email.split('@')[0];
             }
         }
 
-<<<<<<< HEAD
-        // Load per-user statistics from the new endpoint
-=======
->>>>>>> 8f6b515 (UI update)
         async function loadStatistics() {
             try {
                 const res = await fetch(`${API_URL}/api/data/my-statistics`, { headers: authHeaders() });
                 if (res.status === 401) { window.location.href = 'login.html'; return; }
                 if (!res.ok) return;
-<<<<<<< HEAD
-
-                const data = await res.json();
-                const s = data.statistics || {};
-                document.getElementById('totalRecords').textContent      = s.total_records       || 0;
-                document.getElementById('verifiedRecords').textContent   = s.verified_count      || 0;
-                document.getElementById('tamperedRecords').textContent   = s.tampered_count      || 0;
-                document.getElementById('totalVerifications').textContent = s.total_verifications || 0;
-            } catch (err) {
-                console.error('Error loading stats:', err);
-            }
-        }
-
-        // Load recent activity feed from audit_logs
-        async function loadActivity() {
-            const container = document.getElementById('activityList');
-            if (!container) return;
-            try {
-                const res = await fetch(`${API_URL}/api/activity`, { headers: authHeaders() });
-                if (!res.ok) {
-                    container.innerHTML = '<div style="text-align:center;color:#999;padding:1rem;">No recent activity.</div>';
-                    return;
-                }
-                const data = await res.json();
-                const logs = data.activity || [];
-                if (!logs.length) {
-                    container.innerHTML = '<div style="text-align:center;color:#999;padding:1rem;">No activity yet. Start by uploading a record!</div>';
-                    return;
-                }
-                const ACTION_ICONS = {
-                    upload_record:   { icon: '📤', label: 'Uploaded record',   color: '#1976d2' },
-                    verify_record:   { icon: '🔍', label: 'Verified record',   color: '#388e3c' },
-                    login_success:   { icon: '🔑', label: 'Logged in',         color: '#7b1fa2' },
-                    otp_verified:    { icon: '✅', label: 'OTP Verified',      color: '#2e7d32' },
-                    otp_sent:        { icon: '📧', label: 'OTP Sent',          color: '#f57c00' },
-                    profile_update:  { icon: '👤', label: 'Profile Updated',   color: '#0288d1' },
-                    registration:    { icon: '🆕', label: 'Registered',        color: '#6a1b9a' },
-                };
-                container.innerHTML = logs.map(log => {
-                    const a = ACTION_ICONS[log.action] || { icon: '📌', label: log.action, color: '#555' };
-                    const ts = log.timestamp ? new Date(log.timestamp).toLocaleString('en-IN', {
-                        month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
-                    }) : '';
-                    const success = log.success !== false;
-                    return `<div style="display:flex;align-items:center;gap:0.75rem;background:${success ? '#fff' : '#fff8f8'};border:1px solid ${success ? '#e8eae6' : '#ffcdd2'};border-radius:10px;padding:0.6rem 1rem;">
-                        <span style="font-size:1.3rem;flex-shrink:0;">${a.icon}</span>
-                        <div style="flex:1;">
-                            <span style="font-weight:600;font-size:0.88rem;color:${a.color};">${a.label}</span>
-                            ${!success ? ' <span style="font-size:0.78rem;color:#c62828;">(Failed)</span>' : ''}
-                            ${log.details && log.details.status ? ` — <span style="font-size:0.78rem;color:${log.details.status==='tampered'?'#c62828':'#2e7d32'};">${log.details.status}</span>` : ''}
-                        </div>
-                        <span style="font-size:0.78rem;color:#999;flex-shrink:0;">${ts}</span>
-                    </div>`;
-                }).join('');
-            } catch (err) {
-                container.innerHTML = '<div style="text-align:center;color:#999;padding:1rem;">Could not load activity.</div>';
-            }
-        }
-
-        window.addEventListener('DOMContentLoaded', () => {
-            loadUserProfile();
-            loadStatistics();
-            loadActivity();
-        });
-    </script>
-
-    <!-- Site Footer -->
-    <footer class="site-footer">
-        <div class="footer-container">
-            <div class="footer-grid">
-
-                <!-- Column 1: About Platform -->
-                <div class="footer-col">
-                    <div class="footer-brand">
-                        <span class="footer-brand-icon">&#128274;</span>
-                        <span class="footer-brand-name">Data Integrity Platform</span>
-                    </div>
-                    <p class="footer-desc">Secure data storage and integrity verification using SHA-256 cryptographic hashing. Built as a Final Year BTech CSE Project.</p>
-                    <div class="footer-social">
-                        <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-                        <a href="#" title="Twitter"><i class="fab fa-twitter"></i></a>
-                        <a href="#" title="GitHub"><i class="fab fa-github"></i></a>
-                    </div>
-                </div>
-
-                <!-- Column 2: Quick Links -->
-                <div class="footer-col">
-                    <p class="footer-col-title">Quick Links</p>
-                    <ul class="footer-links">
-                        <li><a href="index.html">Home</a></li>
-                        <li><a href="dashboard.html">Dashboard</a></li>
-                        <li><a href="records.html">View Records</a></li>
-                        <li><a href="profile.html">Profile Settings</a></li>
-                    </ul>
-                </div>
-
-                <!-- Column 3: Support -->
-                <div class="footer-col">
-                    <p class="footer-col-title">Support</p>
-                    <ul class="footer-links">
-                        <li><a href="#">Help Center</a></li>
-                        <li><a href="#">FAQs</a></li>
-                        <li><a href="#">Contact Us</a></li>
-                        <li><a href="#">Privacy Policy</a></li>
-                    </ul>
-                </div>
-
-                <!-- Column 4: Technologies Used -->
-                <div class="footer-col">
-                    <p class="footer-col-title">Technologies Used</p>
-                    <ul class="footer-tech-list">
-                        <li class="footer-tech-item">
-                            <span class="footer-tech-icon flask"><i class="fas fa-flask"></i></span>
-                            Flask Backend
-                        </li>
-                        <li class="footer-tech-item">
-                            <span class="footer-tech-icon mongo"><i class="fas fa-database"></i></span>
-                            MongoDB Database
-                        </li>
-                        <li class="footer-tech-item">
-                            <span class="footer-tech-icon sha"><i class="fas fa-shield-alt"></i></span>
-                            SHA-256 Cryptographic Hashing
-                        </li>
-                        <li class="footer-tech-item">
-                            <span class="footer-tech-icon google"><i class="fab fa-google"></i></span>
-                            Google OAuth Authentication
-                        </li>
-                    </ul>
-                </div>
-
-            </div>
-
-            <div class="footer-divider"></div>
-            <div class="footer-bottom">
-                <p class="footer-copyright">&copy; 2026 Data Integrity Platform | Final Year BTech CSE Project</p>
-                <div class="footer-bottom-badge">
-                    <i class="fas fa-lock"></i>
-                    Built with <span>SHA-256</span> Security
-                </div>
-            </div>
-        </div>
-    </footer>
-</body>
-</html>
-=======
                 const data = await res.json();
                 const s = data.statistics || {};
                 document.getElementById('totalRecords').textContent = s.total_records || 0;
@@ -875,7 +541,6 @@
                 document.getElementById('totalVerifications').textContent = s.total_verifications || 0;
             } catch (err) {
                 console.error('Stats error', err);
-                // fallback values
                 document.getElementById('totalRecords').textContent = '—';
                 document.getElementById('verifiedRecords').textContent = '—';
                 document.getElementById('tamperedRecords').textContent = '—';
@@ -894,7 +559,6 @@
                     container.innerHTML = '<div style="text-align:center;padding:2rem;color:#64748b;"><i class="fas fa-inbox"></i> No recent activity. Start by uploading a record.</div>';
                     return;
                 }
-                // Map activity types to human readable + icons
                 const actionMeta = {
                     upload_record:   { icon: '📄', label: 'Record uploaded', color: '#4f46e5' },
                     verify_record:   { icon: '🔍', label: 'Integrity verification', color: '#10b981' },
@@ -927,7 +591,7 @@
             }
         }
 
-        // Particle network background (same as records.html)
+        // Particle network background (matching records page)
         (function() {
             const canvas = document.getElementById('particles-canvas');
             const ctx = canvas.getContext('2d');
@@ -1007,4 +671,3 @@
     </script>
 </body>
 </html>
->>>>>>> 8f6b515 (UI update)

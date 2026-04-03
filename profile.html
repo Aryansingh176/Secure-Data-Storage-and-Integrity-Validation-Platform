@@ -2,302 +2,6 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-<<<<<<< HEAD
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile Settings - Data Integrity Platform</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/dashboard-style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="stylesheet" href="css/footer.css">
-    <style>
-        /* OTP shake animation */
-        @keyframes otp-shake {
-            0%,100% { transform: translateX(0); }
-            20% { transform: translateX(-6px); }
-            40% { transform: translateX(6px); }
-            60% { transform: translateX(-4px); }
-            80% { transform: translateX(4px); }
-        }
-        .otp-error-shake {
-            animation: otp-shake 0.4s ease;
-        }
-        .otp-error-digit {
-            border-color: #dc2626 !important;
-            background: #fff5f5 !important;
-        }
-        .otp-inline-error {
-            display: none;
-            margin-top: 10px;
-            padding: 9px 13px;
-            background: #fee2e2;
-            border: 1px solid #fca5a5;
-            border-radius: 8px;
-            color: #991b1b;
-            font-size: 13px;
-            font-weight: 500;
-        }
-        .otp-inline-error.show { display: block; }
-        .otp-inline-success {
-            display: none;
-            margin-top: 10px;
-            padding: 9px 13px;
-            background: #dcfce7;
-            border: 1px solid #86efac;
-            border-radius: 8px;
-            color: #166534;
-            font-size: 13px;
-            font-weight: 500;
-        }
-        .otp-inline-success.show { display: block; }
-        .email-verified-badge {
-            display: none;
-            align-items: center;
-            gap: 5px;
-            margin-top: 5px;
-            font-size: 12.5px;
-            font-weight: 600;
-            color: #166534;
-        }
-        .email-verified-badge.show { display: flex; }
-        .email-verified-badge svg { width: 15px; height: 15px; }
-        .form-input.verified-input {
-            border-color: #16a34a !important;
-            background: #f0fdf4 !important;
-            color: #166534;
-        }
-
-        /* Udemy Style Overrides */
-        body, .dashboard-body { background-color: #f7f8fa !important; }
-        .dashboard-main { padding: 0 !important; background: transparent !important; }
-        
-        .udemy-layout {
-            display: flex;
-            flex-direction: column;
-            gap: 2rem;
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 20px;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        @media (min-width: 900px) {
-            .udemy-layout { flex-direction: row; align-items: flex-start; }
-            .udemy-sidebar { flex: 0 0 280px; position: sticky; top: 100px; }
-            .udemy-content { flex: 1 1 auto; min-width: 0; }
-        }
-        
-        .avatar-card-ud {
-            background: #fff;
-            padding: 24px;
-            text-align: center;
-            border: 1px solid #d1d5db;
-        }
-        .avatar-circle-ud {
-            width: 96px; height: 96px;
-            border-radius: 50%;
-            background: #1c1d1f; color: #fff;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 32px; font-weight: 700;
-            margin: 0 auto 16px auto;
-        }
-        .avatar-name-ud { font-weight: 700; font-size: 19px; color: #1c1d1f; margin-bottom: 4px; }
-        .avatar-role-ud { font-size: 13px; color: #6b7280; margin-bottom: 16px; }
-        
-        .sidebar-menu-ud {
-            list-style: none; padding: 0; margin: 0;
-            background: #fff;
-            border: 1px solid #d1d5db;
-            border-top: none;
-        }
-        .sidebar-menu-ud li { margin: 0; border-bottom: 1px solid #d1d5db;}
-        .sidebar-menu-ud li:last-child { border-bottom: none; }
-        
-        .sidebar-menu-ud a {
-            display: block; padding: 16px 20px;
-            color: #1c1d1f; text-decoration: none;
-            font-weight: 500; font-size: 15px;
-            transition: background 0.2s, color 0.2s;
-            cursor: pointer;
-            border-left: 4px solid transparent;
-        }
-        .sidebar-menu-ud a:hover { background: #f3f4f6; }
-        .sidebar-menu-ud a.active { background: #f3f4f6; border-left-color: #5022c3; font-weight: 700; }
-        
-        .content-header-ud { margin-bottom: 32px; text-align: left; border-bottom: 1px solid #d1d5db; padding-bottom: 24px;}
-        .content-title-ud { font-size: 32px; font-weight: 700; color: #1c1d1f; margin-bottom: 8px; margin-top:0; }
-        .content-subtitle-ud { color: #1c1d1f; font-size: 16px; margin:0; }
-        
-        .udemy-card {
-            background: #ffffff;
-            margin-bottom: 32px;
-            border: 1px solid #d1d5db;
-            scroll-margin-top: 100px;
-        }
-        .udemy-card-header { border-bottom: 1px solid #d1d5db; padding: 24px; background: #fff;}
-        .udemy-card-title { font-size: 20px; font-weight: 700; color: #1c1d1f; margin: 0 0 8px 0; }
-        .udemy-card-subtitle { font-size: 15px; color: #6b7280; margin:0;}
-        .udemy-card-body { padding: 24px; background: #fff; }
-        
-        .form-group-ud { margin-bottom: 24px; }
-        .form-label-ud { display: block; font-weight: 700; font-size: 15px; margin-bottom: 8px; color: #1c1d1f; }
-        .form-input-ud {
-            width: 100%; padding: 14px 16px;
-            border: 1px solid #1c1d1f;
-            border-radius: 0;
-            font-size: 15px;
-            color: #1c1d1f;
-            transition: background 0.2s;
-            font-family: inherit;
-            box-sizing: border-box;
-            background: #fff;
-        }
-        .form-input-ud:focus {
-            outline: none; background: #fff; border-color: #5022c3; box-shadow: 0 0 0 2px rgba(80,34,195,0.15);
-        }
-        .form-input-ud:disabled, .form-input-ud[readonly] { background-color: #f3f4f6; color: #6b7280; cursor: not-allowed; border-color: #d1d5db; }
-        .form-hint-ud { display: block; font-size: 13px; color: #6b7280; margin-top: 8px; }
-        .required-star { color: #dc2626; }
-        
-        .save-btn-container-ud { text-align: left; padding: 24px 0 40px 0; border-top: 1px solid #d1d5db; margin-top: 32px; }
-        .udemy-save-btn {
-            background: #1c1d1f; color: white;
-            border: none; padding: 16px 24px;
-            font-size: 16px; font-weight: 700;
-            cursor: pointer;
-            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-            min-width: 160px;
-            transition: background 0.2s;
-        }
-        .udemy-save-btn:hover { background: #000; }
-        .udemy-save-btn:disabled { opacity: 0.7; cursor: not-allowed; }
-        
-        .message-box { padding: 16px; border-radius: 4px; margin-bottom: 24px; font-weight: 700; font-size: 15px; display:none; }
-        .message-success { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
-        .message-error { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
-
-        .udemy-verify-card {
-            border: 1px solid #d1d5db; padding: 24px; margin-bottom: 24px; background: #fff;
-        }
-        .udemy-verify-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 20px; }
-        .udemy-verify-icon { font-size: 24px; margin-right: 16px; color: #1c1d1f; }
-        .udemy-verify-title-group { display: flex; align-items: flex-start; }
-        .udemy-verify-title { font-weight: 700; color: #1c1d1f; font-size: 18px; margin: 0 0 4px 0; }
-        
-        .udemy-badge { font-size: 12px; font-weight: 700; padding: 6px 12px; border-radius: 4px; letter-spacing: 0.5px; }
-        .udemy-badge-pending { background: #fef08a; color: #854d0e; }
-        .udemy-badge-verified { background: #dcfce7; color: #166534; }
-        
-        .udemy-btn-secondary { background: transparent; color: #1c1d1f; border: 1px solid #1c1d1f; padding: 12px 20px; font-size: 15px; font-weight: 700; cursor: pointer; transition: background 0.2s;}
-        .udemy-btn-secondary:hover { background: rgba(0,0,0,0.05); }
-        .udemy-btn-primary { background: #5022c3; color: white; border: none; padding: 12px 20px; font-size: 15px; font-weight: 700; cursor: pointer; transition: background 0.2s;}
-        .udemy-btn-primary:hover { background: #3e1b99; }
-        
-        .email-verified-badge {
-            display: none; align-items: center; justify-content: flex-start;
-            color: #16a34a; font-weight: 700; font-size: 14px; margin-top: 8px;
-        }
-        .email-verified-badge svg { width: 18px; height: 18px; margin-right: 6px; }
-
-        .otp-inputs { display: flex; gap: 10px; margin: 16px 0; }
-        .otp-digit {
-            width: 50px; height: 60px;
-            border: 1px solid #1c1d1f;
-            text-align: center;
-            font-size: 24px; font-weight: 700;
-            outline: none;
-            background: #fff;
-        }
-        .otp-digit:focus { border-color: #5022c3; box-shadow: 0 0 0 2px rgba(80,34,195,0.15); }
-        
-        /* Smooth scrolling */
-        html { scroll-behavior: smooth; }
-    </style>
-
-    <script>
-        // Check authentication
-        window.addEventListener('DOMContentLoaded', () => {
-            const token = localStorage.getItem('auth_token');
-            if (!token) {
-                window.location.href = 'login.html';
-            }
-        });
-    </script>
-</head>
-<body>
-    <!-- Top Navigation Bar -->
-    <nav class="top-navbar">
-        <div class="navbar-container">
-            <div class="navbar-left">
-                <div class="logo-section">
-                    <span class="logo-icon">🔒</span>
-                    <span class="logo-text">Data Integrity Platform</span>
-                </div>
-            </div>
-            <div class="navbar-right">
-                <ul class="nav-links">
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="records.html">View Records</a></li>
-                    <li><a href="dashboard.html">Dashboard</a></li>
-                    <li><a href="profile.html" class="active">Profile</a></li>
-                    <li><a href="#" id="logoutBtn" style="color: #ff6b6b;">Logout</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Main Content -->
-    <main class="dashboard-main">
-        <div class="udemy-layout">
-            <!-- Left Sidebar -->
-            <aside class="udemy-sidebar">
-                <div class="avatar-card-ud">
-                    <div class="avatar-circle-ud">AS</div>
-                    <div class="avatar-name-ud" id="sidebarAvatarName">My Profile</div>
-                    <div class="avatar-role-ud">Data Platform User</div>
-                </div>
-                <ul class="sidebar-menu-ud">
-                    <li><a href="#section-personal" class="sidebar-link active" onclick="activateLink(this)">Profile</a></li>
-                    <li><a href="#section-contact" class="sidebar-link" onclick="activateLink(this)">Contact Info</a></li>
-                    <li><a href="#section-account" class="sidebar-link" onclick="activateLink(this)">Account Setup</a></li>
-                    <li><a href="#section-verification" class="sidebar-link" onclick="activateLink(this)">Security & Identity</a></li>
-                </ul>
-            </aside>
-
-            <!-- Right Main Content -->
-            <div class="udemy-content">
-                <div class="content-header-ud">
-                    <h1 class="content-title-ud">Public profile</h1>
-                    <p class="content-subtitle-ud">Add information about yourself</p>
-                </div>
-
-                <!-- Success/Error Message -->
-                <div class="message-box" id="messageBox" style="display:none;"></div>
-
-                <form id="profileForm">
-                    <!-- Personal Information -->
-                    <div class="udemy-card" id="section-personal">
-                        <div class="udemy-card-header">
-                            <h2 class="udemy-card-title">Basics</h2>
-                            <p class="udemy-card-subtitle">Information visible across the platform</p>
-                        </div>
-                        <div class="udemy-card-body">
-                            <div class="form-group-ud">
-                                <label for="fullName" class="form-label-ud">Full Name <span class="required-star">*</span></label>
-                                <input type="text" id="fullName" name="fullName" class="form-input-ud" required maxlength="60">
-                            </div>
-                            <div class="form-group-ud">
-                                <label for="email" class="form-label-ud">Email Address <span class="required-star">*</span></label>
-                                <input type="email" id="email" name="email" class="form-input-ud" required>
-                                <div class="email-verified-badge" id="emailFieldVerifiedBadge">
-                                    <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
-                                    Email verified successfully.
-                                </div>
-                            </div>
-                            <div class="form-group-ud">
-                                <label for="dateOfBirth" class="form-label-ud">Date of Birth</label>
-                                <input type="date" id="dateOfBirth" name="dateOfBirth" class="form-input-ud">
-=======
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Profile • SHA-256 Vault</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -534,7 +238,7 @@
             font-weight: 500;
         }
 
-        /* Verification cards (style aligned with SHA-256 Vault) */
+        /* Verification cards */
         .verify-card {
             background: white;
             border-radius: 24px;
@@ -775,10 +479,9 @@
     </nav>
 
     <div class="container">
-        <!-- Profile Main Card -->
         <div class="glass-card">
             <div class="card-header">
-                <h2><i class="fas fa-user-astronaut"></i> My Identity Vault</h2>
+                <h2>Profile</h2>
                 <p style="color:#475569;">Manage your personal information and security credentials</p>
             </div>
             <div class="card-body">
@@ -795,8 +498,7 @@
                 </div>
 
                 <form id="profileForm">
-                    <!-- Personal information section -->
-                    <h3 style="margin-bottom: 1rem; font-weight: 700;"><i class="fas fa-address-card"></i> Basic Information</h3>
+                    <h3 style="margin-bottom: 1rem; font-weight: 700;">Basic Information</h3>
                     <div class="form-group">
                         <label class="form-label">Full Name <span class="required-star">*</span></label>
                         <input type="text" id="fullName" class="form-control" placeholder="Your full name" maxlength="60">
@@ -819,14 +521,12 @@
 
                     <hr>
 
-                    <!-- Security & Verification Section (inspired by modern OTP flow) -->
-                    <h3 style="margin-bottom: 1.5rem; font-weight: 700;"><i class="fas fa-shield-alt"></i> Identity Verification</h3>
+                    <h3 style="margin-bottom: 1.5rem; font-weight: 700;">Identity Verification</h3>
                     
                     <!-- Email Verification Card -->
                     <div class="verify-card" id="emailVerifyCard">
                         <div class="verify-header">
                             <div class="verify-title-group">
-                                <span class="verify-icon">✉️</span>
                                 <div>
                                     <div class="verify-title">Email verification</div>
                                     <div class="verify-subtitle" id="emailVerifyHint">Secure your account with email confirmation</div>
@@ -850,28 +550,14 @@
                             <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
                                 <button type="button" onclick="verifyOtp('email')" class="btn-primary">Verify code</button>
                                 <button type="button" onclick="resetOtpStep('email')" class="btn-outline">Resend code</button>
->>>>>>> 8f6b515 (UI update)
                             </div>
                         </div>
                     </div>
 
-<<<<<<< HEAD
-                    <!-- Contact Details -->
-                    <div class="udemy-card" id="section-contact">
-                        <div class="udemy-card-header">
-                            <h2 class="udemy-card-title">Contact Information</h2>
-                            <p class="udemy-card-subtitle">Help us reach out for important notifications</p>
-                        </div>
-                        <div class="udemy-card-body">
-                            <div class="form-group-ud">
-                                <label for="phoneNumber" class="form-label-ud">Phone Number</label>
-                                <input type="tel" id="phoneNumber" name="phoneNumber" class="form-input-ud" placeholder="+91 XXXXX XXXXX">
-=======
                     <!-- Phone Verification Card -->
                     <div class="verify-card" id="phoneVerifyCard">
                         <div class="verify-header">
                             <div class="verify-title-group">
-                                <span class="verify-icon">📱</span>
                                 <div>
                                     <div class="verify-title">Phone verification</div>
                                     <div class="verify-subtitle" id="phoneVerifyHint">Add phone number to enhance security</div>
@@ -895,170 +581,19 @@
                             <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
                                 <button type="button" onclick="verifyOtp('phone')" class="btn-primary">Verify code</button>
                                 <button type="button" onclick="resetOtpStep('phone')" class="btn-outline">Resend code</button>
->>>>>>> 8f6b515 (UI update)
                             </div>
                         </div>
                     </div>
 
-<<<<<<< HEAD
-                    <!-- System Information -->
-                    <div class="udemy-card" id="section-account">
-                        <div class="udemy-card-header">
-                            <h2 class="udemy-card-title">System Info</h2>
-                            <p class="udemy-card-subtitle">Automated records attached to your profile</p>
-                        </div>
-                        <div class="udemy-card-body">
-                            <div style="display:flex;gap:20px;">
-                                <div style="flex:1;">
-                                    <label class="form-label-ud">Member Since</label>
-                                    <input type="text" id="memberSince" class="form-input-ud" readonly>
-                                </div>
-                                <div style="flex:1;">
-                                    <label class="form-label-ud">Last Login</label>
-                                    <input type="text" id="lastLogin" class="form-input-ud" readonly>
-                                </div>
-                            </div>
-                            <div class="form-group-ud" style="margin-top:24px;">
-                                <label class="form-label-ud">Google Connect</label>
-                                <input type="text" id="googleId" class="form-input-ud" readonly placeholder="Not connected via Google">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Security & Identity -->
-                    <div class="udemy-card" id="section-verification" style="border:none;background:transparent;padding:0;margin-bottom:0;">
-                        <h2 style="font-size:24px;font-weight:700;color:#1c1d1f;margin:0 0 8px 0;">Identity Verification</h2>
-                        <p style="font-size:16px;color:#1c1d1f;margin:0 0 24px 0;">Add a layer of security to your data integrity profile</p>
-
-                        <!-- Email Verification -->
-                        <div class="udemy-verify-card">
-                            <div class="udemy-verify-header">
-                                <div class="udemy-verify-title-group">
-                                    <span class="udemy-verify-icon">✉️</span>
-                                    <div>
-                                        <p class="udemy-verify-title">Email Verification</p>
-                                        <p class="udemy-card-subtitle" id="emailVerifyHint">Send an OTP to verify your email address</p>
-                                    </div>
-                                </div>
-                                <span id="emailVerifyBadge" class="udemy-badge udemy-badge-pending">PENDING</span>
-                            </div>
-                            <div id="emailSendStep">
-                                <button type="button" onclick="sendOtp('email')" id="sendEmailOtpBtn" class="udemy-btn-secondary">Send Verification Code</button>
-                            </div>
-                            <div id="emailVerifyStep" style="display:none; margin-top:20px;">
-                                <p style="font-size:15px;color:#1c1d1f;font-weight:700;margin-bottom:12px;">Enter 6-digit code</p>
-                                <div id="emailOtpDigitRow" class="otp-inputs">
-                                    <input class="otp-digit" data-channel="email" type="text" maxlength="1" inputmode="numeric">
-                                    <input class="otp-digit" data-channel="email" type="text" maxlength="1" inputmode="numeric">
-                                    <input class="otp-digit" data-channel="email" type="text" maxlength="1" inputmode="numeric">
-                                    <input class="otp-digit" data-channel="email" type="text" maxlength="1" inputmode="numeric">
-                                    <input class="otp-digit" data-channel="email" type="text" maxlength="1" inputmode="numeric">
-                                    <input class="otp-digit" data-channel="email" type="text" maxlength="1" inputmode="numeric">
-                                </div>
-                                <div id="emailOtpError" class="otp-inline-error"></div>
-                                <div id="emailOtpSuccess" class="otp-inline-success"></div>
-                                <div style="display:flex;gap:16px;align-items:center; margin-top: 10px;">
-                                    <button type="button" onclick="verifyOtp('email')" id="verifyEmailOtpBtn" class="udemy-btn-primary">Verify</button>
-                                    <button type="button" onclick="resetOtpStep('email')" style="background:none;border:none;color:#5022c3;font-size:15px;cursor:pointer;font-weight:700;">Resend Code</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Phone Verification -->
-                        <div class="udemy-verify-card" style="margin-bottom:0;">
-                            <div class="udemy-verify-header">
-                                <div class="udemy-verify-title-group">
-                                    <span class="udemy-verify-icon">📱</span>
-                                    <div>
-                                        <p class="udemy-verify-title">Phone Verification</p>
-                                        <p class="udemy-card-subtitle" id="phoneVerifyHint">Send an OTP to verify your phone number</p>
-                                    </div>
-                                </div>
-                                <span id="phoneVerifyBadge" class="udemy-badge udemy-badge-pending">PENDING</span>
-                            </div>
-                            <div id="phoneSendStep">
-                                <button type="button" onclick="sendOtp('phone')" id="sendPhoneOtpBtn" class="udemy-btn-secondary">Send Verification Code</button>
-                            </div>
-                            <div id="phoneVerifyStep" style="display:none; margin-top:20px;">
-                                <p style="font-size:15px;color:#1c1d1f;font-weight:700;margin-bottom:12px;">Enter 6-digit code</p>
-                                <div id="phoneOtpDigitRow" class="otp-inputs">
-                                    <input class="otp-digit" data-channel="phone" type="text" maxlength="1" inputmode="numeric">
-                                    <input class="otp-digit" data-channel="phone" type="text" maxlength="1" inputmode="numeric">
-                                    <input class="otp-digit" data-channel="phone" type="text" maxlength="1" inputmode="numeric">
-                                    <input class="otp-digit" data-channel="phone" type="text" maxlength="1" inputmode="numeric">
-                                    <input class="otp-digit" data-channel="phone" type="text" maxlength="1" inputmode="numeric">
-                                    <input class="otp-digit" data-channel="phone" type="text" maxlength="1" inputmode="numeric">
-                                </div>
-                                <div id="phoneOtpError" class="otp-inline-error"></div>
-                                <div id="phoneOtpSuccess" class="otp-inline-success"></div>
-                                <div style="display:flex;gap:16px;align-items:center; margin-top: 10px;">
-                                    <button type="button" onclick="verifyOtp('phone')" id="verifyPhoneOtpBtn" class="udemy-btn-primary">Verify</button>
-                                    <button type="button" onclick="resetOtpStep('phone')" style="background:none;border:none;color:#5022c3;font-size:15px;cursor:pointer;font-weight:700;">Resend Code</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Submit -->
-                    <div class="save-btn-container-ud">
-                        <button type="submit" class="udemy-save-btn" id="saveBtn">
-                            <span id="saveBtnText">Save Settings</span>
-                            <span id="saveBtnLoader" style="display:none;"><i class="fas fa-spinner fa-spin"></i></span>
-=======
                     <div style="text-align: right; margin-top: 2rem;">
                         <button type="submit" class="save-btn" id="saveBtn">
                             <span id="saveBtnText"><i class="fas fa-save"></i> Save Profile Changes</span>
                             <span id="saveBtnLoader" style="display: none;"><i class="fas fa-spinner fa-pulse"></i></span>
->>>>>>> 8f6b515 (UI update)
                         </button>
                     </div>
                 </form>
             </div>
         </div>
-<<<<<<< HEAD
-    </main>
-    <script>
-        function activateLink(element) {
-            document.querySelectorAll('.sidebar-link').forEach(link => link.classList.remove('active'));
-            element.classList.add('active');
-        }
-        
-        const uiFullName = document.getElementById('fullName');
-        if(uiFullName) {
-            uiFullName.addEventListener('input', function(e) {
-                const val = (e.target.value || '').trim() || 'User Profile';
-                const sidebarAvatarName = document.getElementById('sidebarAvatarName');
-                if(sidebarAvatarName) sidebarAvatarName.textContent = val;
-                
-                const nameParts = val.split(' ');
-                let initials = 'U';
-                if (nameParts.length > 0 && nameParts[0].length > 0) {
-                    initials = nameParts[0].charAt(0).toUpperCase();
-                }
-                if(nameParts.length > 1 && nameParts[nameParts.length - 1].length > 0) {
-                    initials += nameParts[nameParts.length - 1].charAt(0).toUpperCase();
-                }
-                const avatarCircle = document.querySelector('.avatar-circle-ud');
-                if(avatarCircle) avatarCircle.textContent = initials;
-            });
-        }
-        
-        document.addEventListener('DOMContentLoaded', () => {
-            setTimeout(() => {
-                if(uiFullName) {
-                    const evt = new Event('input', { bubbles: true });
-                    uiFullName.dispatchEvent(evt);
-                }
-            }, 600);
-        });
-    </script>
-
-
-    <script>
-        const API_URL = 'http://localhost:5000';
-
-        // Logout handler
-=======
     </div>
 
     <footer>
@@ -1074,8 +609,6 @@
         function getToken() { return localStorage.getItem('auth_token'); }
         function authHeaders() { return { 'Authorization': 'Bearer ' + getToken() }; }
 
-        // Logout
->>>>>>> 8f6b515 (UI update)
         document.getElementById('logoutBtn').addEventListener('click', (e) => {
             e.preventDefault();
             localStorage.removeItem('auth_token');
@@ -1083,99 +616,6 @@
             window.location.href = 'login.html';
         });
 
-<<<<<<< HEAD
-        // Show message
-        function showMessage(message, type = 'success') {
-            const messageBox = document.getElementById('messageBox');
-            messageBox.textContent = message;
-            messageBox.className = `message-box message-${type}`;
-            messageBox.style.display = 'block';
-            
-            setTimeout(() => {
-                messageBox.style.display = 'none';
-            }, 5000);
-        }
-
-        // Load user profile
-        async function loadUserProfile() {
-            const token = localStorage.getItem('auth_token');
-            try {
-                const response = await fetch(`${API_URL}/api/auth/user/profile`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    const user = data.user;
-                    
-                    // Populate form
-                    document.getElementById('fullName').value = user.name || '';
-                    document.getElementById('email').value = user.email || '';
-                    document.getElementById('dateOfBirth').value = user.date_of_birth || '';
-                    document.getElementById('phoneNumber').value = user.phone || user.phone_number || '';
-                    document.getElementById('googleId').value = user.google_id || 'N/A';
-
-                    // Update OTP verification badge status
-                    if (user.email_verified) {
-                        const b = document.getElementById('emailVerifyBadge');
-                        b.textContent = 'VERIFIED ✓'; b.style.background = '#d4edda'; b.style.color = '#155724';
-                        document.getElementById('emailVerifyHint').textContent = 'Your email has been verified.';
-                        document.getElementById('emailSendStep').innerHTML = '<p style="color:#166534;font-size:13px;font-weight:600;background:#dcfce7;padding:9px 13px;border-radius:8px;border:1px solid #86efac;">✅ Email is verified</p>';
-                        // Green indicator on email field
-                        const emailInput = document.getElementById('email');
-                        if (emailInput) emailInput.classList.add('verified-input');
-                        const verifiedBadge = document.getElementById('emailFieldVerifiedBadge');
-                        if (verifiedBadge) verifiedBadge.classList.add('show');
-                    }
-                    if (user.phone_verified) {
-                        const b = document.getElementById('phoneVerifyBadge');
-                        b.textContent = 'VERIFIED ✓'; b.style.background = '#d4edda'; b.style.color = '#155724';
-                        document.getElementById('phoneVerifyHint').textContent = 'Your phone has been verified.';
-                        document.getElementById('phoneSendStep').innerHTML = '<p style="color:#155724;font-size:13px;font-weight:600;">✅ Phone is verified</p>';
-                    }
-                    
-                    // Format dates
-                    if (user.created_at) {
-                        const createdDate = new Date(user.created_at);
-                        document.getElementById('memberSince').value = createdDate.toLocaleDateString('en-US', {
-                            year: 'numeric', month: 'long', day: 'numeric'
-                        });
-                    }
-                    
-                    if (user.last_login) {
-                        const lastLoginDate = new Date(user.last_login);
-                        document.getElementById('lastLogin').value = lastLoginDate.toLocaleString('en-US', {
-                            year: 'numeric', month: 'long', day: 'numeric',
-                            hour: '2-digit', minute: '2-digit'
-                        });
-                    }
-                } else {
-                    showMessage('Failed to load profile data', 'error');
-                }
-            } catch (error) {
-                console.error('Error loading profile:', error);
-                showMessage('Error connecting to server', 'error');
-            }
-        }
-
-        // Save profile
-        document.getElementById('profileForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const saveBtn = document.getElementById('saveBtn');
-            const saveBtnText = document.getElementById('saveBtnText');
-            const saveBtnLoader = document.getElementById('saveBtnLoader');
-            
-            // Show loading
-            saveBtn.disabled = true;
-            saveBtnText.style.display = 'none';
-            saveBtnLoader.style.display = 'inline';
-            
-            const token = localStorage.getItem('auth_token');
-            const profileData = {
-=======
         function showMessage(msg, type = 'success') {
             const box = document.getElementById('globalMessage');
             box.textContent = msg;
@@ -1192,7 +632,6 @@
             avatar.textContent = initials;
         }
 
-        // Load full profile
         async function loadUserProfile() {
             try {
                 const res = await fetch(`${API}/api/auth/user/profile`, { headers: authHeaders() });
@@ -1210,7 +649,6 @@
                 document.getElementById('googleIdSpan').innerHTML = user.google_id ? 'Connected' : 'Not linked';
                 updateAvatar(user.name || user.email);
                 
-                // Update email verification UI
                 const emailVerified = user.email_verified === true;
                 const emailBadge = document.getElementById('emailVerifyBadge');
                 const emailHint = document.getElementById('emailVerifyHint');
@@ -1230,7 +668,6 @@
                     document.getElementById('email').classList.remove('verified-input');
                 }
                 
-                // Phone verification UI
                 const phoneVerified = user.phone_verified === true;
                 const phoneBadge = document.getElementById('phoneVerifyBadge');
                 const phoneHint = document.getElementById('phoneVerifyHint');
@@ -1245,7 +682,6 @@
                     phoneHint.textContent = 'Verify your phone number for extra security';
                     document.getElementById('phoneSendStep').innerHTML = '<button type="button" onclick="sendOtp(\'phone\')" id="sendPhoneOtpBtn" class="btn-secondary"><i class="fas fa-mobile-alt"></i> Send verification code</button>';
                 }
-                // Reset OTP steps visibility
                 document.getElementById('emailVerifyStep').style.display = 'none';
                 document.getElementById('phoneVerifyStep').style.display = 'none';
             } catch (err) {
@@ -1253,7 +689,6 @@
             }
         }
 
-        // Update profile
         document.getElementById('profileForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const saveBtn = document.getElementById('saveBtn');
@@ -1264,57 +699,11 @@
             loader.style.display = 'inline';
             
             const payload = {
->>>>>>> 8f6b515 (UI update)
                 name: document.getElementById('fullName').value,
                 email: document.getElementById('email').value,
                 date_of_birth: document.getElementById('dateOfBirth').value || null,
                 phone_number: document.getElementById('phoneNumber').value || null
             };
-<<<<<<< HEAD
-            
-            try {
-                const response = await fetch(`${API_URL}/api/auth/user/profile`, {
-                    method: 'PUT',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(profileData)
-                });
-
-                const data = await response.json();
-                
-                if (response.ok) {
-                    showMessage('Profile updated successfully!', 'success');
-                    // Update localStorage email if changed
-                    localStorage.setItem('user_email', profileData.email);
-                } else {
-                    showMessage(data.error || 'Failed to update profile', 'error');
-                }
-            } catch (error) {
-                console.error('Error saving profile:', error);
-                showMessage('Error connecting to server', 'error');
-            } finally {
-                // Hide loading
-                saveBtn.disabled = false;
-                saveBtnText.style.display = 'inline';
-                saveBtnLoader.style.display = 'none';
-            }
-        });
-
-        // Initialize
-        window.addEventListener('DOMContentLoaded', () => {
-            loadUserProfile();
-            initOtpBoxes();
-        });
-
-        // ── OTP Verification ──────────────────────────────────────────────────
-        function initOtpBoxes() {
-            document.querySelectorAll('.otp-digit').forEach((input, idx, all) => {
-                const channelInputs = Array.from(all).filter(i => i.dataset.channel === input.dataset.channel);
-                const localIdx = channelInputs.indexOf(input);
-
-=======
             try {
                 const res = await fetch(`${API}/api/auth/user/profile`, {
                     method: 'PUT',
@@ -1326,7 +715,7 @@
                     showMessage('Profile updated successfully!', 'success');
                     localStorage.setItem('user_email', payload.email);
                     updateAvatar(payload.name);
-                    await loadUserProfile(); // refresh verification status
+                    await loadUserProfile();
                 } else {
                     showMessage(data.error || 'Update failed', 'error');
                 }
@@ -1339,13 +728,11 @@
             }
         });
 
-        // OTP shared logic
         function initOtpBoxes() {
             document.querySelectorAll('.otp-digit').forEach((input, idx, all) => {
                 const channel = input.dataset.channel;
                 const channelInputs = Array.from(all).filter(i => i.dataset.channel === channel);
                 const localIdx = channelInputs.indexOf(input);
->>>>>>> 8f6b515 (UI update)
                 input.addEventListener('input', function () {
                     this.value = this.value.replace(/\D/g, '');
                     if (this.value && localIdx < channelInputs.length - 1) channelInputs[localIdx + 1].focus();
@@ -1364,44 +751,6 @@
         }
 
         async function sendOtp(channel) {
-<<<<<<< HEAD
-            const identifier = channel === 'email'
-                ? document.getElementById('email').value.trim().toLowerCase()
-                : document.getElementById('phoneNumber').value.trim();
-
-            if (!identifier) {
-                showMessage(`Please fill in your ${channel === 'email' ? 'email address' : 'phone number'} above first.`, 'error');
-                return;
-            }
-
-            const btn = document.getElementById(channel === 'email' ? 'sendEmailOtpBtn' : 'sendPhoneOtpBtn');
-            btn.textContent = 'Sending…';
-            btn.disabled = true;
-
-            try {
-                const token = localStorage.getItem('auth_token');
-                const res = await fetch(`${API_URL}/api/auth/resend-otp`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                    body: JSON.stringify({ identifier, channel, purpose: 'registration' })
-                });
-                const data = await res.json();
-
-                if (res.ok && data.success) {
-                    document.getElementById(`${channel}SendStep`).style.display = 'none';
-                    document.getElementById(`${channel}VerifyStep`).style.display = 'block';
-                    document.querySelector(`.otp-digit[data-channel="${channel}"]`).focus();
-                    showMessage(`OTP sent to your ${channel}!`, 'success');
-                } else {
-                    showMessage(data.error || `Failed to send OTP to ${channel}.`, 'error');
-                    btn.disabled = false;
-                    btn.textContent = `Send ${channel === 'email' ? 'Email' : 'Phone'} OTP`;
-                }
-            } catch (e) {
-                showMessage('Cannot reach server.', 'error');
-                btn.disabled = false;
-                btn.textContent = `Send ${channel === 'email' ? 'Email' : 'Phone'} OTP`;
-=======
             const identifier = channel === 'email' ? document.getElementById('email').value.trim() : document.getElementById('phoneNumber').value.trim();
             if (!identifier) {
                 showMessage(`Please enter your ${channel === 'email' ? 'email address' : 'phone number'} first and save.`, 'error');
@@ -1433,7 +782,6 @@
             } finally {
                 btn.innerHTML = originalText;
                 btn.disabled = false;
->>>>>>> 8f6b515 (UI update)
             }
         }
 
@@ -1441,95 +789,6 @@
             const digits = Array.from(document.querySelectorAll(`.otp-digit[data-channel="${channel}"]`)).map(i => i.value);
             const otp = digits.join('');
             if (otp.length !== 6) { showMessage('Enter all 6 digits.', 'error'); return; }
-<<<<<<< HEAD
-
-            const identifier = channel === 'email'
-                ? document.getElementById('email').value.trim().toLowerCase()
-                : document.getElementById('phoneNumber').value.trim();
-
-            const btn = document.getElementById(channel === 'email' ? 'verifyEmailOtpBtn' : 'verifyPhoneOtpBtn');
-            btn.textContent = 'Verifying…';
-            btn.disabled = true;
-
-            try {
-                const token = localStorage.getItem('auth_token');
-                const endpoint = channel === 'email' ? '/api/auth/verify-email' : '/api/auth/verify-phone';
-                const res = await fetch(`${API_URL}${endpoint}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                    body: JSON.stringify({ identifier, otp })
-                });
-                const data = await res.json();
-
-                if (res.ok && data.success) {
-                    // Mark badge as verified
-                    const badge = document.getElementById(`${channel}VerifyBadge`);
-                    badge.textContent = 'VERIFIED ✓';
-                    badge.style.background = '#d4edda';
-                    badge.style.color = '#155724';
-                    document.getElementById(`${channel}VerifyHint`).textContent = `Your ${channel} has been verified successfully.`;
-
-                    if (channel === 'email') {
-                        // Show inline success inside OTP step
-                        const successEl = document.getElementById('emailOtpSuccess');
-                        successEl.textContent = '✅ Email verified successfully!';
-                        successEl.classList.add('show');
-                        const errEl = document.getElementById('emailOtpError');
-                        if (errEl) errEl.classList.remove('show');
-
-                        // Green indicator on the email input field
-                        const emailInput = document.getElementById('email');
-                        emailInput.classList.add('verified-input');
-                        const verifiedBadge = document.getElementById('emailFieldVerifiedBadge');
-                        if (verifiedBadge) verifiedBadge.classList.add('show');
-
-                        // Hide the verify buttons row, keep success message
-                        setTimeout(() => {
-                            document.getElementById('emailVerifyStep').style.display = 'none';
-                            document.getElementById('emailSendStep').innerHTML =
-                                '<p style="color:#166534;font-size:13px;font-weight:600;background:#dcfce7;padding:9px 13px;border-radius:8px;border:1px solid #86efac;">✅ Email verified successfully!</p>';
-                        }, 1500);
-                    } else {
-                        document.getElementById(`${channel}VerifyStep`).style.display = 'none';
-                        document.getElementById(`${channel}SendStep`).innerHTML =
-                            '<p style="color:#166534;font-size:13px;font-weight:600;background:#dcfce7;padding:9px 13px;border-radius:8px;border:1px solid #86efac;">✅ Phone verified successfully!</p>';
-                    }
-                    showMessage(`${channel === 'email' ? 'Email' : 'Phone'} verified successfully!`, 'success');
-                } else {
-                    const errorMsg = data.error || data.message || 'Invalid OTP. Please try again.';
-                    if (channel === 'email') {
-                        // Show inline error
-                        const errEl = document.getElementById('emailOtpError');
-                        errEl.textContent = '❌ ' + errorMsg;
-                        errEl.classList.add('show');
-                        const successEl = document.getElementById('emailOtpSuccess');
-                        if (successEl) successEl.classList.remove('show');
-                        // Shake and highlight OTP digits red
-                        const digitRow = document.getElementById('emailOtpDigitRow');
-                        const digits = digitRow.querySelectorAll('.otp-digit');
-                        digits.forEach(d => d.classList.add('otp-error-digit'));
-                        digitRow.classList.remove('otp-error-shake');
-                        void digitRow.offsetWidth; // reflow to restart animation
-                        digitRow.classList.add('otp-error-shake');
-                        // Remove error styling after 2s so user can retry
-                        setTimeout(() => {
-                            digits.forEach(d => {
-                                d.classList.remove('otp-error-digit');
-                                d.value = '';
-                            });
-                            digits[0].focus();
-                        }, 1200);
-                    } else {
-                        showMessage(errorMsg, 'error');
-                    }
-                    btn.disabled = false;
-                    btn.textContent = `Verify ${channel === 'email' ? 'Email' : 'Phone'}`;
-                }
-            } catch (e) {
-                showMessage('Network error.', 'error');
-                btn.disabled = false;
-                btn.textContent = `Verify ${channel === 'email' ? 'Email' : 'Phone'}`;
-=======
             const identifier = channel === 'email' ? document.getElementById('email').value.trim() : document.getElementById('phoneNumber').value.trim();
             const btn = document.getElementById(channel === 'email' ? 'verifyEmailOtpBtn' : 'verifyPhoneOtpBtn');
             if (btn) btn.disabled = true;
@@ -1542,7 +801,6 @@
                 });
                 const data = await res.json();
                 if (res.ok && data.success) {
-                    // update UI to verified state
                     const badge = document.getElementById(`${channel}VerifyBadge`);
                     badge.textContent = 'VERIFIED ✓';
                     badge.classList.add('verified');
@@ -1579,7 +837,6 @@
                 showMessage('Verification request failed', 'error');
             } finally {
                 if (btn) btn.disabled = false;
->>>>>>> 8f6b515 (UI update)
             }
         }
 
@@ -1587,99 +844,11 @@
             document.getElementById(`${channel}SendStep`).style.display = 'block';
             document.getElementById(`${channel}VerifyStep`).style.display = 'none';
             document.querySelectorAll(`.otp-digit[data-channel="${channel}"]`).forEach(i => i.value = '');
-<<<<<<< HEAD
-            const btn = document.getElementById(channel === 'email' ? 'sendEmailOtpBtn' : 'sendPhoneOtpBtn');
-            btn.disabled = false;
-            btn.textContent = `Send ${channel === 'email' ? 'Email' : 'Phone'} OTP`;
-        }
-    </script>
-
-    <!-- Site Footer -->
-    <footer class="site-footer">
-        <div class="footer-container">
-            <div class="footer-grid">
-
-                <!-- Column 1: About Platform -->
-                <div class="footer-col">
-                    <div class="footer-brand">
-                        <span class="footer-brand-icon">&#128274;</span>
-                        <span class="footer-brand-name">Data Integrity Platform</span>
-                    </div>
-                    <p class="footer-desc">Secure data storage and integrity verification using SHA-256 cryptographic hashing. Built as a Final Year BTech CSE Project.</p>
-                    <div class="footer-social">
-                        <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-                        <a href="#" title="Twitter"><i class="fab fa-twitter"></i></a>
-                        <a href="#" title="GitHub"><i class="fab fa-github"></i></a>
-                    </div>
-                </div>
-
-                <!-- Column 2: Quick Links -->
-                <div class="footer-col">
-                    <p class="footer-col-title">Quick Links</p>
-                    <ul class="footer-links">
-                        <li><a href="index.html">Home</a></li>
-                        <li><a href="dashboard.html">Dashboard</a></li>
-                        <li><a href="records.html">View Records</a></li>
-                        <li><a href="profile.html">Profile Settings</a></li>
-                    </ul>
-                </div>
-
-                <!-- Column 3: Support -->
-                <div class="footer-col">
-                    <p class="footer-col-title">Support</p>
-                    <ul class="footer-links">
-                        <li><a href="#">Help Center</a></li>
-                        <li><a href="#">FAQs</a></li>
-                        <li><a href="#">Contact Us</a></li>
-                        <li><a href="#">Privacy Policy</a></li>
-                    </ul>
-                </div>
-
-                <!-- Column 4: Technologies Used -->
-                <div class="footer-col">
-                    <p class="footer-col-title">Technologies Used</p>
-                    <ul class="footer-tech-list">
-                        <li class="footer-tech-item">
-                            <span class="footer-tech-icon flask"><i class="fas fa-flask"></i></span>
-                            Flask Backend
-                        </li>
-                        <li class="footer-tech-item">
-                            <span class="footer-tech-icon mongo"><i class="fas fa-database"></i></span>
-                            MongoDB Database
-                        </li>
-                        <li class="footer-tech-item">
-                            <span class="footer-tech-icon sha"><i class="fas fa-shield-alt"></i></span>
-                            SHA-256 Cryptographic Hashing
-                        </li>
-                        <li class="footer-tech-item">
-                            <span class="footer-tech-icon google"><i class="fab fa-google"></i></span>
-                            Google OAuth Authentication
-                        </li>
-                    </ul>
-                </div>
-
-            </div>
-
-            <div class="footer-divider"></div>
-            <div class="footer-bottom">
-                <p class="footer-copyright">&copy; 2026 Data Integrity Platform | Final Year BTech CSE Project</p>
-                <div class="footer-bottom-badge">
-                    <i class="fas fa-lock"></i>
-                    Built with <span>SHA-256</span> Security
-                </div>
-            </div>
-        </div>
-    </footer>
-</body>
-</html>
-
-=======
             const msgDiv = document.getElementById(`${channel}OtpMessage`);
             if (msgDiv) msgDiv.style.display = 'none';
         }
 
-        // Particle animation (same as records page)
+        // Particle animation
         (function() {
             const canvas = document.getElementById('particles-canvas');
             const ctx = canvas.getContext('2d');
@@ -1725,4 +894,3 @@
     </script>
 </body>
 </html>
->>>>>>> 8f6b515 (UI update)
