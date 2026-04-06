@@ -1,38 +1,59 @@
-# Data Integrity Platform - Backend Dependencies
-# BTech CSE Final Year Project
-
-# Flask Framework
-Flask==3.0.0
-flask-cors==4.0.0
-
-# MongoDB Driver
-pymongo[srv]==4.6.1
-
-# Environment Variables
-python-dotenv==1.0.0
-
-# Date/Time handling
-python-dateutil==2.8.2
-
-# Authentication & OAuth
-PyJWT==2.8.0
-google-auth==2.27.0
-google-auth-oauthlib==1.2.0
-google-auth-httplib2==0.2.0
-requests==2.31.0
+﻿aiohappyeyeballs==2.6.1
+aiohttp==3.13.3
+aiohttp-retry==2.9.1
+aiosignal==1.4.0
+attrs==25.4.0
+blinker==1.9.0
+cachetools==5.5.2
+certifi==2026.1.4
+cffi==2.0.0
+charset-normalizer==3.4.4
+click==8.3.1
+colorama==0.4.6
 cryptography==41.0.7
-
-# OTP Security — password hashing for OTP storage
-Werkzeug==3.0.1          # generate_password_hash / check_password_hash (pbkdf2:sha256)
-                         # Also provides secure_filename for safe file upload handling
-
-# SMS Service — optional, used for phone OTP
-# twilio==8.10.0         # Uncomment to enable real SMS in production
-
-# Rate Limiting (integrity routes)
-flask-limiter==3.5.0
-
-# Structured Logging (optional, for production JSON logs)
+Deprecated==1.3.1
+dnspython==2.8.0
+Flask==3.0.0
+Flask-Cors==4.0.0
+Flask-Limiter==3.5.0
+frozenlist==1.8.0
+google-auth==2.27.0
+google-auth-httplib2==0.2.0
+google-auth-oauthlib==1.2.0
+gunicorn==25.3.0
+httplib2==0.31.2
+idna==3.11
+itsdangerous==2.2.0
+Jinja2==3.1.6
+limits==5.8.0
+markdown-it-py==4.0.0
+MarkupSafe==3.0.3
+mdurl==0.1.2
+multidict==6.7.1
+oauthlib==3.3.1
+ordered-set==4.1.0
+packaging==26.0
+pillow==12.1.1
+propcache==0.4.1
+pyasn1==0.6.2
+pyasn1_modules==0.4.2
+pycparser==3.0
+Pygments==2.19.2
+PyJWT==2.8.0
+pymongo==4.6.1
+pyparsing==3.3.2
+python-dateutil==2.8.2
+python-dotenv==1.0.0
 python-json-logger==2.0.7
-                         # In development mode, OTP is printed to console
-
+reportlab==4.4.10
+requests==2.31.0
+requests-oauthlib==2.0.0
+rich==13.9.4
+rsa==4.9.1
+six==1.17.0
+twilio==9.10.2
+typing_extensions==4.15.0
+urllib3==2.6.3
+Werkzeug==3.1.5
+wrapt==2.1.2
+yarl==1.22.0
