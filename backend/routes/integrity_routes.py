@@ -34,6 +34,7 @@ from flask import Blueprint, request, jsonify, make_response
 from werkzeug.utils import secure_filename
 import hashlib
 import io
+import os
 from datetime import datetime
 from bson import ObjectId
 
@@ -80,7 +81,7 @@ def init_integrity_routes(db):
     global _data_model, _audit_model
     _data_model  = DataModel(db)
     _audit_model = AuditLogModel(db)
-    print('[OK] Integrity routes initialized  (/api/upload  /api/verify  /api/records  /api/dashboard/stats)')
+    print('[OK] Integrity routes initialized  (/api/upload  /api/verify  /api/records  /api/dashboard/stats  /api/public/record/<verification_id>)')
 
 
 # ── Internal helpers ──────────────────────────────────────────────────────────
@@ -114,6 +115,12 @@ def _log(user_id, action, record_id=None, success=True, details=None):
         )
     except Exception as exc:
         print(f'[AuditLog] write failed: {exc}')
+
+
+def _public_verification_link(verification_id: str) -> str:
+    """Create absolute public verification URL: /verify/<verification_id>."""
+    base = os.getenv('PUBLIC_VERIFY_BASE_URL', 'http://localhost:5000').rstrip('/')
+    return f'{base}/verify/{verification_id}'
 
 
 # == POST /api/upload ==========================================================
@@ -195,6 +202,8 @@ def upload():
         'success': True,
         'message': 'Record stored',
         'hash':    data_hash,
+        'verification_id': record.get('verification_id'),
+        'verification_link': _public_verification_link(record.get('verification_id', '')),
         'record':  record,
     }), 201
 
@@ -391,8 +400,9 @@ def _get_verification_count(record_id: str) -> int:
         return 0
 
 
-# == GET /api/public/verify/<verification_id> ==================================
+# == GET /api/public/record/<verification_id> ==================================
 
+@integrity_bp.route('/public/record/<verification_id>', methods=['GET'])
 @integrity_bp.route('/public/verify/<verification_id>', methods=['GET'])
 def public_record_info(verification_id):
     """
@@ -405,11 +415,13 @@ def public_record_info(verification_id):
 
     return jsonify({
         'success':          True,
+        'verification_id':  verification_id,
+        'verification_link': _public_verification_link(verification_id),
         'original_filename': record.get('original_filename', ''),
+        'upload_date':      record.get('created_at', ''),
         'file_type':        record.get('file_type', ''),
         'file_size':        record.get('file_size', 0),
         'hash_algorithm':   record.get('hash_algorithm', 'SHA-256'),
-        'data_hash':        record.get('data_hash', ''),
         'upload_method':    record.get('upload_method', ''),
         'created_at':       record.get('created_at', ''),
         'verification_count': record.get('verification_count', 0),
@@ -437,13 +449,21 @@ def public_verify(verification_id):
     stored_hash   = record.get('data_hash', '')
     content_type  = request.content_type or ''
     ip_address    = get_client_ip()
+    user_agent    = get_user_agent()
 
-    if 'multipart/form-data' in content_type:
+    if upload_method == 'file':
+        if 'multipart/form-data' not in content_type:
+            return jsonify({'error': 'This verification link expects a file upload'}), 400
         if 'file' not in request.files or not request.files['file'].filename:
             return jsonify({'error': 'No file provided'}), 400
-        file_bytes = request.files['file'].read()
+        uploaded_file = request.files['file']
+        filename = secure_filename(uploaded_file.filename)
+        file_bytes = uploaded_file.read()
         if not file_bytes:
             return jsonify({'error': 'File is empty'}), 400
+        valid, error_msg = DataModel.validate_file(filename, len(file_bytes))
+        if not valid:
+            return jsonify({'error': error_msg}), 400
         computed = hashlib.sha256(file_bytes).hexdigest()
     else:
         body = request.get_json(silent=True) or {}
@@ -460,6 +480,19 @@ def public_verify(verification_id):
 
     # Log the attempt
     _data_model.log_verification_attempt(record_id, status, ip_address)
+    _log(
+        user_id=record.get('user_id'),
+        action=AuditAction.VERIFY_RECORD,
+        record_id=record_id,
+        success=matched,
+        details={
+            'status': status,
+            'public': True,
+            'verification_id': verification_id,
+            'ip_address': ip_address,
+            'upload_method': upload_method,
+        },
+    )
 
     return jsonify({
         'status':        status,
@@ -469,6 +502,7 @@ def public_verify(verification_id):
                           'TAMPERED — Hash mismatch detected!'),
         'stored_hash':   stored_hash,
         'computed_hash': computed,
+        'verification_count': _get_verification_count(str(record_id)),
     }), 200
 
 

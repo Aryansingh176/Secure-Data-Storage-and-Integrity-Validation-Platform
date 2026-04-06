@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -15,6 +16,7 @@
             --neutral-50: #f8fafc;
             --neutral-100: #f1f5f9;
             --neutral-200: #e2e8f0;
+            --neutral-300: #cbd5e1;
             --neutral-700: #334155;
             --neutral-900: #0f172a;
             --success: #10b981;
@@ -35,6 +37,7 @@
             line-height: 1.6;
             min-height: 100vh;
             position: relative;
+            overflow-x: hidden;
         }
 
         /* Subtle animated particle background */
@@ -46,7 +49,28 @@
             height: 100%;
             z-index: 0;
             pointer-events: none;
-            opacity: 0.3;
+            opacity: 0.35;
+        }
+
+        .ambient-blob {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(79, 70, 229, 0.15) 0%, rgba(255, 255, 255, 0) 70%);
+            border-radius: 50%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .blob-1 {
+            top: -100px;
+            left: -200px;
+        }
+
+        .blob-2 {
+            top: 40%;
+            right: -250px;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, rgba(255, 255, 255, 0) 70%);
         }
 
         .container {
@@ -54,18 +78,18 @@
             margin: 0 auto;
             padding: 0 24px;
             position: relative;
-            z-index: 1;
+            z-index: 10;
         }
 
-        /* ====================== NAVBAR ====================== */
+        /* NAVBAR */
         .navbar {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(16px);
-            border-bottom: 1px solid var(--neutral-200);
+            background: rgba(255, 255, 255, 0.95); /* Opaque white to replace expensive blur */
+            border-bottom: 1px solid rgba(255, 255, 255, 0.5);
             position: sticky;
             top: 0;
             z-index: 100;
-            transition: all 0.2s;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
         }
 
         .nav-content {
@@ -80,15 +104,21 @@
         .logo {
             display: flex;
             align-items: center;
-            gap: 10px;
-            font-weight: 700;
+            gap: 12px;
+            font-weight: 800;
             font-size: 1.65rem;
             color: var(--neutral-900);
+            letter-spacing: -0.5px;
+        }
+
+        .logo i {
+            color: var(--primary);
+            font-size: 1.8rem;
         }
 
         .nav-links {
             display: flex;
-            gap: 2rem;
+            gap: 2.5rem;
             list-style: none;
             flex-wrap: wrap;
         }
@@ -96,8 +126,26 @@
         .nav-links a {
             color: var(--neutral-700);
             text-decoration: none;
-            font-weight: 500;
+            font-weight: 600;
+            font-size: 0.95rem;
             transition: color 0.2s;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background-color: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after,
+        .nav-links a.active::after {
+            width: 100%;
         }
 
         .nav-links a:hover,
@@ -106,322 +154,431 @@
         }
 
         .logout-btn {
-            background: var(--danger);
-            color: white;
-            padding: 10px 20px;
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            padding: 8px 24px;
             border-radius: 9999px;
-            font-weight: 600;
+            font-weight: 700;
             font-size: 0.95rem;
-            transition: all 0.2s;
-            border: none;
+            transition: all 0.3s;
+            border: 1px solid rgba(239, 68, 68, 0.2);
             cursor: pointer;
         }
 
         .logout-btn:hover {
-            background: #dc2626;
+            background: var(--danger);
+            color: white;
             transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
         }
 
-        /* ====================== PAGE HEADER ====================== */
+        /* PAGE HEADER */
         .page-header {
             text-align: center;
-            padding: 3rem 0 2rem;
+            padding: 4rem 0 2rem;
         }
 
         .page-header h1 {
-            font-size: 2.8rem;
-            font-weight: 700;
-            margin-bottom: 0.8rem;
-            background: linear-gradient(135deg, #0f172a, #4f46e5);
-            -webkit-background-clip: text;
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #0f172a 20%, #4f46e5 80%);
             background-clip: text;
+            -webkit-background-clip: text;
             color: transparent;
+            margin-bottom: 0.8rem;
+            letter-spacing: -1.5px;
+            line-height: 1.1;
         }
 
         .page-header p {
-            font-size: 1.1rem;
+            font-size: 1.25rem;
             color: #475569;
+            max-width: 600px;
+            margin: 0 auto;
         }
 
-        /* ====================== CARDS ====================== */
-        .card {
-            background: white;
-            border-radius: 24px;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
-            border: 1px solid var(--neutral-200);
+        /* CARDS */
+        .main-card {
+            background: rgba(255, 255, 255, 0.98); /* Highly opaque white */
+            border-radius: 32px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.6) inset;
+            border: 1px solid rgba(255, 255, 255, 0.8);
             overflow: hidden;
-            margin-bottom: 2.5rem;
-            transition: transform 0.25s ease, box-shadow 0.3s ease;
+            margin-bottom: 3.5rem;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        .card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.15);
+        .main-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 40px 60px -15px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.7) inset;
         }
 
         .card-header {
-            padding: 1.25rem 2rem;
-            border-bottom: 1px solid var(--neutral-100);
-            background: #fafcff;
+            padding: 2rem 2.5rem;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+            background: rgba(250, 252, 255, 0.6);
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 0.8rem;
+            gap: 1rem;
         }
 
         .card-header h2 {
-            font-size: 1.4rem;
-            font-weight: 600;
+            font-size: 1.6rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--neutral-900);
         }
 
-        .badge {
-            background: #e0e7ff;
+        .card-header h2 i {
             color: var(--primary);
-            padding: 6px 16px;
-            border-radius: 9999px;
-            font-size: 0.85rem;
-            font-weight: 500;
         }
 
-        /* ====================== TABS ====================== */
+        .security-badge {
+            background: rgba(79, 70, 229, 0.1);
+            color: var(--primary);
+            padding: 8px 18px;
+            border-radius: 9999px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            border: 1px solid rgba(79, 70, 229, 0.2);
+            box-shadow: 0 2px 10px rgba(79, 70, 229, 0.1);
+        }
+
+        /* TABS */
         .tabs {
             display: flex;
-            border-bottom: 1px solid var(--neutral-200);
-            background: #ffffff;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+            background: rgba(255, 255, 255, 0.5);
         }
 
         .tab-btn {
             flex: 1;
-            padding: 1rem;
+            padding: 1.2rem;
             background: none;
             border: none;
-            font-weight: 600;
-            color: #64748b;
+            font-weight: 700;
+            color: var(--neutral-500);
             cursor: pointer;
-            transition: all 0.3s;
-            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            font-size: 1.05rem;
+            position: relative;
         }
 
         .tab-btn.active {
             color: var(--primary);
-            border-bottom: 3px solid var(--primary);
-            background: rgba(79, 70, 229, 0.02);
+            background: rgba(79, 70, 229, 0.03);
         }
 
-        /* ====================== FORMS ====================== */
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: var(--primary);
+            border-radius: 3px 3px 0 0;
+        }
+
+        /* FORMS */
         .card-body {
-            padding: 2rem;
+            padding: 2.5rem;
         }
 
         .upload-area {
-            border: 2px dashed var(--neutral-200);
-            border-radius: 20px;
-            padding: 2.5rem;
+            border: 2px dashed rgba(79, 70, 229, 0.3);
+            border-radius: 24px;
+            padding: 3.5rem 2rem;
             text-align: center;
-            transition: all 0.25s ease;
+            transition: all 0.3s ease;
             cursor: pointer;
-            background: #fefefe;
+            background: rgba(255, 255, 255, 0.6);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .upload-area:hover {
-            border-color: var(--primary-light);
-            background: #f8fafc;
+            border-color: var(--primary);
+            background: rgba(79, 70, 229, 0.02);
             transform: scale(0.99);
         }
 
-        .form-group {
+        .upload-icon-wrapper {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(79, 70, 229, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
             margin-bottom: 1.5rem;
+            color: var(--primary);
+        }
+
+        .form-group {
+            margin-top: 1.5rem;
         }
 
         .form-label {
             display: block;
-            font-weight: 500;
-            margin-bottom: 0.5rem;
+            font-weight: 600;
+            margin-bottom: 0.6rem;
             color: var(--neutral-700);
+            font-size: 0.95rem;
         }
 
         .form-control {
             width: 100%;
-            padding: 12px 16px;
+            padding: 16px 20px;
             border: 1px solid var(--neutral-200);
-            border-radius: 14px;
-            background: white;
+            border-radius: 16px;
             font-size: 1rem;
             font-family: inherit;
-            transition: 0.2s;
+            transition: 0.3s;
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02) inset;
         }
 
         .form-control:focus {
             outline: none;
             border-color: var(--primary);
+            background: #fff;
             box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15);
         }
 
+        .btn-primary,
         .btn {
-            background: var(--primary);
+            background: linear-gradient(135deg, var(--primary) 0%, #312e81 100%);
             color: white;
-            padding: 12px 28px;
-            border-radius: 9999px;
-            font-weight: 600;
+            padding: 16px 32px;
+            border-radius: 16px;
+            font-weight: 700;
             display: inline-flex;
+            justify-content: center;
             align-items: center;
-            gap: 8px;
-            transition: all 0.25s;
+            gap: 12px;
             border: none;
             cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 1.5rem;
+            font-size: 1.05rem;
+            box-shadow: 0 10px 20px rgba(79, 70, 229, 0.25);
         }
 
+        .btn-primary:hover,
         .btn:hover {
-            transform: translateY(-2px);
-            background: var(--primary-dark);
-            box-shadow: 0 8px 20px -6px rgba(79, 70, 229, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(79, 70, 229, 0.35);
+            background: linear-gradient(135deg, #4338ca 0%, #1e1b4b 100%);
         }
 
         .btn-secondary {
-            background: var(--neutral-100);
+            background: rgba(255, 255, 255, 0.8);
             color: var(--neutral-700);
+            border: 1px solid var(--neutral-200);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
         }
 
         .btn-secondary:hover {
-            background: var(--neutral-200);
+            background: white;
+            border-color: var(--neutral-300);
             transform: translateY(-2px);
-            box-shadow: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            color: var(--primary);
         }
 
         .btn-danger {
-            background: var(--danger);
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            box-shadow: none;
+            border: 1px solid rgba(239, 68, 68, 0.1);
         }
 
         .btn-danger:hover {
-            background: #dc2626;
+            background: var(--danger);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(239, 68, 68, 0.3);
         }
 
-        /* ====================== STATS BAR ====================== */
+        /* STATS BAR */
         .stats-bar {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 1rem;
-            padding: 1.2rem 2rem;
-            background: #f8fafc;
+            gap: 1.5rem;
+            padding: 2rem 2.5rem;
+            background: rgba(255, 255, 255, 0.4);
             border-bottom: 1px solid var(--neutral-200);
         }
 
         .stat-card {
             text-align: center;
-            background: white;
-            border-radius: 16px;
-            padding: 1rem;
-            transition: all 0.2s;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(5px);
+            border-radius: 20px;
+            padding: 1.5rem 1rem;
+            transition: all 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
         }
 
         .stat-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 20px -8px rgba(0, 0, 0, 0.1);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08);
         }
 
         .stat-value {
-            font-size: 1.8rem;
+            font-size: 2.2rem;
             font-weight: 800;
             color: var(--neutral-900);
-            letter-spacing: -0.02em;
+            letter-spacing: -0.05em;
+            line-height: 1.1;
         }
 
         .stat-label {
-            font-size: 0.8rem;
-            color: #475569;
-            margin-top: 4px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--neutral-500);
+            margin-top: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        /* ====================== TABLE ====================== */
+        /* TABLE - HIGH PERFORMANCE GLASSMORPHISM */
         .table-wrapper {
             overflow-x: auto;
-            padding: 0 1rem 1rem;
+            padding: 0.5rem 2.5rem 2.5rem;
             scrollbar-width: thin;
         }
 
         .records-table {
             width: 100%;
             border-collapse: separate;
-            border-spacing: 0;
-            font-size: 0.85rem;
+            border-spacing: 0 10px;
+            font-size: 0.95rem;
         }
 
         .records-table th {
-            font-size: 1rem;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
             text-align: left;
-            padding: 1rem 0.8rem;
-            color: black;
-            font-weight: bold;
-            border-bottom: 1px solid var(--neutral-200);
+            padding: 0.8rem 1.5rem;
+            color: var(--neutral-500);
+            font-weight: 700;
+            border: none;
         }
 
         .records-table td {
-            padding: 1rem 0.8rem;
-            border-bottom: 1px solid var(--neutral-100);
+            padding: 1.2rem 1.5rem;
+            background: rgba(255, 255, 255, 0.85); /* Highly opaque to replace expensive blur */
+            border-top: 1px solid rgba(255, 255, 255, 0.9);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.4);
             vertical-align: middle;
-            color: #1e293b;
+            color: var(--neutral-800);
+            font-weight: 500;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .records-table td:first-child {
+            border-left: 1px solid rgba(255, 255, 255, 0.9);
+            border-top-left-radius: 16px;
+            border-bottom-left-radius: 16px;
+        }
+
+        .records-table td:last-child {
+            border-right: 1px solid rgba(255, 255, 255, 0.4);
+            border-top-right-radius: 16px;
+            border-bottom-right-radius: 16px;
         }
 
         .records-table tr {
-            transition: background 0.15s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+            will-change: transform;
+            transform: translateZ(0); /* Hardware acceleration for smooth scrolling */
         }
 
-        .records-table tr:hover {
-            background: #f8fafc;
+        .records-table tr:hover td {
+            background: rgba(255, 255, 255, 0.98);
+            transform: scale(1.005);
+            box-shadow: 0 15px 30px rgba(79, 70, 229, 0.08);
+            z-index: 10;
+            position: relative;
+            color: var(--primary-dark);
         }
 
         code {
-            background: var(--neutral-100);
-            padding: 2px 6px;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 6px 12px;
             border-radius: 8px;
-            font-size: 0.75rem;
+            font-size: 0.85rem;
             cursor: pointer;
-            color: var(--primary);
-            transition: background 0.2s;
+            color: var(--primary-dark);
+            transition: all 0.2s;
+            border: 1px solid rgba(79, 70, 229, 0.15);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
         }
 
         code:hover {
-            background: #e2e8f0;
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(79, 70, 229, 0.25);
         }
 
         .badge-status {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .badge-verified {
-            background: #dcfce7;
-            color: #16a34a;
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.2);
         }
 
         .badge-tampered {
-            background: #fee2e2;
-            color: #dc2626;
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.2);
         }
 
         .badge-pending {
-            background: #fef9c3;
-            color: #ca8a04;
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+            border: 1px solid rgba(245, 158, 11, 0.2);
         }
 
         .empty-state {
             text-align: center;
-            padding: 3rem;
-            color: #64748b;
+            padding: 4rem;
+            color: var(--neutral-500);
+            font-weight: 600;
+            font-size: 1.1rem;
         }
 
-        /* ====================== VERIFICATION INFO ====================== */
+        /* MODALS & NOTIFICATIONS */
         .verification-info {
-            background: white;
-            border-radius: 20px;
-            padding: 1.8rem;
-            border: 1px solid var(--neutral-200);
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.8);
             margin-top: 1rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
         }
 
         .legend-items {
@@ -435,9 +592,9 @@
             display: flex;
             align-items: center;
             gap: 0.8rem;
+            font-weight: 600;
         }
 
-        /* ====================== MODAL ====================== */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -445,8 +602,9 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
-            backdrop-filter: blur(4px);
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             z-index: 1000;
             align-items: center;
             justify-content: center;
@@ -454,47 +612,156 @@
 
         .modal-content {
             background: white;
-            border-radius: 28px;
-            max-width: 500px;
+            border-radius: 32px;
+            max-width: 550px;
             width: 90%;
-            padding: 1.8rem;
+            padding: 2.5rem;
             position: relative;
-            animation: modalFadeIn 0.3s ease;
-            box-shadow: 0 25px 40px -12px rgba(0,0,0,0.25);
+            animation: modalFadeIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.8);
         }
 
         @keyframes modalFadeIn {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
+            from {
+                opacity: 0;
+                transform: scale(0.9) translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
         }
 
         .modal-close {
             position: absolute;
-            top: 1rem;
-            right: 1rem;
-            background: none;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: rgba(0, 0, 0, 0.05);
             border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
             font-size: 1.2rem;
             cursor: pointer;
-            color: #94a3b8;
-            transition: color 0.2s;
+            color: var(--neutral-700);
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .modal-close:hover {
+            background: rgba(239, 68, 68, 0.1);
             color: var(--danger);
+            transform: rotate(90deg);
         }
 
         .modal-title {
-            font-size: 1.3rem;
-            font-weight: 700;
+            font-size: 1.6rem;
+            font-weight: 800;
             margin-bottom: 0.5rem;
+            color: var(--neutral-900);
         }
 
         .modal-actions {
             display: flex;
             gap: 1rem;
             justify-content: flex-end;
-            margin-top: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .toast {
+            position: fixed;
+            right: 24px;
+            bottom: 24px;
+            z-index: 1200;
+            background: var(--neutral-900);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 1rem 1.5rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            transform: translateY(20px);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 900px) {
+            .page-header h1 {
+                font-size: 2.8rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 1.5rem;
+            }
+
+            .page-header {
+                padding: 2.5rem 0 1rem;
+            }
+
+            .page-header h1 {
+                font-size: 2.2rem;
+            }
+
+            .stats-bar {
+                grid-template-columns: repeat(2, 1fr);
+                padding: 1.5rem;
+                gap: 1rem;
+            }
+
+            .card-header {
+                padding: 1.5rem;
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+
+            .tab-btn {
+                border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+                padding: 1rem;
+            }
+
+            .tab-btn.active::after {
+                display: none;
+            }
+
+            .tab-btn.active {
+                border-left: 4px solid var(--primary);
+            }
+
+            .card-body {
+                padding: 1.5rem;
+            }
+
+            .upload-area {
+                padding: 2rem 1rem;
+            }
+
+            .table-wrapper {
+                padding: 1rem;
+            }
+
+            .verification-info {
+                padding: 1.5rem;
+            }
         }
 
         /* ====================== FOOTER ====================== */
@@ -504,74 +771,15 @@
             padding: 2rem 0;
             text-align: center;
             margin-top: 3rem;
-        }
-
-        /* ====================== RESPONSIVE ====================== */
-        @media (max-width: 768px) {
-            .nav-content {
-                flex-direction: column;
-                text-align: center;
-            }
-            .nav-links {
-                justify-content: center;
-                gap: 1rem;
-            }
-            .page-header h1 {
-                font-size: 2rem;
-            }
-            .stats-bar {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 0.8rem;
-                padding: 1rem;
-            }
-            .card-header {
-                flex-direction: column;
-                text-align: center;
-            }
-            .tab-btn {
-                font-size: 0.85rem;
-                padding: 0.8rem;
-            }
-            .card-body {
-                padding: 1.2rem;
-            }
-            .upload-area {
-                padding: 1.5rem;
-            }
-            .btn {
-                padding: 8px 18px;
-                font-size: 0.85rem;
-            }
-            .records-table th, .records-table td {
-                padding: 0.6rem;
-                font-size: 0.75rem;
-            }
-            .records-table td .btn-secondary,
-            .records-table td .btn-danger {
-                font-size: 0.7rem;
-                padding: 0.2rem 0.5rem;
-            }
-            .legend-items {
-                flex-direction: column;
-                gap: 0.8rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .container {
-                padding: 0 16px;
-            }
-            .stat-value {
-                font-size: 1.4rem;
-            }
-            .stat-card {
-                padding: 0.6rem;
-            }
+            position: relative;
+            z-index: 10;
         }
     </style>
 </head>
-<body>
 
+<body>
+    <div class="ambient-blob blob-1"></div>
+    <div class="ambient-blob blob-2"></div>
     <canvas id="particles-canvas"></canvas>
 
     <nav class="navbar">
@@ -597,13 +805,13 @@
         </div>
 
         <!-- Store New Fingerprint Card -->
-        <div class="card">
-           <div class="card-header">
-                <h2 style="font-size: 1.6rem; font-weight: 600;">
+        <div class="main-card">
+            <div class="card-header">
+                <h2>
                     <i class="fas fa-lock"></i> Store New Data
                 </h2>
-                <span style="background: #e0e7ff; color: #4f46e5; padding: 6px 16px; border-radius: 9999px; font-size: 0.9rem; font-weight: 500;">
-                    SHA-256 • Tamper Proof
+                <span class="security-badge">
+                    <i class="fas fa-shield-alt"></i> SHA-256 • Tamper Proof
                 </span>
             </div>
             <div class="tabs">
@@ -624,10 +832,12 @@
 
                     <div class="form-group">
                         <label class="form-label">Label (optional)</label>
-                        <input type="text" id="fileLabel" class="form-control" placeholder="e.g., Contract, Invoice, Photo...">
+                        <input type="text" id="fileLabel" class="form-control"
+                            placeholder="e.g., Contract, Invoice, Photo...">
                     </div>
 
-                    <button type="submit" class="btn" id="fileUploadBtn"><i class="fas fa-lock"></i> Secure & Upload</button>
+                    <button type="submit" class="btn" id="fileUploadBtn"><i class="fas fa-lock"></i> Secure &
+                        Upload</button>
                     <div id="fileUploadStatus" style="margin-top: 1rem; font-size: 0.85rem;"></div>
                 </form>
             </div>
@@ -637,12 +847,14 @@
                 <form id="textHashForm">
                     <div class="form-group">
                         <label class="form-label">Your Text Data</label>
-                        <textarea id="textInput" class="form-control" rows="5" placeholder="Paste or type your text here..."></textarea>
+                        <textarea id="textInput" class="form-control" rows="5"
+                            placeholder="Paste or type your text here..."></textarea>
                         <small style="color: #64748b;">Only the SHA-256 hash is stored.</small>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Label (optional)</label>
-                        <input type="text" id="textLabel" class="form-control" placeholder="e.g., Meeting notes, Secret message">
+                        <input type="text" id="textLabel" class="form-control"
+                            placeholder="e.g., Meeting notes, Secret message">
                     </div>
                     <button type="submit" class="btn"><i class="fas fa-database"></i> Save & Generate Hash</button>
                     <div id="textHashStatus" style="margin-top: 1rem; font-size: 0.85rem;"></div>
@@ -651,23 +863,47 @@
         </div>
 
         <!-- Records List Card -->
-        <div class="card">
+        <div class="main-card">
             <div class="card-header">
                 <h2><i class="fas fa-database"></i> My Integrity Records</h2>
             </div>
             <div class="stats-bar">
-                <div class="stat-card"><div class="stat-value" id="totalRecords">0</div><div class="stat-label">Total Records</div></div>
-                <div class="stat-card"><div class="stat-value" id="verifiedRecords" style="color:#16a34a;">0</div><div class="stat-label">Verified</div></div>
-                <div class="stat-card"><div class="stat-value" id="tamperedRecords" style="color:#dc2626;">0</div><div class="stat-label">Tampered</div></div>
-                <div class="stat-card"><div class="stat-value" id="totalVerifications">0</div><div class="stat-label">Verifications</div></div>
+                <div class="stat-card">
+                    <div class="stat-value" id="totalRecords">0</div>
+                    <div class="stat-label">Total Records</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="verifiedRecords" style="color:#16a34a;">0</div>
+                    <div class="stat-label">Verified</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="tamperedRecords" style="color:#dc2626;">0</div>
+                    <div class="stat-label">Tampered</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="totalVerifications">0</div>
+                    <div class="stat-label">Verifications</div>
+                </div>
             </div>
             <div class="table-wrapper">
                 <table class="records-table">
                     <thead>
-                        <tr><th>Name / Label</th><th>Type</th><th>Size</th><th>SHA-256 Hash</th><th>Stored On</th><th>Status</th><th>Actions</th></tr>
+                        <tr>
+                            <th>Name / Label</th>
+                            <th>Type</th>
+                            <th>Size</th>
+                            <th>SHA-256 Hash</th>
+                            <th>Stored On</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
                     </thead>
                     <tbody id="recordsTableBody">
-                        <tr><td colspan="7" class="empty-state"><div class="empty-state">📭 No records yet. Use the form above.</div></td></tr>
+                        <tr>
+                            <td colspan="7" class="empty-state">
+                                <div class="empty-state">📭 No records yet. Use the form above.</div>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -706,6 +942,8 @@
         </div>
     </div>
 
+    <div id="appToast" class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+
     <footer>
         <div class="container">
             <p>© 2026 Data Integrity Platform • Final Year BTech CSE Project • Built with SHA-256 Security</p>
@@ -715,6 +953,7 @@
     <script>
         const API = 'http://localhost:5000';
         let currentVerifyRecord = null;
+        let toastTimer = null;
 
         function getToken() { return localStorage.getItem('auth_token'); }
         function authHeaders() { return { 'Authorization': 'Bearer ' + getToken() }; }
@@ -728,7 +967,7 @@
         });
 
         // Tab switching
-        window.switchTab = function(tab) {
+        window.switchTab = function (tab) {
             document.getElementById('filePanel').style.display = tab === 'file' ? 'block' : 'none';
             document.getElementById('textPanel').style.display = tab === 'text' ? 'block' : 'none';
             const fileBtn = document.getElementById('tabFileBtn');
@@ -745,16 +984,16 @@
         // Format helpers
         function formatDate(iso) {
             if (!iso) return '—';
-            return new Date(iso).toLocaleString('en-IN', { year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
+            return new Date(iso).toLocaleString('en-IN', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
         }
         function formatSize(bytes) {
             if (!bytes) return '—';
             if (bytes < 1024) return bytes + ' B';
-            if (bytes < 1024*1024) return (bytes/1024).toFixed(1) + ' KB';
-            return (bytes/(1024*1024)).toFixed(1) + ' MB';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
         }
         function truncateHash(hash) {
-            return hash ? hash.substring(0,16)+'…' : '—';
+            return hash ? hash.substring(0, 16) + '…' : '—';
         }
         function statusBadge(status) {
             if (status === 'verified') return '<span class="badge-status badge-verified">✅ Verified</span>';
@@ -762,13 +1001,23 @@
             return '<span class="badge-status badge-pending">⏳ Not Verified</span>';
         }
 
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('appToast');
+            if (!toast) return;
+            toast.textContent = message;
+            toast.style.background = isError ? 'rgba(153, 27, 27, 0.95)' : 'rgba(15, 23, 42, 0.94)';
+            toast.classList.add('show');
+            if (toastTimer) clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => toast.classList.remove('show'), 1800);
+        }
+
         // Load records
         async function loadRecords() {
             const tbody = document.getElementById('recordsTableBody');
             tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:2rem;">Loading...</td></tr>';
             try {
-                const res = await fetch(API+'/api/data/my-records', { headers: authHeaders() });
-                if (res.status === 401) { window.location.href='login.html'; return; }
+                const res = await fetch(API + '/api/data/my-records', { headers: authHeaders() });
+                if (res.status === 401) { window.location.href = 'login.html'; return; }
                 const data = await res.json();
                 const s = data.statistics || {};
                 document.getElementById('totalRecords').textContent = s.total_records || 0;
@@ -783,18 +1032,19 @@
                 }
                 tbody.innerHTML = '';
                 records.forEach(r => {
-                    const verifyLink = r.verification_id ? `${window.location.origin}/verify.html?id=${r.verification_id}` : null;
+                    const verifyLink = r.verification_id ? `${API}/verify/${encodeURIComponent(r.verification_id)}` : null;
                     const row = document.createElement('tr');
                     row.innerHTML = `
-                        <td title="${r.original_filename||''}">${(r.original_filename||'Unnamed').substring(0,30)}</td>
-                        <td>${r.file_type||'—'}</td>
+                        <td title="${r.original_filename || ''}">${(r.original_filename || 'Unnamed').substring(0, 30)}</td>
+                        <td>${r.file_type || '—'}</td>
                         <td>${formatSize(r.file_size)}</td>
                         <td><code title="${r.data_hash}" onclick="copyToClipboard('${r.data_hash}')">${truncateHash(r.data_hash)}</code></td>
                         <td>${formatDate(r.created_at)}</td>
                         <td>${statusBadge(r.last_verification_status)}<br><small style="color:#64748b;"></small></td>
                         <td>
-                            <button class="btn btn-secondary" style="font-size:0.75rem;padding:0.3rem 0.8rem;margin-bottom:0.25rem;" onclick="openVerifyModal('${r._id}','${r.upload_method}','${(r.original_filename||'').replace(/'/g,"\\'")}')">🔍 Verify</button>
-                            ${verifyLink ? `<button class="btn btn-secondary" style="font-size:0.75rem;padding:0.3rem 0.8rem;margin-bottom:0.25rem;" onclick="copyShareLink('${verifyLink}')">🔗 Share</button>` : ''}
+                            <button class="btn btn-secondary" style="font-size:0.75rem;padding:0.3rem 0.8rem;margin-bottom:0.25rem;" onclick="openVerifyModal('${r._id}','${r.upload_method}','${(r.original_filename || '').replace(/'/g, "\\'")}')">🔍 Verify</button>
+                            ${verifyLink ? `<button class="btn btn-secondary" style="font-size:0.75rem;padding:0.3rem 0.8rem;margin-bottom:0.25rem;" onclick="copyVerificationLink('${verifyLink}')">🔗 Copy Link</button>` : ''}
+                            ${verifyLink ? `<a class="btn btn-secondary" style="font-size:0.75rem;padding:0.3rem 0.8rem;margin-bottom:0.25rem;display:inline-flex;text-decoration:none;" href="${verifyLink}" target="_blank" rel="noopener">🌐 Verify Now</a>` : ''}
                             <button class="btn btn-secondary" style="font-size:0.75rem;padding:0.3rem 0.8rem;margin-bottom:0.25rem;" onclick="downloadCertificate('${r._id}')">📄 Certificate</button>
                             <button class="btn btn-danger" style="font-size:0.75rem;padding:0.3rem 0.8rem;" onclick="deleteRecord('${r._id}')">🗑️</button>
                         </td>
@@ -837,15 +1087,27 @@
             if (label) formData.append('label', label);
             statusEl.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Computing SHA-256...';
             try {
-                const res = await fetch(API+'/api/data/upload', { method:'POST', headers: authHeaders(), body: formData });
+                const res = await fetch(API + '/api/data/upload', { method: 'POST', headers: authHeaders(), body: formData });
                 const data = await res.json();
                 if (res.ok) {
-                    statusEl.innerHTML = `<span style="color:green;">✅ Stored! Hash: <code>${data.record.data_hash.substring(0,32)}…</code></span>`;
+                    const verifyLink = data.verification_link || `${window.location.origin}/verify/${encodeURIComponent(data.verification_id || '')}`;
+                    statusEl.innerHTML = `
+                        <div style="color:green;font-weight:600;">✅ Document Stored Successfully</div>
+                        <div style="margin-top:0.4rem;">Hash: <code>${data.record.data_hash.substring(0, 32)}…</code></div>
+                        <div style="margin-top:0.6rem;">
+                            Verification Link:<br>
+                            <a href="${verifyLink}" target="_blank" rel="noopener">${verifyLink}</a>
+                        </div>
+                        <div style="margin-top:0.6rem;display:flex;gap:0.5rem;flex-wrap:wrap;">
+                            <button type="button" class="btn btn-secondary" onclick="copyVerificationLink('${verifyLink}')">Copy Link</button>
+                            <a class="btn btn-secondary" href="${verifyLink}" target="_blank" rel="noopener" style="display:inline-flex;text-decoration:none;">Verify Now</a>
+                        </div>
+                    `;
                     fileInput.value = ''; updateFileLabel();
                     document.getElementById('fileLabel').value = '';
                     loadRecords();
                 } else {
-                    statusEl.innerHTML = `<span style="color:red;">❌ ${data.error||'Upload failed'}</span>`;
+                    statusEl.innerHTML = `<span style="color:red;">❌ ${data.error || 'Upload failed'}</span>`;
                 }
             } catch { statusEl.innerHTML = '<span style="color:red;">❌ Backend unreachable.</span>'; }
         });
@@ -859,15 +1121,27 @@
             if (!text) { statusEl.innerHTML = '<span style="color:red;">Enter some text first.</span>'; return; }
             statusEl.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Computing SHA-256...';
             try {
-                const res = await fetch(API+'/api/data/text', { method:'POST', headers: {...authHeaders(), 'Content-Type':'application/json'}, body: JSON.stringify({ text, label }) });
+                const res = await fetch(API + '/api/data/text', { method: 'POST', headers: { ...authHeaders(), 'Content-Type': 'application/json' }, body: JSON.stringify({ text, label }) });
                 const data = await res.json();
                 if (res.ok) {
-                    statusEl.innerHTML = `<span style="color:green;">✅ Stored! Hash: <code>${data.record.data_hash.substring(0,32)}…</code></span>`;
+                    const verifyLink = data.verification_link || `${window.location.origin}/verify/${encodeURIComponent(data.verification_id || '')}`;
+                    statusEl.innerHTML = `
+                        <div style="color:green;font-weight:600;">✅ Document Stored Successfully</div>
+                        <div style="margin-top:0.4rem;">Hash: <code>${data.record.data_hash.substring(0, 32)}…</code></div>
+                        <div style="margin-top:0.6rem;">
+                            Verification Link:<br>
+                            <a href="${verifyLink}" target="_blank" rel="noopener">${verifyLink}</a>
+                        </div>
+                        <div style="margin-top:0.6rem;display:flex;gap:0.5rem;flex-wrap:wrap;">
+                            <button type="button" class="btn btn-secondary" onclick="copyVerificationLink('${verifyLink}')">Copy Link</button>
+                            <a class="btn btn-secondary" href="${verifyLink}" target="_blank" rel="noopener" style="display:inline-flex;text-decoration:none;">Verify Now</a>
+                        </div>
+                    `;
                     document.getElementById('textInput').value = '';
                     document.getElementById('textLabel').value = '';
                     loadRecords();
                 } else {
-                    statusEl.innerHTML = `<span style="color:red;">❌ ${data.error||'Failed'}</span>`;
+                    statusEl.innerHTML = `<span style="color:red;">❌ ${data.error || 'Failed'}</span>`;
                 }
             } catch { statusEl.innerHTML = '<span style="color:red;">❌ Backend unreachable.</span>'; }
         });
@@ -900,19 +1174,19 @@
                     if (!fileInput.files.length) {
                         resultEl.style.display = 'block';
                         resultEl.innerHTML = '⚠️ Please select a file.';
-                        submitBtn.disabled=false; submitBtn.textContent='Verify Now'; return;
+                        submitBtn.disabled = false; submitBtn.textContent = 'Verify Now'; return;
                     }
                     const fd = new FormData();
                     fd.append('file', fileInput.files[0]);
-                    res = await fetch(API+'/api/data/'+recordId+'/verify', { method:'POST', headers: authHeaders(), body: fd });
+                    res = await fetch(API + '/api/data/' + recordId + '/verify', { method: 'POST', headers: authHeaders(), body: fd });
                 } else {
                     const text = document.getElementById('verifyTextInput').value;
                     if (!text.trim()) {
                         resultEl.style.display = 'block';
                         resultEl.innerHTML = '⚠️ Please enter the text.';
-                        submitBtn.disabled=false; submitBtn.textContent='Verify Now'; return;
+                        submitBtn.disabled = false; submitBtn.textContent = 'Verify Now'; return;
                     }
-                    res = await fetch(API+'/api/data/'+recordId+'/verify', { method:'POST', headers: {...authHeaders(), 'Content-Type':'application/json'}, body: JSON.stringify({ text }) });
+                    res = await fetch(API + '/api/data/' + recordId + '/verify', { method: 'POST', headers: { ...authHeaders(), 'Content-Type': 'application/json' }, body: JSON.stringify({ text }) });
                 }
                 data = await res.json();
                 resultEl.style.display = 'block';
@@ -938,10 +1212,19 @@
         }
 
         // Other actions
-        async function deleteRecord(recordId) { if (confirm('Delete this record?')) { try { const res = await fetch(API+'/api/data/'+recordId, { method:'DELETE', headers: authHeaders() }); if (res.ok) { loadRecords(); alert('Record deleted.'); } else alert('Delete failed.'); } catch { alert('Backend unreachable.'); } } }
-        function copyToClipboard(text) { navigator.clipboard.writeText(text).then(() => alert('Hash copied!')).catch(()=>{}); }
-        function copyShareLink(link) { navigator.clipboard.writeText(link).then(() => alert('Verification link copied!')).catch(()=>prompt('Copy this link:', link)); }
-        async function downloadCertificate(recordId) { try { const res = await fetch(API+'/api/records/'+recordId+'/certificate', { headers: authHeaders() }); if (!res.ok) throw new Error(); const blob = await res.blob(); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `integrity_certificate_${recordId.substring(0,8)}.pdf`; a.click(); URL.revokeObjectURL(url); alert('Certificate downloaded!'); } catch { alert('Failed to generate certificate.'); } }
+        async function deleteRecord(recordId) { if (confirm('Delete this record?')) { try { const res = await fetch(API + '/api/data/' + recordId, { method: 'DELETE', headers: authHeaders() }); if (res.ok) { loadRecords(); alert('Record deleted.'); } else alert('Delete failed.'); } catch { alert('Backend unreachable.'); } } }
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text)
+                .then(() => showToast('Hash copied to clipboard'))
+                .catch(() => showToast('Could not copy hash', true));
+        }
+
+        function copyVerificationLink(link) {
+            navigator.clipboard.writeText(link)
+                .then(() => showToast('Verification link copied'))
+                .catch(() => prompt('Copy this link:', link));
+        }
+        async function downloadCertificate(recordId) { try { const res = await fetch(API + '/api/records/' + recordId + '/certificate', { headers: authHeaders() }); if (!res.ok) throw new Error(); const blob = await res.blob(); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `integrity_certificate_${recordId.substring(0, 8)}.pdf`; a.click(); URL.revokeObjectURL(url); alert('Certificate downloaded!'); } catch { alert('Failed to generate certificate.'); } }
 
         // Init
         window.addEventListener('DOMContentLoaded', () => {
@@ -950,7 +1233,7 @@
         });
 
         // Light particle animation (enhanced)
-        (function() {
+        (function () {
             const canvas = document.getElementById('particles-canvas');
             const ctx = canvas.getContext('2d');
             let width, height, particles = [];
@@ -1029,4 +1312,5 @@
         })();
     </script>
 </body>
+
 </html>

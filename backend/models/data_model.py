@@ -27,6 +27,7 @@ from datetime import datetime
 from bson import ObjectId
 import hashlib
 import uuid
+from pymongo.errors import DuplicateKeyError
 
 
 class DataModel:
@@ -125,6 +126,11 @@ class DataModel:
                 record[dt_field] = record[dt_field].isoformat()
         return record
 
+    @staticmethod
+    def _generate_verification_id() -> str:
+        """Generate short public verification ID (8 chars, uppercase)."""
+        return uuid.uuid4().hex[:8].upper()
+
     # ── Create ────────────────────────────────────────────────────────────────
 
     def create_file_record(self, user_id, filename, file_bytes):
@@ -146,7 +152,7 @@ class DataModel:
         file_type = self.EXTENSION_LABELS.get(ext, (ext.upper() if ext else 'Unknown'))
         data_hash = self.hash_bytes(file_bytes)
 
-        record = {
+        base_record = {
             'user_id':                  ObjectId(user_id) if isinstance(user_id, str) else user_id,
             'upload_method':            'file',
             'original_filename':        filename,
@@ -158,16 +164,23 @@ class DataModel:
             'last_verification_status': None,
             'last_verified_at':         None,
             'created_at':               datetime.utcnow(),
-            'verification_id':          str(uuid.uuid4()),
         }
 
-        try:
-            result = self.collection.insert_one(record)
-            record['_id'] = result.inserted_id
-            return self._serialize(record)
-        except Exception as e:
-            print(f'[DataModel] Error inserting file record: {e}')
-            return None
+        for _ in range(5):
+            record = dict(base_record)
+            record['verification_id'] = self._generate_verification_id()
+            try:
+                result = self.collection.insert_one(record)
+                record['_id'] = result.inserted_id
+                return self._serialize(record)
+            except DuplicateKeyError:
+                continue
+            except Exception as e:
+                print(f'[DataModel] Error inserting file record: {e}')
+                return None
+
+        print('[DataModel] Error inserting file record: could not generate unique verification_id')
+        return None
 
     def create_text_record(self, user_id, text, label=None):
         """
@@ -183,7 +196,7 @@ class DataModel:
         """
         data_hash = self.hash_text(text)
 
-        record = {
+        base_record = {
             'user_id':                  ObjectId(user_id) if isinstance(user_id, str) else user_id,
             'upload_method':            'text',
             'original_filename':        label or 'Text Input',
@@ -195,16 +208,23 @@ class DataModel:
             'last_verification_status': None,
             'last_verified_at':         None,
             'created_at':               datetime.utcnow(),
-            'verification_id':          str(uuid.uuid4()),
         }
 
-        try:
-            result = self.collection.insert_one(record)
-            record['_id'] = result.inserted_id
-            return self._serialize(record)
-        except Exception as e:
-            print(f'[DataModel] Error inserting text record: {e}')
-            return None
+        for _ in range(5):
+            record = dict(base_record)
+            record['verification_id'] = self._generate_verification_id()
+            try:
+                result = self.collection.insert_one(record)
+                record['_id'] = result.inserted_id
+                return self._serialize(record)
+            except DuplicateKeyError:
+                continue
+            except Exception as e:
+                print(f'[DataModel] Error inserting text record: {e}')
+                return None
+
+        print('[DataModel] Error inserting text record: could not generate unique verification_id')
+        return None
 
     # ── Verification ──────────────────────────────────────────────────────────
 

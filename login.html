@@ -2,354 +2,653 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Login • SHA-256 Vault</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SHA-256 Vault | Secure Access</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         :root {
-            --primary: #4f46e5;
-            --primary-light: #6366f1;
-            --primary-dark: #4338ca;
-            --neutral-50: #f8fafc;
-            --neutral-100: #f1f5f9;
-            --neutral-200: #e2e8f0;
-            --neutral-700: #334155;
-            --neutral-900: #0f172a;
-            --success: #10b981;
-            --danger: #ef4444;
+            --surface:            #0b1326;
+            --surface-low:        #131b2e;
+            --surface-container:  #171f33;
+            --surface-high:       #222a3d;
+            --surface-highest:    #2d3449;
+            --surface-bright:     #31394d;
+            --primary:            #c3c0ff;
+            --primary-container:  #4f46e5;
+            --on-primary:         #1d00a5;
+            --on-surface:         #dae2fd;
+            --on-surface-var:     #c7c4d8;
+            --outline:            #918fa1;
+            --outline-var:        #464555;
+            --error:              #ffb4ab;
+            --tertiary:           #ffb695;
+            --tertiary-container: #a44100;
+            --secondary-container:#413f82;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Inter', system-ui, sans-serif;
-            background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%);
-            color: var(--neutral-900);
-            line-height: 1.5;
+            background: var(--surface);
+            color: var(--on-surface);
             min-height: 100vh;
             display: flex;
-            flex-direction: column;
-            position: relative;
+            overflow-y: auto;
         }
 
-        #particles-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            pointer-events: none;
-            opacity: 0.35;
-        }
-
-        /* Navbar (same as records/profile) */
-        .navbar {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(16px);
-            border-bottom: 1px solid var(--neutral-200);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .nav-content {
-            max-width: 1280px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1.25rem 24px;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 700;
-            font-size: 1.65rem;
-            color: var(--neutral-900);
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-            list-style: none;
-        }
-
-        .nav-links a {
-            color: var(--neutral-700);
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.2s;
-        }
-
-        .nav-links a:hover {
-            color: var(--primary);
-        }
-
-        /* Main login container */
-        .login-wrapper {
+        /* ── LEFT HERO PANEL ─────────────────────────────────────── */
+        .hero-panel {
             flex: 1;
+            background: var(--surface-low);
             display: flex;
-            align-items: center;
+            flex-direction: column;
             justify-content: center;
-            padding: 40px 20px;
+            padding: 80px 64px;
             position: relative;
-            z-index: 1;
+            overflow: hidden;
         }
 
-        .login-card {
-            background: white;
-            border-radius: 32px;
-            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.1);
-            border: 1px solid var(--neutral-200);
-            padding: 48px 40px;
-            max-width: 460px;
-            width: 100%;
-            transition: transform 0.25s ease, box-shadow 0.3s ease;
+        /* Glowing orbs */
+        .hero-panel::before {
+            content: '';
+            position: absolute;
+            top: -120px;
+            left: -80px;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(79,70,229,0.25) 0%, transparent 65%);
+            border-radius: 50%;
+            animation: pulse 6s ease-in-out infinite;
         }
 
-        .login-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 25px 40px -12px rgba(0, 0, 0, 0.15);
+        .hero-panel::after {
+            content: '';
+            position: absolute;
+            bottom: -100px;
+            right: -60px;
+            width: 380px;
+            height: 380px;
+            background: radial-gradient(circle, rgba(195,192,255,0.1) 0%, transparent 65%);
+            border-radius: 50%;
+            animation: pulse 8s ease-in-out infinite reverse;
         }
 
-        .logo-section {
-            text-align: center;
-            margin-bottom: 28px;
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50%       { transform: scale(1.1); opacity: 0.7; }
         }
 
-        .logo-icon {
-            font-size: 56px;
-            margin-bottom: 16px;
-            display: inline-block;
-            color: var(--primary);
-        }
+        .hero-content { position: relative; z-index: 1; }
 
-        .login-card h1 {
-            font-size: 1.8rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #0f172a, #4f46e5);
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-            margin-bottom: 8px;
-        }
-
-        .subtitle {
-            color: #475569;
-            font-size: 0.9rem;
-        }
-
-        .welcome-text {
-            text-align: center;
-            margin: 24px 0 28px;
-        }
-
-        .welcome-text h2 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--neutral-900);
-            margin-bottom: 6px;
-        }
-
-        .welcome-text p {
-            color: #475569;
-            font-size: 0.9rem;
-        }
-
-        /* Google Button (light style) */
-        .google-btn {
-            width: 100%;
-            background: white;
-            border: 1px solid var(--neutral-200);
-            border-radius: 60px;
-            padding: 14px 24px;
-            font-size: 1rem;
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(79,70,229,0.15);
+            border: 1px solid rgba(195,192,255,0.15);
+            border-radius: 40px;
+            padding: 6px 16px;
+            font-size: 0.7rem;
             font-weight: 600;
-            color: var(--neutral-700);
-            cursor: pointer;
-            transition: all 0.25s ease;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--primary);
+            margin-bottom: 36px;
+        }
+
+        .hero-shield {
+            width: 72px;
+            height: 72px;
+            background: linear-gradient(135deg, var(--primary-container), var(--secondary-container));
+            border-radius: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+            font-size: 2rem;
+            margin-bottom: 28px;
+            box-shadow: 0 0 40px rgba(79,70,229,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
         }
 
-        .google-btn:hover {
-            border-color: var(--primary);
-            background: var(--neutral-50);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px -8px rgba(79, 70, 229, 0.3);
+        .hero-title {
+            font-size: 2.8rem;
+            font-weight: 800;
+            line-height: 1.15;
+            letter-spacing: -0.02em;
+            color: var(--on-surface);
+            margin-bottom: 12px;
         }
 
-        .google-icon {
-            width: 22px;
-            height: 22px;
+        .hero-title span {
+            background: linear-gradient(135deg, #c3c0ff, #818cf8);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
         }
 
-        /* Loading & error states */
-        .loading {
-            display: none;
-            text-align: center;
-            margin-top: 24px;
-            color: var(--primary);
-            font-size: 0.85rem;
-            font-weight: 500;
-        }
-
-        .loading.show {
-            display: block;
-        }
-
-        .error-message {
-            background: #fee2e2;
-            border-left: 4px solid var(--danger);
-            color: #991b1b;
-            padding: 12px 16px;
-            border-radius: 16px;
-            font-size: 0.85rem;
-            margin-top: 20px;
-            display: none;
-        }
-
-        .error-message.show {
-            display: block;
-        }
-
-        /* Feature badges (light) */
-        .features {
-            margin-top: 36px;
-            padding-top: 28px;
-            border-top: 1px solid var(--neutral-200);
-        }
-
-        .features h3 {
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #64748b;
-            text-align: center;
-            margin-bottom: 18px;
+        .hero-subtitle {
+            font-size: 0.95rem;
+            color: var(--on-surface-var);
+            line-height: 1.6;
+            margin-bottom: 52px;
+            max-width: 380px;
         }
 
         .feature-list {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 20px;
         }
 
         .feature-item {
             display: flex;
-            align-items: center;
-            gap: 12px;
-            color: var(--neutral-700);
-            font-size: 0.85rem;
+            align-items: flex-start;
+            gap: 16px;
         }
 
-        .feature-icon {
-            font-size: 1.1rem;
+        .feature-icon-wrap {
+            width: 40px;
+            height: 40px;
+            background: rgba(79,70,229,0.12);
+            border: 1px solid rgba(195,192,255,0.1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
             color: var(--primary);
         }
 
-        /* Footer (consistent) */
-        footer {
-            background: #0f172a;
-            color: #cbd5e1;
-            padding: 2rem 0;
-            text-align: center;
-            margin-top: auto;
-            position: relative;
-            z-index: 1;
+        .feature-text h4 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--on-surface);
+            margin-bottom: 2px;
         }
 
-        .footer-container {
-            max-width: 1280px;
-            margin: 0 auto;
-            padding: 0 24px;
+        .feature-text p {
+            font-size: 0.78rem;
+            color: var(--on-surface-var);
+            line-height: 1.5;
         }
 
-        .footer-bottom {
+        .hero-stat {
+            margin-top: 52px;
+            padding-top: 28px;
+            border-top: 1px solid rgba(70,69,85,0.4);
             display: flex;
-            justify-content: space-between;
+            gap: 40px;
+        }
+
+        .stat-value {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--primary);
+            letter-spacing: -0.02em;
+        }
+
+        .stat-label {
+            font-size: 0.72rem;
+            color: var(--on-surface-var);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 500;
+        }
+
+        /* ── RIGHT LOGIN PANEL ───────────────────────────────────── */
+        .login-panel {
+            width: 520px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 64px 56px;
+            background: var(--surface);
+            position: relative;
+            overflow-y: auto;
+        }
+
+        .login-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 1px;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent, rgba(79,70,229,0.4), transparent);
+        }
+
+        .login-header {
+            margin-bottom: 36px;
+        }
+
+        .login-header h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--on-surface);
+            margin-bottom: 6px;
+            letter-spacing: -0.01em;
+        }
+
+        .login-header p {
+            font-size: 0.875rem;
+            color: var(--on-surface-var);
+        }
+
+        /* ── Tab switcher ───────────────────────────────────────── */
+        .tab-switcher {
+            display: flex;
+            background: var(--surface-high);
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 32px;
+            gap: 4px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 10px 12px;
+            border: none;
+            border-radius: 9px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
+            justify-content: center;
+            gap: 7px;
+            background: transparent;
+            color: var(--on-surface-var);
+        }
+
+        .tab-btn.active {
+            background: var(--surface-highest);
+            color: var(--on-surface);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .tab-btn.admin-tab.active {
+            background: linear-gradient(135deg, #7f1d1d, #991b1b);
+            color: #fecaca;
+        }
+
+        /* ── Panels ─────────────────────────────────────────────── */
+        .user-form-panel { display: block; }
+        .user-form-panel.hidden { display: none; }
+        .admin-form-panel { display: none; }
+        .admin-form-panel.active { display: block; }
+
+        /* ── Google Button ──────────────────────────────────────── */
+        .google-btn {
+            width: 100%;
+            background: var(--surface-highest);
+            border: 1px solid rgba(70,69,85,0.5);
+            border-radius: 12px;
+            padding: 15px 24px;
+            font-size: 0.92rem;
+            font-weight: 600;
+            font-family: inherit;
+            color: var(--on-surface);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .google-btn:hover {
+            background: var(--surface-bright);
+            border-color: rgba(195,192,255,0.3);
+            box-shadow: 0 0 20px rgba(79,70,229,0.15);
+            transform: translateY(-1px);
+        }
+
+        .google-btn svg { flex-shrink: 0; }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 28px 0;
+            color: var(--outline);
             font-size: 0.75rem;
+            font-weight: 500;
         }
 
-        .footer-bottom-badge {
-            background: #1e293b;
-            padding: 4px 12px;
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--outline-var);
+            opacity: 0.4;
+        }
+
+        /* ── Platform capabilities ──────────────────────────────── */
+        .capabilities {
+            background: var(--surface-low);
+            border-radius: 12px;
+            padding: 18px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .cap-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
+            color: var(--on-surface-var);
+        }
+
+        .cap-icon {
+            color: var(--primary);
+            font-size: 0.8rem;
+        }
+
+        /* ── Admin form ─────────────────────────────────────────── */
+        .admin-header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .admin-badge-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(153,0,10,0.2);
+            border: 1px solid rgba(255,180,171,0.2);
             border-radius: 40px;
-            font-size: 0.7rem;
+            padding: 4px 14px;
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.07em;
+            text-transform: uppercase;
+            color: #fca5a5;
+            margin-bottom: 12px;
         }
 
-        @media (max-width: 640px) {
-            .nav-content {
-                flex-direction: column;
-                text-align: center;
-            }
-            .nav-links {
-                justify-content: center;
-                gap: 1.2rem;
-            }
-            .login-card {
-                padding: 32px 24px;
-            }
-            .footer-bottom {
-                flex-direction: column;
-                text-align: center;
-            }
+        .admin-header h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--on-surface);
+            margin-bottom: 4px;
+        }
+
+        .admin-header p {
+            font-size: 0.8rem;
+            color: var(--on-surface-var);
+        }
+
+        .form-group { margin-bottom: 18px; }
+
+        .form-group label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--on-surface-var);
+            margin-bottom: 8px;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+        }
+
+        .input-wrap { position: relative; }
+
+        .form-group input {
+            width: 100%;
+            padding: 13px 16px;
+            background: var(--surface-highest);
+            border: 1px solid transparent;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-family: inherit;
+            color: var(--on-surface);
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .form-group input::placeholder { color: var(--outline); }
+
+        .form-group input:focus {
+            border-color: rgba(195,192,255,0.3);
+            background: var(--surface-bright);
+            box-shadow: 0 0 0 3px rgba(79,70,229,0.1);
+        }
+
+        .pw-toggle {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--outline);
+            font-size: 0.85rem;
+            padding: 0;
+            transition: color 0.2s;
+        }
+
+        .pw-toggle:hover { color: var(--primary); }
+
+        /* ── Primary CTA buttons ────────────────────────────────── */
+        .admin-login-btn {
+            width: 100%;
+            padding: 14px 24px;
+            background: linear-gradient(135deg, #dc2626, #991b1c);
+            color: #fecaca;
+            border: none;
+            border-radius: 12px;
+            font-size: 0.92rem;
+            font-weight: 700;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 8px;
+            box-shadow: 0 0 20px rgba(220,38,38,0.25);
+        }
+
+        .admin-login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px rgba(220,38,38,0.4);
+        }
+
+        .admin-login-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* ── Alerts ─────────────────────────────────────────────── */
+        .alert {
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 0.82rem;
+            margin-top: 16px;
+            display: none;
+        }
+
+        .alert.show { display: block; }
+
+        .alert-error {
+            background: rgba(147,0,10,0.2);
+            border-left: 3px solid var(--error);
+            color: var(--error);
+        }
+
+        .alert-success {
+            background: rgba(22,163,74,0.15);
+            border-left: 3px solid #4ade80;
+            color: #4ade80;
+        }
+
+        .alert-info {
+            background: rgba(79,70,229,0.15);
+            border-left: 3px solid var(--primary);
+            color: var(--primary);
+        }
+
+        /* ── Loading ────────────────────────────────────────────── */
+        .loading-msg {
+            text-align: center;
+            font-size: 0.82rem;
+            color: var(--primary);
+            font-weight: 500;
+            margin-top: 16px;
+            display: none;
+        }
+
+        .loading-msg.show { display: block; }
+
+        /* ── Footer ─────────────────────────────────────────────── */
+        .login-footer {
+            margin-top: 32px;
+            text-align: center;
+            font-size: 0.7rem;
+            color: var(--outline);
+            line-height: 1.6;
+        }
+
+        .login-footer a { color: var(--on-surface-var); text-decoration: none; }
+        .login-footer a:hover { color: var(--primary); }
+
+        /* ── Floating particles on hero ─────────────────────────── */
+        .particles {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: rgba(195,192,255,0.4);
+            border-radius: 50%;
+            animation: float linear infinite;
+        }
+
+        @keyframes float {
+            0%   { transform: translateY(100vh) scale(0); opacity: 0; }
+            10%  { opacity: 1; }
+            90%  { opacity: 1; }
+            100% { transform: translateY(-20px) scale(1); opacity: 0; }
+        }
+
+        /* ── Responsive ─────────────────────────────────────────── */
+        @media (max-width: 900px) {
+            body { flex-direction: column; overflow-y: auto; }
+            .hero-panel { padding: 48px 32px; flex: none; }
+            .hero-title { font-size: 2rem; }
+            .hero-stat { display: none; }
+            .login-panel { width: 100%; padding: 48px 32px; }
+            .login-panel::before { display: none; }
         }
     </style>
 </head>
 <body>
 
-    <canvas id="particles-canvas"></canvas>
+    <!-- ── LEFT HERO PANEL ─────────────────────────────────── -->
+    <div class="hero-panel">
+        <div class="particles" id="particles"></div>
 
-    <nav class="navbar">
-        <div class="nav-content">
-            <div class="logo">
-                <i class="fas fa-shield-alt"></i>
-                SHA-256 Vault
+        <div class="hero-content">
+            <div class="hero-badge">
+                <i class="fas fa-lock"></i>
+                Cryptographic Security Platform
             </div>
-            <ul class="nav-links">
-                <li><a href="index.html">Home</a></li>
-                <li><a href="records.html">Records</a></li>
-                <li><a href="dashboard.html">Dashboard</a></li>
-                <li><a href="profile.html">Profile</a></li>
-            </ul>
+
+            <div class="hero-shield">🔐</div>
+
+            <h1 class="hero-title">
+                The Gold Standard<br>for <span>Data Integrity.</span>
+            </h1>
+
+            <p class="hero-subtitle">
+                A high-security cryptographic sanctuary for verified digital assets and tamper-proof storage.
+            </p>
+
+            <div class="feature-list">
+                <div class="feature-item">
+                    <div class="feature-icon-wrap">
+                        <i class="fas fa-hashtag"></i>
+                    </div>
+                    <div class="feature-text">
+                        <h4>SHA-256 Hashing</h4>
+                        <p>Military-grade cryptographic hashing for every stored entry.</p>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-icon-wrap">
+                        <i class="fas fa-check-double"></i>
+                    </div>
+                    <div class="feature-text">
+                        <h4>Real-time Verification</h4>
+                        <p>Instant audit trails and integrity checks for all data points.</p>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-icon-wrap">
+                        <i class="fas fa-shield-halved"></i>
+                    </div>
+                    <div class="feature-text">
+                        <h4>Tamper Detection</h4>
+                        <p>Automated alerts and zero-trust protocols for data safety.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hero-stat">
+                <div class="stat-item">
+                    <div class="stat-value">SHA-256</div>
+                    <div class="stat-label">Algorithm</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">100%</div>
+                    <div class="stat-label">Verified</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">BTech</div>
+                    <div class="stat-label">Final Year Project</div>
+                </div>
+            </div>
         </div>
-    </nav>
+    </div>
 
-    <div class="login-wrapper">
-        <div class="login-card">
-            <div class="logo-section">
-                <div class="logo-icon">🔐</div>
-                <h1>Data Integrity Platform</h1>
-                <p class="subtitle">SHA-256 Vault</p>
-            </div>
+    <!-- ── RIGHT LOGIN PANEL ───────────────────────────────── -->
+    <div class="login-panel">
+        <div class="login-header">
+            <h2>Welcome Back</h2>
+            <p>Please select your access level below.</p>
+        </div>
 
-            <div class="welcome-text">
-                <h2>Welcome back</h2>
-                <p>Sign in to access your secure data vault</p>
-            </div>
+        <!-- Tab Switcher -->
+        <div class="tab-switcher">
+            <button class="tab-btn active" id="userTabBtn" onclick="switchTab('user')">
+                <i class="fas fa-user"></i> User Login
+            </button>
+            <button class="tab-btn admin-tab" id="adminTabBtn" onclick="switchTab('admin')">
+                <i class="fas fa-shield-alt"></i> Admin Login
+            </button>
+        </div>
 
-            <!-- Google OAuth Button -->
+        <!-- ── USER LOGIN PANEL ──────────────────────────── -->
+        <div class="user-form-panel" id="userPanel">
             <button id="googleLoginBtn" class="google-btn">
-                <svg class="google-icon" viewBox="0 0 24 24">
+                <svg width="20" height="20" viewBox="0 0 24 24">
                     <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                     <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
                     <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
@@ -358,46 +657,133 @@
                 Continue with Google
             </button>
 
-            <div class="loading" id="loadingMessage">
+            <div class="loading-msg" id="loadingMessage">
                 <i class="fas fa-spinner fa-pulse"></i> Authenticating...
             </div>
-            <div class="error-message" id="errorMessage"></div>
+            <div class="alert alert-error" id="errorMessage"></div>
 
-            <!-- Feature highlights -->
-            <div class="features">
-                <h3>Platform capabilities</h3>
-                <div class="feature-list">
-                    <div class="feature-item">
-                        <span class="feature-icon">🛡️</span>
-                        <span>SHA-256 cryptographic fingerprinting</span>
-                    </div>
-                    <div class="feature-item">
-                        <span class="feature-icon">✓</span>
-                        <span>Real-time integrity verification</span>
-                    </div>
-                    <div class="feature-item">
-                        <span class="feature-icon">⚡</span>
-                        <span>Instant tamper detection</span>
-                    </div>
+            <div class="divider">Platform Capabilities</div>
+
+            <div class="capabilities">
+                <div class="cap-item">
+                    <i class="fas fa-lock cap-icon"></i>
+                    <span>SHA-256 Hashing</span>
+                </div>
+                <div class="cap-item">
+                    <i class="fas fa-bolt cap-icon"></i>
+                    <span>Instant Verification</span>
+                </div>
+                <div class="cap-item">
+                    <i class="fas fa-bell cap-icon"></i>
+                    <span>Tamper Alerts</span>
+                </div>
+                <div class="cap-item">
+                    <i class="fas fa-database cap-icon"></i>
+                    <span>Secure Storage</span>
                 </div>
             </div>
+        </div>
+
+        <!-- ── ADMIN LOGIN PANEL ─────────────────────────── -->
+        <div class="admin-form-panel" id="adminPanel">
+            <div class="admin-header">
+                <div class="admin-badge-pill">
+                    <i class="fas fa-lock"></i> Restricted Access
+                </div>
+                <h3>Admin Login</h3>
+                <p>Sign in with administrator credentials</p>
+            </div>
+
+            <form id="adminLoginForm" autocomplete="off">
+                <div class="form-group">
+                    <label for="adminUsername">Username</label>
+                    <div class="input-wrap">
+                        <input
+                            type="text"
+                            id="adminUsername"
+                            placeholder="Enter admin username"
+                            autocomplete="off"
+                            required
+                        />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="adminPassword">Password</label>
+                    <div class="input-wrap">
+                        <input
+                            type="password"
+                            id="adminPassword"
+                            placeholder="Enter admin password"
+                            autocomplete="new-password"
+                            required
+                        />
+                        <button type="button" class="pw-toggle" id="pwToggle" onclick="togglePw()">
+                            <i class="fas fa-eye" id="pwIcon"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" class="admin-login-btn" id="adminLoginBtn">
+                    <i class="fas fa-shield-alt"></i>
+                    Login as Admin
+                </button>
+            </form>
+
+            <div class="alert alert-error" id="adminError"></div>
+            <div class="alert alert-success" id="adminSuccess"></div>
+        </div>
+
+        <div class="login-footer">
+            <p>© 2026 Data Integrity Platform &nbsp;·&nbsp; BTech CSE Final Year Project</p>
+            <p style="margin-top:6px;">
+                <a href="index.html">Home</a>
+            </p>
         </div>
     </div>
-
-    <footer>
-        <div class="footer-container">
-            <div class="footer-bottom">
-                <p>© 2026 Data Integrity Platform • Final Year BTech CSE Project</p>
-                <div class="footer-bottom-badge">
-                    <i class="fas fa-lock"></i> SHA-256 Secured
-                </div>
-            </div>
-        </div>
-    </footer>
 
     <script>
         const API_URL = 'http://localhost:5000';
 
+        // ── Particles ──────────────────────────────────────────
+        (function() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 20; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                p.style.left = Math.random() * 100 + '%';
+                p.style.animationDuration = (8 + Math.random() * 12) + 's';
+                p.style.animationDelay = (Math.random() * 10) + 's';
+                p.style.width = p.style.height = (1 + Math.random() * 3) + 'px';
+                container.appendChild(p);
+            }
+        })();
+
+        // ── Tab switcher ──────────────────────────────────────
+        function switchTab(tab) {
+            const userPanel  = document.getElementById('userPanel');
+            const adminPanel = document.getElementById('adminPanel');
+            const userBtn    = document.getElementById('userTabBtn');
+            const adminBtn   = document.getElementById('adminTabBtn');
+
+            if (tab === 'user') {
+                userPanel.classList.remove('hidden');
+                adminPanel.classList.remove('active');
+                userBtn.classList.add('active');
+                adminBtn.classList.remove('active');
+            } else {
+                userPanel.classList.add('hidden');
+                adminPanel.classList.add('active');
+                adminBtn.classList.add('active');
+                userBtn.classList.remove('active');
+            }
+        }
+
+        if (new URLSearchParams(window.location.search).get('tab') === 'admin') {
+            switchTab('admin');
+        }
+
+        // ── User login ────────────────────────────────────────
         function showError(message) {
             const el = document.getElementById('errorMessage');
             el.textContent = message;
@@ -406,9 +792,9 @@
         }
 
         function showLoading(show) {
-            const loadingEl = document.getElementById('loadingMessage');
-            if (show) loadingEl.classList.add('show');
-            else loadingEl.classList.remove('show');
+            const el = document.getElementById('loadingMessage');
+            if (show) el.classList.add('show');
+            else el.classList.remove('show');
         }
 
         document.getElementById('googleLoginBtn').addEventListener('click', () => {
@@ -416,11 +802,10 @@
             window.location.href = `${API_URL}/api/auth/google/login`;
         });
 
-        // Handle OAuth redirect response
         window.addEventListener('load', () => {
             const params = new URLSearchParams(window.location.search);
-            const token = params.get('token');
-            const error = params.get('error');
+            const token  = params.get('token');
+            const error  = params.get('error');
 
             if (token) {
                 localStorage.setItem('auth_token', token);
@@ -435,84 +820,73 @@
             }
         });
 
-        // Light particle background (matching records page)
-        (function() {
-            const canvas = document.getElementById('particles-canvas');
-            const ctx = canvas.getContext('2d');
-            let width, height, particles = [];
-            const PARTICLE_COUNT = 70;
-            const CONNECTION_DIST = 130;
+        // ── Password toggle ───────────────────────────────────
+        function togglePw() {
+            const input = document.getElementById('adminPassword');
+            const icon  = document.getElementById('pwIcon');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        }
 
-            function resize() {
-                width = window.innerWidth;
-                height = window.innerHeight;
-                canvas.width = width;
-                canvas.height = height;
+        // ── Admin login ───────────────────────────────────────
+        function showAdminError(msg) {
+            const el = document.getElementById('adminError');
+            el.textContent = msg;
+            el.classList.add('show');
+            document.getElementById('adminSuccess').classList.remove('show');
+            setTimeout(() => el.classList.remove('show'), 7000);
+        }
+
+        function showAdminSuccess(msg) {
+            const el = document.getElementById('adminSuccess');
+            el.textContent = msg;
+            el.classList.add('show');
+            document.getElementById('adminError').classList.remove('show');
+        }
+
+        document.getElementById('adminLoginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn      = document.getElementById('adminLoginBtn');
+            const username = document.getElementById('adminUsername').value.trim();
+            const password = document.getElementById('adminPassword').value;
+
+            if (!username || !password) {
+                showAdminError('Please enter both username and password.');
+                return;
             }
 
-            function random(min, max) {
-                return Math.random() * (max - min) + min;
-            }
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Authenticating...';
 
-            function initParticles() {
-                particles = [];
-                for (let i = 0; i < PARTICLE_COUNT; i++) {
-                    particles.push({
-                        x: Math.random() * width,
-                        y: Math.random() * height,
-                        vx: random(-0.2, 0.2),
-                        vy: random(-0.2, 0.2),
-                        radius: random(1.2, 2.8),
-                        alpha: random(0.2, 0.5)
-                    });
-                }
-            }
+            try {
+                const res  = await fetch(`${API_URL}/api/admin/login`, {
+                    method:  'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body:    JSON.stringify({ username, password }),
+                });
+                const data = await res.json();
 
-            function draw() {
-                if (!ctx) return;
-                ctx.clearRect(0, 0, width, height);
-                for (let p of particles) {
-                    p.x += p.vx;
-                    p.y += p.vy;
-                    if (p.x < 0) p.x = width;
-                    if (p.x > width) p.x = 0;
-                    if (p.y < 0) p.y = height;
-                    if (p.y > height) p.y = 0;
+                if (res.ok && data.success) {
+                    localStorage.setItem('adminToken', data.token);
+                    localStorage.setItem('adminUsername', data.username);
+                    showAdminSuccess('✓ Login successful! Redirecting to Admin Dashboard...');
+                    setTimeout(() => { window.location.href = 'admin-dashboard.html'; }, 900);
+                } else {
+                    showAdminError(data.error || 'Invalid admin credentials');
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-shield-alt"></i> Login as Admin';
                 }
-                // Draw connections
-                for (let i = 0; i < particles.length; i++) {
-                    for (let j = i + 1; j < particles.length; j++) {
-                        const dx = particles[i].x - particles[j].x;
-                        const dy = particles[i].y - particles[j].y;
-                        const dist = Math.hypot(dx, dy);
-                        if (dist < CONNECTION_DIST) {
-                            ctx.beginPath();
-                            ctx.moveTo(particles[i].x, particles[i].y);
-                            ctx.lineTo(particles[j].x, particles[j].y);
-                            ctx.strokeStyle = `rgba(79, 70, 229, ${(1 - dist / CONNECTION_DIST) * 0.15})`;
-                            ctx.lineWidth = 0.6;
-                            ctx.stroke();
-                        }
-                    }
-                }
-                // Draw particles
-                for (let p of particles) {
-                    ctx.beginPath();
-                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-                    ctx.fillStyle = `rgba(79, 70, 229, ${p.alpha * 0.8})`;
-                    ctx.fill();
-                }
-                requestAnimationFrame(draw);
+            } catch (err) {
+                showAdminError('Network error — is the backend running on port 5000?');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-shield-alt"></i> Login as Admin';
             }
-
-            window.addEventListener('resize', () => {
-                resize();
-                initParticles();
-            });
-            resize();
-            initParticles();
-            draw();
-        })();
+        });
     </script>
 </body>
 </html>

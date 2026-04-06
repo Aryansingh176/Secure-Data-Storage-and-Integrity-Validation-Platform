@@ -9,7 +9,7 @@ This is the main server file that:
 - Runs the Flask application
 """
 
-from flask import Flask, jsonify, session
+from flask import Flask, jsonify, session, send_from_directory
 from flask_cors import CORS
 import os
 from dotenv import load_dotenv
@@ -20,6 +20,7 @@ from routes.data_routes import data_bp, init_routes
 from routes.auth_routes import auth_bp, init_auth_routes
 from routes.otp_auth_routes import otp_auth_bp, init_otp_auth
 from routes.integrity_routes import integrity_bp, init_integrity_routes
+from routes.admin_routes import admin_bp, init_admin_routes
 
 # Load environment variables
 load_dotenv()
@@ -50,12 +51,14 @@ init_routes(db)
 init_auth_routes(db)
 init_otp_auth(db)
 init_integrity_routes(db)
+init_admin_routes(db)
 
 # Register blueprints
 app.register_blueprint(data_bp)
 app.register_blueprint(auth_bp)
 app.register_blueprint(otp_auth_bp)
 app.register_blueprint(integrity_bp)
+app.register_blueprint(admin_bp)
 
 # Root endpoint
 @app.route('/')
@@ -84,6 +87,10 @@ def index():
             'GET  /api/records':              'Get all records for authenticated user',
             'DELETE /api/records/<id>':       'Delete a record (owner only)',
             'GET  /api/dashboard/stats':      'Dashboard statistics for authenticated user',
+            # ── Public Verification (no auth) ────────────────────────────────
+            'GET  /api/public/record/<verification_id>': 'Public metadata by verification ID',
+            'POST /api/public/verify/<verification_id>': 'Public verify uploaded file/text against stored hash',
+            'GET  /verify/<verification_id>': 'Public verification page (HTML)',
             # ── Auth ──────────────────────────────────────────────────────────
             'GET  /api/auth/google/login':    'Google OAuth login',
             'POST /api/auth/login':           'Send OTP to email/phone',
@@ -101,6 +108,13 @@ def health():
         'status': 'healthy',
         'database': 'connected' if db is not None else 'disconnected'
     })
+
+
+@app.route('/verify/<verification_id>')
+def public_verify_page(verification_id):
+    """Serve public verification page (no login required)."""
+    project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+    return send_from_directory(project_root, 'verify.html')
 
 # Error handlers
 @app.errorhandler(404)

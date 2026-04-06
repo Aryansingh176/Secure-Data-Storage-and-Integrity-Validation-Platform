@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verify Document — Data Integrity Platform</title>
+    <title>Document Verification Portal — Data Integrity Platform</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -195,7 +195,7 @@
 
 <nav class="navbar">
     <span class="logo">🔒</span>
-    <h1>Data Integrity Platform — Document Verification</h1>
+    <h1>Document Verification Portal</h1>
 </nav>
 
 <main>
@@ -228,8 +228,9 @@
             <table class="meta-table">
                 <tr><td>File Type</td><td id="metaFileType">—</td></tr>
                 <tr><td>File Size</td><td id="metaFileSize">—</td></tr>
-                <tr><td>Upload Method</td><td id="metaMethod">—</td></tr>
-                <tr><td>Stored On</td><td id="metaDate">—</td></tr>
+                <tr><td>Upload Date</td><td id="metaDate">—</td></tr>
+                <tr><td>Hash Algorithm</td><td id="metaAlgo">SHA-256</td></tr>
+                <tr><td>Verification ID</td><td id="metaVerificationId">—</td></tr>
                 <tr><td>Verifications</td><td id="metaCount">—</td></tr>
             </table>
 
@@ -237,7 +238,7 @@
                 <div style="font-size:0.85rem;font-weight:600;color:#555;margin-bottom:4px;">
                     <i class="fas fa-fingerprint" style="color:#1a237e;"></i>&nbsp; Stored SHA-256 Hash
                 </div>
-                <div class="hash-box" id="storedHashBox">—</div>
+                <div class="hash-box" id="storedHashBox">Stored securely and compared during verification.</div>
             </div>
 
             <hr class="divider">
@@ -279,6 +280,8 @@
                 <i class="fas fa-search"></i> Verify Now
             </button>
 
+            <p id="verifyHint" style="margin-top:0.7rem;font-size:0.88rem;color:#607d8b;">Upload a document to verify.</p>
+
             <!-- Result -->
             <div class="result-box" id="resultBox">
                 <div class="result-icon" id="resultIcon">✅</div>
@@ -300,7 +303,7 @@
 </footer>
 
 <script>
-const API = 'http://localhost:5000';
+const API = (window.location.port === '5000') ? window.location.origin : 'http://localhost:5000';
 
 // ── Read verification_id from URL query param or path ─────────────────────────
 function getVerificationId() {
@@ -357,7 +360,7 @@ async function loadRecord() {
     }
 
     try {
-        const res = await fetch(`${API}/api/public/verify/${_verificationId}`);
+        const res = await fetch(`${API}/api/public/record/${_verificationId}`);
         if (!res.ok) { showError(); return; }
         const data = await res.json();
 
@@ -368,10 +371,10 @@ async function loadRecord() {
         document.getElementById('recordName').textContent    = data.original_filename || '—';
         document.getElementById('metaFileType').textContent  = data.file_type || '—';
         document.getElementById('metaFileSize').textContent  = fmtSize(data.file_size);
-        document.getElementById('metaMethod').textContent    = (data.upload_method === 'file') ? 'File Upload' : 'Text Input';
         document.getElementById('metaDate').textContent      = fmtDate(data.created_at);
+        document.getElementById('metaAlgo').textContent      = data.hash_algorithm || 'SHA-256';
+        document.getElementById('metaVerificationId').textContent = data.verification_id || _verificationId;
         document.getElementById('metaCount').textContent     = data.verification_count + ' times';
-        document.getElementById('storedHashBox').textContent = data.data_hash || '—';
         document.getElementById('typeIcon').textContent      = TYPE_ICONS[data.file_type] || '📄';
 
         // If text record, switch method and show text tab
@@ -446,6 +449,7 @@ async function runVerification() {
 function showResult(data) {
     const box = document.getElementById('resultBox');
     const isVerified = data.status === 'verified';
+    document.getElementById('verifyHint').style.display = 'none';
 
     box.className = 'result-box ' + (isVerified ? 'verified' : 'tampered');
     document.getElementById('resultIcon').textContent  = isVerified ? '✅' : '⚠️';

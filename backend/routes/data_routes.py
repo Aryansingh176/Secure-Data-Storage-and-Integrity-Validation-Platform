@@ -20,6 +20,7 @@ Legacy routes (kept for backward compatibility):
 
 from flask import Blueprint, request, jsonify
 from werkzeug.utils import secure_filename
+import os
 
 from models.data_model import DataModel
 from models.audit_log_model import AuditLogModel, AuditAction
@@ -55,6 +56,12 @@ def _log(user_id, action, record_id=None, success=True, details=None):
             success=success,
             details=details or {},
         )
+
+
+def _public_verification_link(verification_id: str) -> str:
+    """Create absolute public verification URL: /verify/<verification_id>."""
+    base = os.getenv('PUBLIC_VERIFY_BASE_URL', 'http://localhost:5000').rstrip('/')
+    return f'{base}/verify/{verification_id}'
 
 
 # == FILE UPLOAD ===============================================================
@@ -100,6 +107,8 @@ def upload_file():
     return jsonify({
         'success': True,
         'message': 'File fingerprint stored. SHA-256: ' + record['data_hash'],
+        'verification_id': record.get('verification_id'),
+        'verification_link': _public_verification_link(record.get('verification_id', '')),
         'record':  record,
     }), 201
 
@@ -143,6 +152,8 @@ def hash_text():
     return jsonify({
         'success': True,
         'message': 'Text fingerprint stored. SHA-256: ' + record['data_hash'],
+        'verification_id': record.get('verification_id'),
+        'verification_link': _public_verification_link(record.get('verification_id', '')),
         'record':  record,
     }), 201
 
