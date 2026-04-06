@@ -18,7 +18,7 @@ class Database:
     
     def __init__(self):
         """Initialize database connection"""
-        self.mongo_uri = os.getenv('MONGO_URI', 'mongodb://localhost:27017/')
+        self.mongo_uri = os.getenv('MONGODB_URI')
         self.db_name = os.getenv('MONGO_DB_NAME', 'data_integrity_platform')
         self.client = None
         self.db = None
@@ -31,6 +31,9 @@ class Database:
             Database object if successful, None otherwise
         """
         try:
+            if not self.mongo_uri:
+                raise Exception('MONGODB_URI not set in environment')
+
             # Create MongoDB client
             self.client = MongoClient(self.mongo_uri, serverSelectionTimeoutMS=5000)
             
