@@ -14,6 +14,8 @@ from flask_cors import CORS
 import os
 from dotenv import load_dotenv
 
+load_dotenv()
+
 # Import configurations and routes
 from config.database import db_instance
 from routes.data_routes import data_bp, init_routes
@@ -21,9 +23,6 @@ from routes.auth_routes import auth_bp, init_auth_routes
 from routes.otp_auth_routes import otp_auth_bp, init_otp_auth
 from routes.integrity_routes import integrity_bp, init_integrity_routes
 from routes.admin_routes import admin_bp, init_admin_routes
-
-# Load environment variables
-load_dotenv()
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -133,15 +132,6 @@ def internal_error(error):
 
 # Run the server
 if __name__ == '__main__':
-    port = int(os.getenv('PORT', 5000))
-    debug = os.getenv('FLASK_DEBUG', 'True') == 'True'
-    
-    print("\n" + "="*60)
-    print("Data Integrity Platform - Backend Server")
-    print("="*60)
-    print(f"Server running on: http://localhost:{port}")
-    print(f"MongoDB: {os.getenv('MONGO_DB_NAME', 'data_integrity_platform')}")
-    print(f"Debug mode: {debug}")
-    print("="*60 + "\n")
-    
-    app.run(host='0.0.0.0', port=port, debug=debug)
+    import os
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port, debug=False)
