@@ -20,6 +20,7 @@ from routes.auth_routes import auth_bp, init_auth_routes
 from routes.otp_auth_routes import otp_auth_bp, init_otp_auth
 from routes.integrity_routes import integrity_bp, init_integrity_routes
 from routes.admin_routes import admin_bp, init_admin_routes
+from complaint_routes import complaint_bp, init_complaint_routes
 
 import os
 PORT = int(os.environ.get("PORT", 5000))
@@ -53,6 +54,7 @@ init_auth_routes(db)
 init_otp_auth(db)
 init_integrity_routes(db)
 init_admin_routes(db)
+init_complaint_routes(db)
 
 # Register blueprints
 app.register_blueprint(data_bp)
@@ -60,6 +62,7 @@ app.register_blueprint(auth_bp)
 app.register_blueprint(otp_auth_bp)
 app.register_blueprint(integrity_bp)
 app.register_blueprint(admin_bp)
+app.register_blueprint(complaint_bp)
 
 # Root endpoint
 @app.route('/')

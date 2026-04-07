@@ -338,6 +338,129 @@
             white-space: nowrap;
         }
 
+        /* Complaints section */
+        .complaint-card {
+            background: white;
+            border-radius: 24px;
+            border: 1px solid var(--neutral-200);
+            padding: 1.2rem;
+            margin-top: 1rem;
+            box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.03), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+        }
+
+        .complaint-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 0.9rem;
+            margin-top: 0.9rem;
+        }
+
+        .complaint-field {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+
+        .complaint-field.full {
+            grid-column: 1 / -1;
+        }
+
+        .complaint-field label {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: #334155;
+        }
+
+        .complaint-field input,
+        .complaint-field select,
+        .complaint-field textarea {
+            border: 1px solid var(--neutral-200);
+            border-radius: 12px;
+            padding: 10px 12px;
+            font: inherit;
+            font-size: 0.9rem;
+            outline: none;
+        }
+
+        .complaint-field input:focus,
+        .complaint-field select:focus,
+        .complaint-field textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+        }
+
+        .helper-text {
+            font-size: 0.74rem;
+            color: #64748b;
+        }
+
+        .inline-row {
+            display: flex;
+            gap: 0.6rem;
+            align-items: center;
+        }
+
+        .btn-secondary {
+            border: 1px solid var(--neutral-200);
+            background: white;
+            color: var(--neutral-700);
+            border-radius: 9999px;
+            padding: 8px 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            border: none;
+            background: var(--primary);
+            color: white;
+            border-radius: 9999px;
+            padding: 10px 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            padding: 3px 10px;
+            border-radius: 9999px;
+            font-size: 0.74rem;
+            font-weight: 700;
+        }
+
+        .status-open { background: #dbeafe; color: #1d4ed8; }
+        .status-progress { background: #fef3c7; color: #92400e; }
+        .status-resolved { background: #dcfce7; color: #166534; }
+        .status-rejected { background: #fee2e2; color: #991b1b; }
+
+        .complaint-table-wrap {
+            overflow-x: auto;
+            margin-top: 0.8rem;
+        }
+
+        .complaint-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.82rem;
+        }
+
+        .complaint-table th,
+        .complaint-table td {
+            border-bottom: 1px solid var(--neutral-200);
+            padding: 0.65rem 0.45rem;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        .complaint-msg-ok { color: #166534; font-size: 0.78rem; font-weight: 600; }
+        .complaint-msg-err { color: #991b1b; font-size: 0.78rem; font-weight: 600; }
+
         /* Footer */
         footer {
             background: #0f172a;
@@ -391,6 +514,7 @@
                 <li><a href="records.html">Records</a></li>
                 <li><a href="dashboard.html" class="active">Dashboard</a></li>
                 <li><a href="profile.html">Profile</a></li>
+                <li><a href="#complaintsSection">Complaints</a></li>
             </ul>
             <button class="logout-btn" id="logoutBtn">Logout</button>
         </div>
@@ -466,6 +590,86 @@
         <div id="activityList" class="activity-list">
             <div style="text-align: center; padding: 2rem; color: #64748b;"><i class="fas fa-spinner fa-pulse"></i> Loading activity...</div>
         </div>
+
+        <h2 class="section-title" id="complaintsSection"><i class="fas fa-ticket-alt"></i> Complaints</h2>
+        <div class="complaint-card">
+            <div class="inline-row" style="justify-content: space-between; flex-wrap: wrap;">
+                <strong>Complaint Token System</strong>
+                <button class="btn-primary" id="openComplaintFormBtn">Submit New Complaint</button>
+            </div>
+
+            <form id="complaintForm" style="display:none; margin-top: 1rem;">
+                <div class="complaint-form">
+                    <div class="complaint-field">
+                        <label for="complaintTitle">Complaint Title</label>
+                        <input id="complaintTitle" type="text" maxlength="120" required>
+                    </div>
+                    <div class="complaint-field">
+                        <label for="complaintCategory">Category</label>
+                        <select id="complaintCategory" required>
+                            <option value="">Select category</option>
+                            <option>File Not Found</option>
+                            <option>Verification Failed</option>
+                            <option>Upload Issue</option>
+                            <option>Account Issue</option>
+                            <option>Data Mismatch</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+                    <div class="complaint-field">
+                        <label for="complaintPriority">Priority</label>
+                        <select id="complaintPriority" required>
+                            <option value="">Select priority</option>
+                            <option>Low</option>
+                            <option>Medium</option>
+                            <option>High</option>
+                        </select>
+                    </div>
+                    <div class="complaint-field full">
+                        <label for="complaintDescription">Description</label>
+                        <textarea id="complaintDescription" rows="4" minlength="20" required></textarea>
+                    </div>
+                    <div class="complaint-field full">
+                        <label for="complaintStoredFilename">Stored File Name</label>
+                        <div class="inline-row">
+                            <input id="complaintStoredFilename" type="text" placeholder="example.pdf" required style="flex:1;">
+                            <button type="button" class="btn-secondary" id="checkStoredFileBtn">Check File</button>
+                        </div>
+                        <div class="helper-text">Enter the exact filename you uploaded previously</div>
+                        <div id="storedFileCheckMessage" class="helper-text"></div>
+                    </div>
+                    <div class="complaint-field full">
+                        <label for="complaintVerificationFile">Upload Verification File</label>
+                        <input id="complaintVerificationFile" type="file" accept=".pdf,.docx,.xlsx,.jpg,.jpeg,.png,.txt" required>
+                        <div id="verificationFormatMessage" class="helper-text">Accepted: PDF, DOCX, XLSX, JPG, JPEG, PNG, TXT (max 10 MB)</div>
+                    </div>
+                </div>
+                <div class="inline-row" style="margin-top: 0.9rem;">
+                    <button type="submit" class="btn-primary" id="complaintSubmitBtn" disabled>Submit Complaint</button>
+                    <span id="complaintSubmitMessage" class="helper-text"></span>
+                </div>
+            </form>
+
+            <div class="complaint-table-wrap">
+                <table class="complaint-table">
+                    <thead>
+                        <tr>
+                            <th>Complaint ID</th>
+                            <th>Title</th>
+                            <th>Category</th>
+                            <th>Priority</th>
+                            <th>Status</th>
+                            <th>Submitted Date</th>
+                            <th>Admin Response</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="complaintsHistoryBody">
+                        <tr><td colspan="8" style="color:#64748b;">No complaints submitted yet.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 
     <footer>
@@ -476,6 +680,16 @@
 
     <script>
         const API_URL = 'https://secure-data-storage-and-integrity.onrender.com';
+        const ALLOWED_COMPLAINT_FORMATS = ['pdf', 'docx', 'xlsx', 'jpg', 'jpeg', 'png', 'txt'];
+
+        let complaintCheckState = {
+            checked: false,
+            found: false,
+            storedFormat: null,
+            verificationFormat: null,
+            validated: false,
+        };
+        let complaintHistoryCache = {};
 
         function getToken() { return localStorage.getItem('auth_token'); }
         function authHeaders() { return { 'Authorization': 'Bearer ' + getToken() }; }
@@ -492,7 +706,228 @@
         window.addEventListener('DOMContentLoaded', () => {
             if (!getToken()) window.location.href = 'login.html';
             loadDashboardData();
+            setupComplaintSystem();
         });
+
+        function esc(value) {
+            return String(value ?? '').replace(/[&<>"']/g, (ch) => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            }[ch]));
+        }
+
+        function statusBadge(status) {
+            if (status === 'Open') return '<span class="status-pill status-open">Open</span>';
+            if (status === 'In Progress') return '<span class="status-pill status-progress">In Progress</span>';
+            if (status === 'Resolved') return '<span class="status-pill status-resolved">Resolved</span>';
+            if (status === 'Rejected') return '<span class="status-pill status-rejected">Rejected</span>';
+            return esc(status || '—');
+        }
+
+        function setupComplaintSystem() {
+            document.getElementById('openComplaintFormBtn').addEventListener('click', () => {
+                const form = document.getElementById('complaintForm');
+                form.style.display = form.style.display === 'none' ? 'block' : 'none';
+            });
+
+            document.getElementById('checkStoredFileBtn').addEventListener('click', checkStoredFile);
+            document.getElementById('complaintVerificationFile').addEventListener('change', onVerificationFileSelected);
+            document.getElementById('complaintForm').addEventListener('submit', submitComplaint);
+            loadMyComplaints();
+        }
+
+        async function checkStoredFile() {
+            const filename = document.getElementById('complaintStoredFilename').value.trim();
+            const msg = document.getElementById('storedFileCheckMessage');
+            if (!filename) {
+                msg.className = 'complaint-msg-err';
+                msg.textContent = 'Please enter a stored filename.';
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_URL}/api/complaints/check-file?stored_filename=${encodeURIComponent(filename)}`, { headers: authHeaders() });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || 'Failed to check file');
+
+                complaintCheckState.checked = true;
+                complaintCheckState.found = !!data.found;
+                complaintCheckState.storedFormat = data.stored_file_format || null;
+
+                if (data.found) {
+                    msg.className = 'complaint-msg-ok';
+                    msg.textContent = `✓ Stored file found. Format: ${data.stored_file_format || 'unknown'}.`;
+                } else {
+                    msg.className = 'complaint-msg-err';
+                    msg.textContent = '✗ Stored file not found. You can still submit this complaint.';
+                }
+                validateComplaintFormat();
+            } catch (err) {
+                msg.className = 'complaint-msg-err';
+                msg.textContent = err.message;
+            }
+        }
+
+        function onVerificationFileSelected(event) {
+            const file = event.target.files?.[0];
+            complaintCheckState.verificationFormat = null;
+            if (!file) {
+                validateComplaintFormat();
+                return;
+            }
+
+            const parts = file.name.split('.');
+            const ext = parts.length > 1 ? parts.pop().toLowerCase() : '';
+            complaintCheckState.verificationFormat = ext;
+            validateComplaintFormat();
+        }
+
+        function validateComplaintFormat() {
+            const msg = document.getElementById('verificationFormatMessage');
+            const submitBtn = document.getElementById('complaintSubmitBtn');
+            const ext = complaintCheckState.verificationFormat;
+
+            if (!ext) {
+                complaintCheckState.validated = false;
+                submitBtn.disabled = true;
+                msg.className = 'helper-text';
+                msg.textContent = 'Accepted: PDF, DOCX, XLSX, JPG, JPEG, PNG, TXT (max 10 MB)';
+                return;
+            }
+
+            if (!ALLOWED_COMPLAINT_FORMATS.includes(ext)) {
+                complaintCheckState.validated = false;
+                submitBtn.disabled = true;
+                msg.className = 'complaint-msg-err';
+                msg.textContent = `Unsupported format .${ext}. Please upload a supported file.`;
+                return;
+            }
+
+            if (complaintCheckState.checked && complaintCheckState.found && complaintCheckState.storedFormat && complaintCheckState.storedFormat !== ext) {
+                complaintCheckState.validated = false;
+                submitBtn.disabled = true;
+                msg.className = 'complaint-msg-err';
+                msg.textContent = `Format mismatch: stored file is ${complaintCheckState.storedFormat}, uploaded is ${ext}.`;
+                return;
+            }
+
+            complaintCheckState.validated = true;
+            submitBtn.disabled = false;
+            msg.className = 'complaint-msg-ok';
+            msg.textContent = complaintCheckState.checked && complaintCheckState.found
+                ? `✓ Format validated (${ext}).`
+                : `✓ File format accepted (${ext}).`;
+        }
+
+        async function submitComplaint(event) {
+            event.preventDefault();
+            const submitMsg = document.getElementById('complaintSubmitMessage');
+
+            const title = document.getElementById('complaintTitle').value.trim();
+            const description = document.getElementById('complaintDescription').value.trim();
+            const category = document.getElementById('complaintCategory').value;
+            const priority = document.getElementById('complaintPriority').value;
+            const storedFilename = document.getElementById('complaintStoredFilename').value.trim();
+            const file = document.getElementById('complaintVerificationFile').files?.[0];
+
+            if (description.length < 20) {
+                submitMsg.className = 'complaint-msg-err';
+                submitMsg.textContent = 'Description must be at least 20 characters.';
+                return;
+            }
+
+            if (!complaintCheckState.validated) {
+                submitMsg.className = 'complaint-msg-err';
+                submitMsg.textContent = 'Please validate file format before submitting.';
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('title', title);
+            formData.append('description', description);
+            formData.append('category', category);
+            formData.append('priority', priority);
+            formData.append('stored_filename', storedFilename);
+            formData.append('verification_file', file);
+
+            try {
+                const res = await fetch(`${API_URL}/api/complaints/submit`, {
+                    method: 'POST',
+                    headers: { 'Authorization': 'Bearer ' + getToken() },
+                    body: formData,
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || 'Complaint submission failed');
+
+                submitMsg.className = 'complaint-msg-ok';
+                submitMsg.textContent = `Complaint submitted. Token: ${data.complaint_id}`;
+                document.getElementById('complaintForm').reset();
+                complaintCheckState = { checked: false, found: false, storedFormat: null, verificationFormat: null, validated: false };
+                document.getElementById('complaintSubmitBtn').disabled = true;
+                document.getElementById('storedFileCheckMessage').textContent = '';
+                document.getElementById('verificationFormatMessage').className = 'helper-text';
+                document.getElementById('verificationFormatMessage').textContent = 'Accepted: PDF, DOCX, XLSX, JPG, JPEG, PNG, TXT (max 10 MB)';
+                loadMyComplaints();
+            } catch (err) {
+                submitMsg.className = 'complaint-msg-err';
+                submitMsg.textContent = err.message;
+            }
+        }
+
+        async function loadMyComplaints() {
+            const tbody = document.getElementById('complaintsHistoryBody');
+            try {
+                const res = await fetch(`${API_URL}/api/complaints/my-complaints`, { headers: authHeaders() });
+                if (res.status === 401) { window.location.href = 'login.html'; return; }
+                const data = await res.json();
+                const complaints = data.complaints || [];
+
+                if (!complaints.length) {
+                    complaintHistoryCache = {};
+                    tbody.innerHTML = '<tr><td colspan="8" style="color:#64748b;">No complaints submitted yet.</td></tr>';
+                    return;
+                }
+
+                complaintHistoryCache = {};
+                complaints.forEach((c) => { complaintHistoryCache[c.complaint_id] = c; });
+
+                tbody.innerHTML = complaints.map((c) => `
+                    <tr>
+                        <td>${esc(c.complaint_id)}</td>
+                        <td>${esc(c.title)}</td>
+                        <td>${esc(c.category)}</td>
+                        <td>${esc(c.priority)}</td>
+                        <td>${statusBadge(c.status)}</td>
+                        <td>${c.created_at ? new Date(c.created_at).toLocaleDateString('en-IN') : '—'}</td>
+                        <td>${esc(c.admin_response || '—')}</td>
+                        <td><button class="btn-secondary" onclick="viewComplaintDetails('${esc(c.complaint_id)}')">View Details</button></td>
+                    </tr>
+                `).join('');
+            } catch (err) {
+                tbody.innerHTML = '<tr><td colspan="8" style="color:#991b1b;">Failed to load complaints.</td></tr>';
+            }
+        }
+
+        function viewComplaintDetails(complaintId) {
+            const c = complaintHistoryCache[complaintId];
+            if (!c) return;
+            const details = [
+                `Complaint ID: ${c.complaint_id}`,
+                `Title: ${c.title}`,
+                `Category: ${c.category}`,
+                `Priority: ${c.priority}`,
+                `Status: ${c.status}`,
+                `Stored File Found: ${c.stored_file_found ? 'Yes' : 'No'}`,
+                `Stored Format: ${c.stored_file_format || 'N/A'}`,
+                `Verification Format: ${c.verification_file_format || 'N/A'}`,
+                `Admin Response: ${c.admin_response || 'No response yet'}`,
+                `Description: ${c.description}`,
+            ].join('\n');
+            alert(details);
+        }
 
         async function loadDashboardData() {
             try {

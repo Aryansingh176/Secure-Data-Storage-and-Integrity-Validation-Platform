@@ -440,6 +440,10 @@
         .filter-row { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
         .filter-select,.filter-date { padding:7px 12px; border:1px solid var(--border); border-radius:9px; font-size:0.82rem; font-family:inherit; outline:none; transition:border-color 0.2s; background:white; }
         .filter-select:focus,.filter-date:focus { border-color:var(--primary); }
+        .badge.c-open { background:#dbeafe; color:#1d4ed8; }
+        .badge.c-progress { background:#fef3c7; color:#92400e; }
+        .badge.c-resolved { background:#dcfce7; color:#15803d; }
+        .badge.c-rejected { background:#fee2e2; color:#991b1b; }
     </style>
 </head>
 <body>
@@ -473,6 +477,9 @@
         </a>
         <a class="nav-item" data-page="verification" onclick="navigate('verification')">
             <i class="fas fa-user-check"></i> Verification Requests
+        </a>
+        <a class="nav-item" data-page="complaints" onclick="navigate('complaints')">
+            <i class="fas fa-ticket-alt"></i> Complaints
         </a>
         <a class="nav-item" data-page="analytics" onclick="navigate('analytics')">
             <i class="fas fa-chart-line"></i> Analytics
@@ -678,6 +685,75 @@
         </div>
     </div>
 
+    <!-- ══ PAGE: COMPLAINTS ═══════════════════════════════════════════ -->
+    <div class="content" id="page-complaints">
+        <div class="stats-grid" style="margin-bottom:18px;">
+            <div class="stat-card blue">
+                <div class="stat-icon"><i class="fas fa-ticket-alt"></i></div>
+                <div class="stat-info"><div class="stat-val" id="cmp-total">—</div><div class="stat-lbl">Total Complaints</div></div>
+            </div>
+            <div class="stat-card amber">
+                <div class="stat-icon"><i class="fas fa-folder-open"></i></div>
+                <div class="stat-info"><div class="stat-val" id="cmp-open">—</div><div class="stat-lbl">Open Complaints</div></div>
+            </div>
+            <div class="stat-card purple">
+                <div class="stat-icon"><i class="fas fa-spinner"></i></div>
+                <div class="stat-info"><div class="stat-val" id="cmp-progress">—</div><div class="stat-lbl">In Progress</div></div>
+            </div>
+            <div class="stat-card green">
+                <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                <div class="stat-info"><div class="stat-val" id="cmp-resolved">—</div><div class="stat-lbl">Resolved Today</div></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title"><i class="fas fa-filter"></i> Filters</span>
+                <div class="filter-row">
+                    <select class="filter-select" id="cmpFilterStatus" onchange="complaintsPage=1;loadComplaintsAdmin()">
+                        <option value="">All Status</option>
+                        <option>Open</option>
+                        <option>In Progress</option>
+                        <option>Resolved</option>
+                        <option>Rejected</option>
+                    </select>
+                    <select class="filter-select" id="cmpFilterCategory" onchange="complaintsPage=1;loadComplaintsAdmin()">
+                        <option value="">All Categories</option>
+                        <option>File Not Found</option>
+                        <option>Verification Failed</option>
+                        <option>Upload Issue</option>
+                        <option>Account Issue</option>
+                        <option>Data Mismatch</option>
+                        <option>Other</option>
+                    </select>
+                    <select class="filter-select" id="cmpFilterPriority" onchange="complaintsPage=1;loadComplaintsAdmin()">
+                        <option value="">All Priorities</option>
+                        <option>Low</option>
+                        <option>Medium</option>
+                        <option>High</option>
+                    </select>
+                    <input class="filter-date" type="date" id="cmpFilterFrom" onchange="complaintsPage=1;loadComplaintsAdmin()">
+                    <input class="filter-date" type="date" id="cmpFilterTo" onchange="complaintsPage=1;loadComplaintsAdmin()">
+                    <input type="text" class="search-input" id="cmpSearch" placeholder="Search complaint ID or email" oninput="debouncedComplaintSearch()" style="min-width:220px;">
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Complaint ID</th><th>User Email</th><th>Title</th><th>Category</th><th>Priority</th>
+                                <th>Status</th><th>File Found</th><th>Format Match</th><th>Submitted</th><th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="complaintsBody"></tbody>
+                    </table>
+                </div>
+                <div class="pagination" id="complaintsPagination"></div>
+            </div>
+        </div>
+    </div>
+
     <!-- ══ PAGE: SETTINGS ═══════════════════════════════════════════ -->
     <div class="content" id="page-settings">
         <div class="settings-grid">
@@ -802,6 +878,31 @@
     </div>
 </div>
 
+<!-- ── COMPLAINT DETAIL MODAL ────────────────────────────────────── -->
+<div class="modal-overlay" id="complaintModal">
+    <div class="modal" style="max-width:700px;">
+        <div class="modal-header">
+            <span class="modal-title"><i class="fas fa-ticket-alt"></i> Complaint Details</span>
+            <button class="modal-close" onclick="closeModal('complaintModal')"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="user-detail-grid" id="complaintDetailGrid"></div>
+        <div class="sf-row" style="margin-top:14px;">
+            <label>Admin Response</label>
+            <textarea id="complaintAdminResponse" rows="4" style="width:100%;border:1px solid var(--border);border-radius:9px;padding:10px;font-family:inherit;"></textarea>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;justify-content:flex-end;margin-top:12px;">
+            <select class="filter-select" id="complaintStatusUpdate">
+                <option>Open</option>
+                <option>In Progress</option>
+                <option>Resolved</option>
+                <option>Rejected</option>
+            </select>
+            <button class="btn btn-outline btn-sm" id="complaintDownloadBtn"><i class="fas fa-download"></i> Download Verification File</button>
+            <button class="btn btn-primary btn-sm" onclick="saveComplaintUpdate()"><i class="fas fa-save"></i> Save</button>
+        </div>
+    </div>
+</div>
+
 <!-- ── CONFIRM MODAL ─────────────────────────────────────────────── -->
 <div class="modal-overlay" id="confirmModal">
     <div class="modal" style="max-width:400px;">
@@ -887,6 +988,7 @@
         users:        { title: 'Users',                   sub: 'Manage all registered users' },
         records:      { title: 'Records / Data',          sub: 'All uploaded file and text fingerprints' },
         verification: { title: 'Verification Requests',   sub: 'Users pending email/phone verification' },
+        complaints:   { title: 'Complaints',              sub: 'Track and resolve user complaints' },
         analytics:    { title: 'Analytics',               sub: 'Platform usage statistics and trends' },
         settings:     { title: 'Settings',                sub: 'Admin configuration and controls' },
         audit:        { title: 'Audit Logs',              sub: 'Admin action history and security events' },
@@ -906,9 +1008,18 @@
         if (page === 'users')        { usersPage = 1; loadUsers(); }
         if (page === 'records')      { recordsPage = 1; loadRecords(); }
         if (page === 'verification') { loadVerification(); }
+        if (page === 'complaints')   { complaintsPage = 1; loadComplaintsAdmin(); }
         if (page === 'analytics')    { loadAnalytics(); }
         if (page === 'audit')        { auditPage = 1; loadAuditLogs(); }
         if (page === 'settings')     { sfLoadSettings(); }
+    }
+
+    function complaintStatusBadge(status) {
+        if (status === 'Open') return '<span class="badge c-open">Open</span>';
+        if (status === 'In Progress') return '<span class="badge c-progress">In Progress</span>';
+        if (status === 'Resolved') return '<span class="badge c-resolved">Resolved</span>';
+        if (status === 'Rejected') return '<span class="badge c-rejected">Rejected</span>';
+        return status || '—';
     }
 
     function toggleSidebar() {
@@ -1296,6 +1407,125 @@
                     scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
             });
         } catch(e) { toast('Failed to load analytics', 'error'); }
+    }
+
+    // ─── AUDIT LOGS ──────────────────────────────────────────────────
+    let complaintsPage = 1;
+    const complaintsLimit = 10;
+    let complaintsDebounceTimer;
+    let selectedComplaintId = '';
+    let complaintCache = [];
+
+    function debouncedComplaintSearch() {
+        clearTimeout(complaintsDebounceTimer);
+        complaintsDebounceTimer = setTimeout(() => { complaintsPage = 1; loadComplaintsAdmin(); }, 350);
+    }
+
+    async function loadComplaintsAdmin() {
+        const status = document.getElementById('cmpFilterStatus').value;
+        const category = document.getElementById('cmpFilterCategory').value;
+        const priority = document.getElementById('cmpFilterPriority').value;
+        const from = document.getElementById('cmpFilterFrom').value;
+        const to = document.getElementById('cmpFilterTo').value;
+        const search = document.getElementById('cmpSearch').value.trim();
+
+        const params = new URLSearchParams({ page: complaintsPage, limit: complaintsLimit, status, category, priority, from, to, search });
+
+        try {
+            const r = await fetch(`${API}/api/admin/complaints?${params}`, { headers: authHeaders() });
+            if (r.status === 401 || r.status === 403) { adminLogout(); return; }
+            const d = await r.json();
+            complaintCache = d.complaints || [];
+
+            document.getElementById('cmp-total').textContent = d.summary?.total ?? 0;
+            document.getElementById('cmp-open').textContent = d.summary?.open ?? 0;
+            document.getElementById('cmp-progress').textContent = d.summary?.in_progress ?? 0;
+            document.getElementById('cmp-resolved').textContent = d.summary?.resolved_today ?? 0;
+
+            renderComplaintsTable(d);
+        } catch (e) {
+            toast('Failed to load complaints', 'error');
+        }
+    }
+
+    function renderComplaintsTable(d) {
+        const tbody = document.getElementById('complaintsBody');
+        if (!d.complaints || !d.complaints.length) {
+            tbody.innerHTML = `<tr><td colspan="10"><div class="empty-state"><i class="fas fa-ticket-alt"></i><p>No complaints found</p></div></td></tr>`;
+            document.getElementById('complaintsPagination').innerHTML = '';
+            return;
+        }
+
+        tbody.innerHTML = d.complaints.map((c) => `
+            <tr>
+                <td><strong>${c.complaint_id}</strong></td>
+                <td>${c.user_email || '—'}</td>
+                <td>${c.title || '—'}</td>
+                <td>${c.category || '—'}</td>
+                <td>${c.priority || '—'}</td>
+                <td>${complaintStatusBadge(c.status)}</td>
+                <td><span class="badge ${c.stored_file_found ? 'verified' : 'pending'}">${c.stored_file_found ? 'Yes' : 'No'}</span></td>
+                <td><span class="badge ${c.format_match ? 'verified' : 'pending'}">${c.format_match ? 'Yes' : 'No'}</span></td>
+                <td class="muted">${fmt(c.created_at)}</td>
+                <td><button class="btn btn-primary btn-sm" onclick="openComplaintModal('${c.complaint_id}')"><i class="fas fa-eye"></i> View</button></td>
+            </tr>
+        `).join('');
+
+        renderPagination('complaintsPagination', d.page, d.totalPages, (p) => { complaintsPage = p; loadComplaintsAdmin(); });
+    }
+
+    function openComplaintModal(complaintId) {
+        const c = complaintCache.find(x => x.complaint_id === complaintId);
+        if (!c) return;
+
+        selectedComplaintId = complaintId;
+        const grid = document.getElementById('complaintDetailGrid');
+        grid.innerHTML = [
+            ['Complaint ID', c.complaint_id],
+            ['User Email', c.user_email || '—'],
+            ['Title', c.title || '—'],
+            ['Category', c.category || '—'],
+            ['Priority', c.priority || '—'],
+            ['Status', c.status || '—'],
+            ['Stored Filename', c.stored_filename || '—'],
+            ['Stored File Found', c.stored_file_found ? 'Yes' : 'No'],
+            ['Stored File Format', c.stored_file_format || '—'],
+            ['Verification File', c.verification_file || '—'],
+            ['Verification File Format', c.verification_file_format || '—'],
+            ['Format Match', c.format_match ? 'Yes' : 'No'],
+            ['Submitted', fmtDateTime(c.created_at)],
+            ['Updated', fmtDateTime(c.updated_at)],
+            ['Description', c.description || '—'],
+        ].map(([label, value], idx) => `<div class="detail-field ${idx === 14 ? 'full' : ''}"><label>${label}</label><span>${value}</span></div>`).join('');
+
+        document.getElementById('complaintAdminResponse').value = c.admin_response || '';
+        document.getElementById('complaintStatusUpdate').value = c.status || 'Open';
+        document.getElementById('complaintDownloadBtn').onclick = () => {
+            window.open(`${API}/api/admin/complaints/file/${encodeURIComponent(c.complaint_id)}`, '_blank');
+        };
+
+        document.getElementById('complaintModal').classList.add('show');
+    }
+
+    async function saveComplaintUpdate() {
+        if (!selectedComplaintId) return;
+        const body = {
+            status: document.getElementById('complaintStatusUpdate').value,
+            admin_response: document.getElementById('complaintAdminResponse').value.trim(),
+        };
+
+        try {
+            const r = await fetch(`${API}/api/admin/complaints/${encodeURIComponent(selectedComplaintId)}`, {
+                method: 'PUT', headers: authHeaders(), body: JSON.stringify(body)
+            });
+            const d = await r.json();
+            if (!r.ok) throw new Error(d.error || 'Failed to update complaint');
+            toast('Complaint updated successfully');
+            closeModal('complaintModal');
+            loadComplaintsAdmin();
+        } catch (e) {
+            toast(e.message || 'Failed to update complaint', 'error');
+        }
     }
 
     // ─── AUDIT LOGS ──────────────────────────────────────────────────
