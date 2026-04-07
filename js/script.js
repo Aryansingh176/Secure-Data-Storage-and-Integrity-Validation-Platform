@@ -19,7 +19,7 @@
    ============================================================================ */
 
 // API Base URL - Flask Backend
-const API_BASE_URL = 'http://localhost:5000/api/data';
+const API_BASE_URL = 'https://secure-data-storage-and-integrity.onrender.com/api/data';
 
 // Status types for data integrity
 const STATUS = {
