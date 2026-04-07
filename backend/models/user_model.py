@@ -46,7 +46,6 @@ class User:
         user_data = {
             'name': name,
             'email': email,
-            'phone': phone,                     # E.164 format: +91XXXXXXXXXX
             'google_id': google_id,
             'profile_picture': profile_picture,
             'email_verified': False,
@@ -59,6 +58,8 @@ class User:
             'last_login': None,
             'date_of_birth': None,
         }
+        if phone:
+            user_data['phone'] = phone  # E.164 format: +91XXXXXXXXXX
         try:
             result = self.collection.insert_one(user_data)
             user_data['_id'] = result.inserted_id

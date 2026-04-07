@@ -42,6 +42,14 @@ class Database:
             
             # Get database
             self.db = self.client[self.db_name]
+
+            # Ensure users.phone index allows missing/null phone values while
+            # still enforcing uniqueness for actual phone numbers.
+            users_collection = self.db['users']
+            phone_index = users_collection.index_information().get('phone_1')
+            if phone_index and phone_index.get('unique') and not phone_index.get('sparse'):
+                users_collection.drop_index('phone_1')
+            users_collection.create_index('phone', unique=True, sparse=True)
             
             print(f"[OK] Connected to MongoDB: {self.db_name}")
             return self.db

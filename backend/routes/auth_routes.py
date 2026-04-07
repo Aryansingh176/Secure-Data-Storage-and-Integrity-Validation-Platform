@@ -25,10 +25,11 @@ JWT_EXPIRATION_HOURS = 24
 GOOGLE_CLIENT_ID = None
 GOOGLE_CLIENT_SECRET = None
 GOOGLE_REDIRECT_URI = None
+FRONTEND_URL = None
 
 def init_auth_routes(db):
     """Initialize authentication routes with database"""
-    global user_model, JWT_SECRET, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REDIRECT_URI
+    global user_model, JWT_SECRET, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REDIRECT_URI, FRONTEND_URL
     
     user_model = User(db)
     JWT_SECRET = os.getenv('JWT_SECRET_KEY', 'your-secret-key-change-in-production')
@@ -37,6 +38,7 @@ def init_auth_routes(db):
     GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
     GOOGLE_CLIENT_SECRET = os.getenv('GOOGLE_CLIENT_SECRET')
     GOOGLE_REDIRECT_URI = os.getenv('GOOGLE_REDIRECT_URI', 'http://localhost:5000/api/auth/google/callback')
+    FRONTEND_URL = os.getenv('FRONTEND_URL', 'https://secure-data-storage-and-integrity-v.vercel.app')
     
     print("\n" + "="*60)
     print("GOOGLE OAUTH CONFIGURATION DEBUG")
@@ -221,17 +223,20 @@ def google_callback():
         # Get user info
         credentials = flow.credentials
         request_adapter = google_requests.Request()
-        id_info = id_token.verify_oauth2_token(
+        user_info = id_token.verify_oauth2_token(
             credentials.id_token,
             request_adapter,
             GOOGLE_CLIENT_ID
         )
+
+        if user_info is None or 'email' not in user_info:
+            return redirect(f"{FRONTEND_URL}/login.html?error=google_failed")
         
         # Extract user information
-        google_id = id_info.get('sub')
-        email = id_info.get('email')
-        name = id_info.get('name')
-        picture = id_info.get('picture')
+        google_id = user_info.get('sub')
+        email = user_info.get('email')
+        name = user_info.get('name')
+        picture = user_info.get('picture')
         
         # Check if user exists
         user = user_model.find_by_google_id(google_id)
@@ -271,7 +276,7 @@ def google_callback():
         token = create_jwt_token(user['_id'], email)
         
         # Redirect to frontend with token
-        return redirect(f'https://secure-data-storage-and-integrity-v.vercel.app/login.html?token={token}')
+        return redirect(f'{FRONTEND_URL}/login.html?token={token}')
     
     except Exception as e:
         print(f"Google callback error: {e}")
