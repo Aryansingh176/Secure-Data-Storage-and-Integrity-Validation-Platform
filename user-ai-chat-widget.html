@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>User Support Chat Widget Demo</title>
+
+  <style>
+    :root {
+      --accent: #1e293b;
+      --accent-soft: #334155;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --success: #22c55e;
+      --danger: #dc2626;
+      --shadow: 0 18px 35px rgba(15, 23, 42, 0.16);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .demo-nav {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 28px;
+      background: rgba(255, 255, 255, 0.93);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(8px);
+    }
+
+    .demo-brand {
+      font-weight: 700;
+      letter-spacing: 0.2px;
+      color: var(--accent);
+    }
+
+    .demo-links {
+      display: flex;
+      gap: 14px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .demo-main {
+      max-width: 960px;
+      margin: 32px auto;
+      padding: 0 24px 80px;
+    }
+
+    .demo-hero {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 26px;
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+    }
+
+    .demo-hero h1 {
+      margin: 0 0 10px;
+      font-size: 30px;
+      line-height: 1.2;
+    }
+
+    .demo-hero p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .demo-grid {
+      margin-top: 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 14px;
+    }
+
+    .demo-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+    }
+
+    .demo-card h3 {
+      margin: 0 0 8px;
+      font-size: 16px;
+      color: var(--accent);
+    }
+
+    .demo-card p {
+      margin: 0;
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* EMBED SECTION START: Chat Widget Styles */
+    .ai-chat-bubble {
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      width: 58px;
+      height: 58px;
+      border: 0;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff;
+      cursor: pointer;
+      font-size: 24px;
+      display: grid;
+      place-items: center;
+      box-shadow: var(--shadow);
+      transition: transform 0.2s ease, background 0.2s ease;
+      z-index: 1000;
+    }
+
+    .ai-chat-bubble:hover {
+      transform: translateY(-2px) scale(1.02);
+      background: var(--accent-soft);
+    }
+
+    .ai-chat-panel {
+      position: fixed;
+      right: 22px;
+      bottom: 92px;
+      width: 340px;
+      height: 500px;
+      display: flex;
+      flex-direction: column;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transform-origin: bottom right;
+      transform: translateY(16px) scale(0.94);
+      opacity: 0;
+      pointer-events: none;
+      transition: transform 0.24s ease, opacity 0.24s ease;
+      z-index: 1000;
+    }
+
+    .ai-chat-panel.open {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .ai-chat-panel.full {
+      right: 0;
+      bottom: 0;
+      width: 100vw;
+      height: 100vh;
+      border-radius: 0;
+      border: 0;
+      max-height: 100vh;
+      transform-origin: center;
+      box-shadow: none;
+    }
+
+    .ai-chat-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background: var(--accent);
+      color: #fff;
+      padding: 12px 12px 12px 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+    }
+
+    .ai-chat-title {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 0;
+    }
+
+    .ai-chat-title strong {
+      font-size: 14px;
+      line-height: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .ai-chat-status {
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      opacity: 0.95;
+    }
+
+    .ai-chat-status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+      box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.2);
+    }
+
+    .ai-chat-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .ai-chat-icon-btn {
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      padding: 6px 10px;
+      font-size: 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .ai-chat-icon-btn:hover {
+      background: rgba(255, 255, 255, 0.18);
+    }
+
+    .ai-warning-banner {
+      display: none;
+      background: #fef2f2;
+      color: #7f1d1d;
+      border-bottom: 1px solid #fecaca;
+      padding: 10px 12px;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .ai-warning-banner.show {
+      display: block;
+    }
+
+    .ai-chat-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 14px;
+      background: #f8fafc;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .ai-chat-panel.full .ai-chat-body {
+      max-width: 920px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 20px 22px;
+    }
+
+    .msg-row {
+      display: flex;
+    }
+
+    .msg-row.user {
+      justify-content: flex-end;
+    }
+
+    .msg-row.bot {
+      justify-content: flex-start;
+    }
+
+    .msg-bubble {
+      max-width: 85%;
+      border-radius: 14px;
+      padding: 10px 12px;
+      font-size: 14px;
+      line-height: 1.45;
+      border: 1px solid var(--border);
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    .msg-row.user .msg-bubble {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+      border-bottom-right-radius: 4px;
+    }
+
+    .msg-row.bot .msg-bubble {
+      background: #fff;
+      color: var(--text);
+      border-bottom-left-radius: 4px;
+    }
+
+    .typing-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 9px 10px;
+      border-radius: 12px;
+      background: #fff;
+      border: 1px solid var(--border);
+      width: fit-content;
+    }
+
+    .typing-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #94a3b8;
+      animation: bounce 1s infinite ease-in-out;
+    }
+
+    .typing-dot:nth-child(2) {
+      animation-delay: 0.15s;
+    }
+
+    .typing-dot:nth-child(3) {
+      animation-delay: 0.3s;
+    }
+
+    @keyframes bounce {
+      0%, 80%, 100% { transform: translateY(0); opacity: 0.45; }
+      40% { transform: translateY(-5px); opacity: 1; }
+    }
+
+    .ai-chat-input-wrap {
+      border-top: 1px solid var(--border);
+      background: #fff;
+      padding: 10px;
+    }
+
+    .ai-chat-panel.full .ai-chat-input-wrap {
+      padding: 14px 18px;
+    }
+
+    .ai-chat-input-row {
+      display: flex;
+      gap: 8px;
+      align-items: flex-end;
+      max-width: 920px;
+      margin: 0 auto;
+    }
+
+    .ai-chat-input {
+      flex: 1;
+      min-height: 42px;
+      max-height: 140px;
+      resize: vertical;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px;
+      font: inherit;
+      font-size: 14px;
+      color: var(--text);
+      outline: none;
+    }
+
+    .ai-chat-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(30, 41, 59, 0.12);
+    }
+
+    .ai-send-btn {
+      border: 0;
+      border-radius: 10px;
+      padding: 11px 14px;
+      background: var(--accent);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      min-width: 76px;
+    }
+
+    .ai-send-btn:hover {
+      background: var(--accent-soft);
+    }
+
+    @media (max-width: 560px) {
+      .ai-chat-panel {
+        right: 12px;
+        left: 12px;
+        width: auto;
+        bottom: 84px;
+        height: 68vh;
+      }
+
+      .ai-chat-panel.full {
+        right: 0;
+        left: 0;
+      }
+
+      .ai-chat-bubble {
+        right: 14px;
+        bottom: 14px;
+      }
+    }
+    /* EMBED SECTION END: Chat Widget Styles */
+  </style>
+</head>
+<body>
+  <nav class="demo-nav">
+    <div class="demo-brand">Data Integrity Platform</div>
+    <div class="demo-links">
+      <span>Home</span>
+      <span>Records</span>
+      <span>Dashboard</span>
+      <span>Profile</span>
+    </div>
+  </nav>
+
+  <main class="demo-main">
+    <section class="demo-hero">
+      <h1>White Theme Demo with AI Support Widget</h1>
+      <p>
+        This page is only for previewing the user-side support chat widget in context.
+        The widget sits at the bottom-right as a floating bubble and can expand into full-window mode.
+      </p>
+      <div class="demo-grid">
+        <div class="demo-card">
+          <h3>Need help with uploads?</h3>
+          <p>Ask the assistant how to verify format mismatches or troubleshoot failed integrity checks.</p>
+        </div>
+        <div class="demo-card">
+          <h3>Track your complaint token</h3>
+          <p>Use the support chat to quickly understand complaint statuses and next actions.</p>
+        </div>
+        <div class="demo-card">
+          <h3>Instant answers</h3>
+          <p>The assistant remembers conversation context by sending full history in every API call.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- EMBED SECTION START: Chat Widget Markup -->
+  <button class="ai-chat-bubble" id="aiChatBubble" aria-label="Open support chat" title="Chat with support">
+    💬
+  </button>
+
+  <section class="ai-chat-panel" id="aiChatPanel" aria-hidden="true">
+    <header class="ai-chat-header">
+      <div class="ai-chat-title">
+        <strong>AI Support Assistant</strong>
+        <div class="ai-chat-status"><span class="ai-chat-status-dot"></span>Online</div>
+      </div>
+      <div class="ai-chat-actions">
+        <button class="ai-chat-icon-btn" id="aiToggleFullBtn" title="Toggle full window">Full Window</button>
+        <button class="ai-chat-icon-btn" id="aiCloseBtn" aria-label="Close chat">Close</button>
+      </div>
+    </header>
+
+    <div class="ai-warning-banner" id="aiWarningBanner">
+      Warning: GROQ_API_KEY is still set to placeholder value. Add your real key in the script before using live AI.
+    </div>
+
+    <div class="ai-chat-body" id="aiChatBody"></div>
+
+    <div class="ai-chat-input-wrap">
+      <div class="ai-chat-input-row">
+        <textarea id="aiChatInput" class="ai-chat-input" rows="1" placeholder="Type your message and press Enter..."></textarea>
+        <button id="aiSendBtn" class="ai-send-btn">Send</button>
+      </div>
+    </div>
+  </section>
+  <!-- EMBED SECTION END: Chat Widget Markup -->
+
+  <script>
+    // EMBED SECTION START: Chat Widget Script
+    (() => {
+      // Safe usage:
+      // 1) Keep real keys in a local .env file (never hardcode secrets in source files).
+      // 2) For Node/Vite-style builds, inject GROQ_API_KEY into process.env at build/runtime.
+      // 3) Keep the placeholder fallback so this file can still run in plain static preview mode.
+      const GROQ_API_KEY = (
+        (typeof process !== 'undefined' && process.env && process.env.GROQ_API_KEY)
+        || 'YOUR_GROQ_API_KEY_HERE'
+      );
+      const SYSTEM_PROMPT = 'You are a helpful customer support AI assistant for a data integrity platform. Be concise, clear, and practical.';
+
+      const GROQ_ENDPOINT = 'https://api.groq.com/openai/v1/chat/completions';
+      const GROQ_MODEL = 'llama3-8b-8192';
+      const MAX_TOKENS = 300;
+      const TEMPERATURE = 0.7;
+
+      const bubble = document.getElementById('aiChatBubble');
+      const panel = document.getElementById('aiChatPanel');
+      const closeBtn = document.getElementById('aiCloseBtn');
+      const toggleFullBtn = document.getElementById('aiToggleFullBtn');
+      const body = document.getElementById('aiChatBody');
+      const input = document.getElementById('aiChatInput');
+      const sendBtn = document.getElementById('aiSendBtn');
+      const warningBanner = document.getElementById('aiWarningBanner');
+
+      const PLACEHOLDER_KEY = 'YOUR_GROQ_API_KEY_HERE';
+      const chatHistory = [];
+
+      let isOpen = false;
+      let isFull = false;
+      let isTyping = false;
+      let typingNode = null;
+
+      function setWarningVisibility() {
+        warningBanner.classList.toggle('show', GROQ_API_KEY === PLACEHOLDER_KEY || !GROQ_API_KEY.trim());
+      }
+
+      function openChat() {
+        isOpen = true;
+        panel.classList.add('open');
+        panel.setAttribute('aria-hidden', 'false');
+        setTimeout(() => input.focus(), 120);
+      }
+
+      function closeChat() {
+        isOpen = false;
+        panel.classList.remove('open');
+        panel.setAttribute('aria-hidden', 'true');
+      }
+
+      function toggleFullWindow() {
+        isFull = !isFull;
+        panel.classList.toggle('full', isFull);
+        toggleFullBtn.textContent = isFull ? 'Compact View' : 'Full Window';
+        scrollToBottom();
+      }
+
+      function scrollToBottom() {
+        body.scrollTop = body.scrollHeight;
+      }
+
+      function createMessageRow(role, text) {
+        const row = document.createElement('div');
+        row.className = `msg-row ${role === 'user' ? 'user' : 'bot'}`;
+
+        const bubbleNode = document.createElement('div');
+        bubbleNode.className = 'msg-bubble';
+        bubbleNode.textContent = text;
+
+        row.appendChild(bubbleNode);
+        return row;
+      }
+
+      function appendMessage(role, text) {
+        const node = createMessageRow(role, text);
+        body.appendChild(node);
+        scrollToBottom();
+      }
+
+      function showTyping() {
+        if (isTyping) return;
+        isTyping = true;
+
+        const row = document.createElement('div');
+        row.className = 'msg-row bot';
+
+        const wrap = document.createElement('div');
+        wrap.className = 'typing-wrap';
+        wrap.innerHTML = '<span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>';
+
+        row.appendChild(wrap);
+        body.appendChild(row);
+        typingNode = row;
+        scrollToBottom();
+      }
+
+      function hideTyping() {
+        isTyping = false;
+        if (typingNode && typingNode.parentNode) {
+          typingNode.parentNode.removeChild(typingNode);
+        }
+        typingNode = null;
+      }
+
+      async function fetchGroqReply() {
+        const messages = [{ role: 'system', content: SYSTEM_PROMPT }, ...chatHistory];
+
+        const response = await fetch(GROQ_ENDPOINT, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${GROQ_API_KEY}`
+          },
+          body: JSON.stringify({
+            model: GROQ_MODEL,
+            messages,
+            max_tokens: MAX_TOKENS,
+            temperature: TEMPERATURE
+          })
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`Groq API error ${response.status}: ${errorText}`);
+        }
+
+        const data = await response.json();
+        const content = data?.choices?.[0]?.message?.content?.trim();
+        return content || 'I could not generate a response right now. Please try again.';
+      }
+
+      async function sendMessage() {
+        const text = input.value.trim();
+        if (!text || isTyping) return;
+
+        appendMessage('user', text);
+        chatHistory.push({ role: 'user', content: text });
+        input.value = '';
+        input.style.height = 'auto';
+
+        if (GROQ_API_KEY === PLACEHOLDER_KEY || !GROQ_API_KEY.trim()) {
+          appendMessage('bot', 'Please set a valid GROQ_API_KEY in the script first.');
+          return;
+        }
+
+        try {
+          showTyping();
+          const reply = await fetchGroqReply();
+          hideTyping();
+          appendMessage('bot', reply);
+          chatHistory.push({ role: 'assistant', content: reply });
+        } catch (err) {
+          hideTyping();
+          appendMessage('bot', `Sorry, I hit an error: ${err.message}`);
+        }
+      }
+
+      function autoResizeInput() {
+        input.style.height = 'auto';
+        input.style.height = Math.min(input.scrollHeight, 140) + 'px';
+      }
+
+      function handleKeyDown(event) {
+        if (event.key === 'Enter' && !event.shiftKey) {
+          event.preventDefault();
+          sendMessage();
+        }
+      }
+
+      function handleGlobalKeydown(event) {
+        if (event.key === 'Escape' && isOpen) {
+          closeChat();
+        }
+      }
+
+      function init() {
+        setWarningVisibility();
+
+        appendMessage('bot', 'Hi, I am your AI support assistant. How can I help you today?');
+
+        bubble.addEventListener('click', () => {
+          if (isOpen) {
+            closeChat();
+          } else {
+            openChat();
+          }
+        });
+
+        closeBtn.addEventListener('click', closeChat);
+        toggleFullBtn.addEventListener('click', toggleFullWindow);
+        sendBtn.addEventListener('click', sendMessage);
+
+        input.addEventListener('keydown', handleKeyDown);
+        input.addEventListener('input', autoResizeInput);
+
+        document.addEventListener('keydown', handleGlobalKeydown);
+      }
+
+      init();
+    })();
+    // EMBED SECTION END: Chat Widget Script
+  </script>
+</body>
+</html>
