@@ -11,10 +11,7 @@ This is the main server file that:
 
 from flask import Flask, jsonify, session, send_from_directory
 from flask_cors import CORS
-import os
 from dotenv import load_dotenv
-
-load_dotenv()
 
 # Import configurations and routes
 from config.database import db_instance
@@ -23,6 +20,11 @@ from routes.auth_routes import auth_bp, init_auth_routes
 from routes.otp_auth_routes import otp_auth_bp, init_otp_auth
 from routes.integrity_routes import integrity_bp, init_integrity_routes
 from routes.admin_routes import admin_bp, init_admin_routes
+
+import os
+PORT = int(os.environ.get("PORT", 5000))
+
+load_dotenv()
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -132,6 +134,5 @@ def internal_error(error):
 
 # Run the server
 if __name__ == '__main__':
-    import os
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port, debug=False)
