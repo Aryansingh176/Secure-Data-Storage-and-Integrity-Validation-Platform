@@ -271,7 +271,7 @@ def google_callback():
         token = create_jwt_token(user['_id'], email)
         
         # Redirect to frontend with token
-        return redirect(f'http://localhost:8000/login.html?token={token}')
+        return redirect(f'https://secure-data-storage-and-integrity-v.vercel.app/login.html?token={token}')
     
     except Exception as e:
         print(f"Google callback error: {e}")
