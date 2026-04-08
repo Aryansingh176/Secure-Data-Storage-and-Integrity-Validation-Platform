@@ -10,8 +10,8 @@ import requests
 support_bp = Blueprint('support', __name__, url_prefix='/api/support')
 
 GROQ_ENDPOINT = 'https://api.groq.com/openai/v1/chat/completions'
-DEFAULT_MODEL = 'llama-3.1-8b-instant'
-FALLBACK_MODELS = ['llama-3.1-8b-instant', 'llama-3.3-70b-versatile']
+DEFAULT_MODEL = 'llama-3.3-70b-versatile'
+FALLBACK_MODELS = ['llama-3.3-70b-versatile', 'llama-3.1-8b-instant']
 
 
 def _get_groq_config():
