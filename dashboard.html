@@ -338,27 +338,80 @@
             white-space: nowrap;
         }
 
-        /* Complaints section */
+        /* Complaints section (Professional UI Upgrade) */
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--neutral-900);
+            margin-bottom: 0.5rem;
+            margin-top: 2.5rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background: var(--primary);
+            border-radius: 99px;
+        }
+
         .complaint-card {
-            background: white;
-            border-radius: 24px;
-            border: 1px solid var(--neutral-200);
-            padding: 1.2rem;
-            margin-top: 1rem;
-            box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.03), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+            background: #ffffff;
+            border-radius: 16px;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            padding: 1.75rem;
+            margin-top: 1.25rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -4px rgba(0, 0, 0, 0.025);
+            transition: all 0.3s ease;
+        }
+        
+        .complaint-card:hover {
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.03);
+            border-color: var(--neutral-200);
+        }
+
+        .complaint-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            padding-bottom: 1.25rem;
+            border-bottom: 1px solid var(--neutral-100);
+            margin-bottom: 1.5rem;
+        }
+        
+        .complaint-header strong {
+            font-size: 1.1rem;
+            color: var(--neutral-800);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .complaint-form {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 0.9rem;
-            margin-top: 0.9rem;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.25rem;
+            margin-top: 1rem;
+            background: var(--neutral-50);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--neutral-200);
         }
 
         .complaint-field {
             display: flex;
             flex-direction: column;
-            gap: 0.35rem;
+            gap: 0.4rem;
         }
 
         .complaint-field.full {
@@ -366,37 +419,57 @@
         }
 
         .complaint-field label {
-            font-size: 0.78rem;
+            font-size: 0.85rem;
             font-weight: 600;
-            color: #334155;
+            color: var(--neutral-700);
+            letter-spacing: 0.02em;
         }
 
         .complaint-field input,
         .complaint-field select,
         .complaint-field textarea {
-            border: 1px solid var(--neutral-200);
-            border-radius: 12px;
-            padding: 10px 12px;
-            font: inherit;
-            font-size: 0.9rem;
+            border: 1px solid var(--neutral-300);
+            border-radius: 8px;
+            padding: 0.65rem 0.875rem;
+            font-family: inherit;
+            font-size: 0.95rem;
             outline: none;
+            background: #ffffff;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) inset;
+        }
+
+        .complaint-field textarea {
+            resize: vertical;
+            min-height: 100px;
         }
 
         .complaint-field input:focus,
         .complaint-field select:focus,
         .complaint-field textarea:focus {
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+            background: #ffffff;
+        }
+        
+        .complaint-field input:hover,
+        .complaint-field select:hover,
+        .complaint-field textarea:hover {
+            border-color: var(--primary-light);
         }
 
         .helper-text {
-            font-size: 0.74rem;
+            font-size: 0.75rem;
             color: #64748b;
+            margin-top: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
 
         .inline-row {
             display: flex;
-            gap: 0.6rem;
+            gap: 0.75rem;
             align-items: center;
         }
 
@@ -441,25 +514,128 @@
 
         .complaint-table-wrap {
             overflow-x: auto;
-            margin-top: 0.8rem;
+            margin-top: 2rem;
+            background: #ffffff;
+            border-radius: 12px;
+            border: 1px solid var(--neutral-200);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         }
 
         .complaint-table {
             width: 100%;
-            border-collapse: collapse;
-            font-size: 0.82rem;
-        }
-
-        .complaint-table th,
-        .complaint-table td {
-            border-bottom: 1px solid var(--neutral-200);
-            padding: 0.65rem 0.45rem;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 0.875rem;
             text-align: left;
-            vertical-align: top;
         }
 
-        .complaint-msg-ok { color: #166534; font-size: 0.78rem; font-weight: 600; }
-        .complaint-msg-err { color: #991b1b; font-size: 0.78rem; font-weight: 600; }
+        .complaint-table thead {
+            background: var(--neutral-50);
+            box-shadow: inset 0 -1px 0 var(--neutral-200);
+        }
+
+        .complaint-table th {
+            padding: 1rem 1.25rem;
+            font-weight: 600;
+            color: var(--neutral-700);
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid var(--neutral-200);
+        }
+
+        .complaint-table td {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--neutral-100);
+            vertical-align: middle;
+            color: var(--neutral-800);
+        }
+
+        .complaint-table tbody tr {
+            transition: background 0.15s ease;
+        }
+
+        .complaint-table tbody tr:hover {
+            background: var(--neutral-50);
+        }
+
+        .complaint-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .complaint-msg-ok { color: #059669; font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+        .complaint-msg-err { color: #dc2626; font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+
+        /* Fancy file upload button */
+        .file-upload-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+        .file-upload-wrapper input[type=file] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+            z-index: 2;
+        }
+        .file-upload-btn {
+            display: inline-block;
+            background: var(--neutral-100);
+            color: var(--neutral-800);
+            border: 1px dashed var(--neutral-300);
+            padding: 0.65rem 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+        .file-upload-btn:hover {
+            background: var(--neutral-200);
+            border-color: var(--neutral-400);
+        }
+        .file-upload-btn i {
+            margin-right: 8px;
+            color: var(--primary);
+        }
+
+        /* Action buttons alignment */
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            padding-top: 1.25rem;
+            border-top: 1px dashed var(--neutral-200);
+        }
+
+        /* Submit Button Customization */
+        #complaintSubmitBtn {
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2);
+            transition: all 0.2s ease;
+        }
+
+        #complaintSubmitBtn:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 8px -2px rgba(79, 70, 229, 0.3);
+        }
+
+        #complaintSubmitBtn:disabled {
+            background: var(--neutral-300);
+            cursor: not-allowed;
+            box-shadow: none;
+            color: var(--neutral-500);
+        }
 
         /* Footer */
         footer {
@@ -593,60 +769,80 @@
 
         <h2 class="section-title" id="complaintsSection"><i class="fas fa-ticket-alt"></i> Complaints</h2>
         <div class="complaint-card">
-            <div class="inline-row" style="justify-content: space-between; flex-wrap: wrap;">
-                <strong>Complaint Token System</strong>
-                <button class="btn-primary" id="openComplaintFormBtn">Submit New Complaint</button>
+            <div class="complaint-header">
+                <strong><i class="fas fa-shield-halved text-primary"></i> Complaint Token System</strong>
+                <button class="btn-primary" id="openComplaintFormBtn" style="border-radius: 8px; padding: 0.6rem 1.25rem; font-weight: 500; font-size: 0.9rem; box-shadow: 0 2px 4px rgba(79, 70, 229, 0.2);">
+                    <i class="fas fa-plus-circle" style="margin-right: 6px;"></i> Submit New Complaint
+                </button>
             </div>
 
-            <form id="complaintForm" style="display:none; margin-top: 1rem;">
+            <form id="complaintForm" style="display:none;">
                 <div class="complaint-form">
                     <div class="complaint-field">
                         <label for="complaintTitle">Complaint Title</label>
-                        <input id="complaintTitle" type="text" maxlength="120" required>
+                        <input id="complaintTitle" type="text" maxlength="120" placeholder="E.g., Missing verification file" required>
                     </div>
                     <div class="complaint-field">
                         <label for="complaintCategory">Category</label>
                         <select id="complaintCategory" required>
-                            <option value="">Select category</option>
-                            <option>File Not Found</option>
-                            <option>Verification Failed</option>
-                            <option>Upload Issue</option>
-                            <option>Account Issue</option>
-                            <option>Data Mismatch</option>
-                            <option>Other</option>
+                            <option value="" disabled selected>Select category...</option>
+                            <option value="File Not Found">File Not Found</option>
+                            <option value="Verification Failed">Verification Failed</option>
+                            <option value="Upload Issue">Upload Issue</option>
+                            <option value="Account Issue">Account Issue</option>
+                            <option value="Data Mismatch">Data Mismatch</option>
+                            <option value="Other">Other</option>
                         </select>
                     </div>
                     <div class="complaint-field">
-                        <label for="complaintPriority">Priority</label>
+                        <label for="complaintPriority">Priority Level</label>
                         <select id="complaintPriority" required>
-                            <option value="">Select priority</option>
-                            <option>Low</option>
-                            <option>Medium</option>
-                            <option>High</option>
+                            <option value="" disabled selected>Select priority...</option>
+                            <option value="Low">Low - Informational</option>
+                            <option value="Medium">Medium - Normal</option>
+                            <option value="High">High - Urgent</option>
                         </select>
                     </div>
                     <div class="complaint-field full">
-                        <label for="complaintDescription">Description</label>
-                        <textarea id="complaintDescription" rows="4" minlength="20" required></textarea>
+                        <label for="complaintDescription">Detailed Description</label>
+                        <textarea id="complaintDescription" placeholder="Please describe the issue in detail (min 20 characters)..." required></textarea>
+                        <div class="helper-text"><i class="fas fa-info-circle"></i> Provide clear steps to reproduce the issue.</div>
                     </div>
+                    
                     <div class="complaint-field full">
-                        <label for="complaintStoredFilename">Stored File Name</label>
-                        <div class="inline-row">
-                            <input id="complaintStoredFilename" type="text" placeholder="example.pdf" required style="flex:1;">
-                            <button type="button" class="btn-secondary" id="checkStoredFileBtn">Check File</button>
+                        <label for="complaintStoredFilename">Stored File Name Reference (Optional)</label>
+                        <div class="inline-row" style="background: white; border-radius: 8px; border: 1px solid var(--neutral-300); padding: 4px 4px 4px 12px; display: flex; overflow: hidden; transition: border-color 0.2s ease;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--neutral-300)'">
+                            <i class="fas fa-file-alt" style="color: var(--neutral-400);"></i>
+                            <input id="complaintStoredFilename" type="text" placeholder="example.pdf" style="flex:1; border: none; box-shadow: none; padding: 6px 12px; background: transparent; outline: none; transition: none;">
+                            <button type="button" class="btn-secondary" id="checkStoredFileBtn" style="border-radius: 6px; font-weight: 500; font-size: 0.85rem; padding: 0.5rem 1rem;">
+                                <i class="fas fa-search" style="margin-right: 4px;"></i> Check
+                            </button>
                         </div>
-                        <div class="helper-text">Enter the exact filename you uploaded previously</div>
+                        <div class="helper-text"><i class="fas fa-database"></i> Link a previously uploaded file strictly for context.</div>
                         <div id="storedFileCheckMessage" class="helper-text"></div>
                     </div>
+                    
                     <div class="complaint-field full">
-                        <label for="complaintVerificationFile">Upload Verification File</label>
-                        <input id="complaintVerificationFile" type="file" accept=".pdf,.docx,.xlsx,.jpg,.jpeg,.png,.txt" required>
-                        <div id="verificationFormatMessage" class="helper-text">Accepted: PDF, DOCX, XLSX, JPG, JPEG, PNG, TXT (max 10 MB)</div>
+                        <label for="complaintVerificationFile">Attach Verification Evidence / Screenshot</label>
+                        <div class="file-upload-wrapper" style="width: 100%;">
+                            <div class="file-upload-btn" id="fileUploadBtnDisplay">
+                                <i class="fas fa-cloud-upload-alt text-primary"></i> Click to select or drag and drop file here
+                            </div>
+                            <input id="complaintVerificationFile" type="file" accept=".pdf,.docx,.xlsx,.jpg,.jpeg,.png,.txt" required>
+                        </div>
+                        <div id="verificationFormatMessage" class="helper-text" style="justify-content: space-between;">
+                            <span><i class="fas fa-file-contract"></i> Accepted: PDF, DOCX, XLSX, JPG, JPEG, PNG, TXT</span>
+                            <span>Max 10 MB</span>
+                        </div>
                     </div>
                 </div>
-                <div class="inline-row" style="margin-top: 0.9rem;">
-                    <button type="submit" class="btn-primary" id="complaintSubmitBtn" disabled>Submit Complaint</button>
-                    <span id="complaintSubmitMessage" class="helper-text"></span>
+                
+                <div class="form-actions">
+                    <span id="complaintSubmitMessage" class="helper-text" style="font-weight: 500; font-size: 0.85rem;"></span>
+                    <button type="button" class="btn-secondary" id="cancelComplaintBtn" style="border-radius: 8px; font-weight: 500; padding: 0.75rem 1.25rem; display: none;">Cancel</button>
+                    <button type="submit" class="btn-primary" id="complaintSubmitBtn" disabled>
+                        <i class="fas fa-paper-plane" style="margin-right: 6px;"></i> Submit Complaint
+                    </button>
                 </div>
             </form>
 
@@ -654,14 +850,14 @@
                 <table class="complaint-table">
                     <thead>
                         <tr>
-                            <th>Complaint ID</th>
-                            <th>Title</th>
+                            <th style="width: 120px;">ID</th>
+                            <th>Incident Title</th>
                             <th>Category</th>
                             <th>Priority</th>
-                            <th>Status</th>
-                            <th>Submitted Date</th>
-                            <th>Admin Response</th>
-                            <th>Action</th>
+                            <th style="width: 100px;">Status</th>
+                            <th style="width: 140px;">Date Opened</th>
+                            <th>Admin Remarks</th>
+                            <th style="width: 100px; text-align: right;">Action</th>
                         </tr>
                     </thead>
                     <tbody id="complaintsHistoryBody">
@@ -730,7 +926,36 @@
         function setupComplaintSystem() {
             document.getElementById('openComplaintFormBtn').addEventListener('click', () => {
                 const form = document.getElementById('complaintForm');
-                form.style.display = form.style.display === 'none' ? 'block' : 'none';
+                const btn = document.getElementById('openComplaintFormBtn');
+                const cancelBtn = document.getElementById('cancelComplaintBtn');
+                if (form.style.display === 'none') {
+                    form.style.display = 'block';
+                    btn.style.display = 'none';
+                    cancelBtn.style.display = 'inline-block';
+                }
+            });
+
+            document.getElementById('cancelComplaintBtn').addEventListener('click', () => {
+                const form = document.getElementById('complaintForm');
+                const btn = document.getElementById('openComplaintFormBtn');
+                const cancelBtn = document.getElementById('cancelComplaintBtn');
+                form.style.display = 'none';
+                btn.style.display = 'inline-flex';
+                cancelBtn.style.display = 'none';
+                form.reset();
+                
+                // Reset file uploader display
+                const displayBtn = document.getElementById('fileUploadBtnDisplay');
+                if (displayBtn) {
+                    displayBtn.innerHTML = '<i class="fas fa-cloud-upload-alt text-primary"></i> Click to select or drag and drop file here';
+                    displayBtn.style.borderColor = 'var(--neutral-300)';
+                    displayBtn.style.color = 'var(--neutral-800)';
+                }
+                document.getElementById('complaintSubmitBtn').disabled = true;
+                document.getElementById('verificationFormatMessage').className = 'helper-text';
+                document.getElementById('verificationFormatMessage').textContent = 'Accepted: PDF, DOCX, XLSX, JPG, JPEG, PNG, TXT (max 10 MB)';
+                document.getElementById('storedFileCheckMessage').textContent = '';
+                document.getElementById('complaintSubmitMessage').textContent = '';
             });
 
             document.getElementById('checkStoredFileBtn').addEventListener('click', checkStoredFile);
@@ -773,10 +998,21 @@
 
         function onVerificationFileSelected(event) {
             const file = event.target.files?.[0];
+            const displayBtn = document.getElementById('fileUploadBtnDisplay');
             complaintCheckState.verificationFormat = null;
             if (!file) {
+                if(displayBtn) {
+                    displayBtn.innerHTML = '<i class="fas fa-cloud-upload-alt text-primary"></i> Click to select or drag and drop file here';
+                    displayBtn.style.borderColor = 'var(--neutral-300)';
+                    displayBtn.style.color = 'var(--neutral-800)';
+                }
                 validateComplaintFormat();
                 return;
+            }
+            if(displayBtn) {
+                displayBtn.innerHTML = '<i class="fas fa-file-check text-success"></i> ' + file.name + ' (' + (file.size/1024/1024).toFixed(2) + ' MB)';
+                displayBtn.style.borderColor = 'var(--success)';
+                displayBtn.style.color = 'var(--success)';
             }
 
             const parts = file.name.split('.');
@@ -863,17 +1099,31 @@
                 if (!res.ok) throw new Error(data.error || 'Complaint submission failed');
 
                 submitMsg.className = 'complaint-msg-ok';
-                submitMsg.textContent = `Complaint submitted. Token: ${data.complaint_id}`;
+                submitMsg.innerHTML = `<i class="fas fa-check-circle"></i> Complaint submitted. Token: ${data.complaint_id}`;
                 document.getElementById('complaintForm').reset();
                 complaintCheckState = { checked: false, found: false, storedFormat: null, verificationFormat: null, validated: false };
                 document.getElementById('complaintSubmitBtn').disabled = true;
                 document.getElementById('storedFileCheckMessage').textContent = '';
                 document.getElementById('verificationFormatMessage').className = 'helper-text';
                 document.getElementById('verificationFormatMessage').textContent = 'Accepted: PDF, DOCX, XLSX, JPG, JPEG, PNG, TXT (max 10 MB)';
+                
+                const displayBtn = document.getElementById('fileUploadBtnDisplay');
+                if(displayBtn) {
+                    displayBtn.innerHTML = '<i class="fas fa-cloud-upload-alt text-primary"></i> Click to select or drag and drop file here';
+                    displayBtn.style.borderColor = 'var(--neutral-300)';
+                    displayBtn.style.color = 'var(--neutral-800)';
+                }
+                
+                setTimeout(() => {
+                    const cancelBtn = document.getElementById('cancelComplaintBtn');
+                    if(cancelBtn) cancelBtn.click();
+                    submitMsg.textContent = '';
+                }, 4000);
+                
                 loadMyComplaints();
             } catch (err) {
                 submitMsg.className = 'complaint-msg-err';
-                submitMsg.textContent = err.message;
+                submitMsg.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${err.message}`;
             }
         }
 
