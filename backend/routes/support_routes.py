@@ -10,13 +10,20 @@ import requests
 support_bp = Blueprint('support', __name__, url_prefix='/api/support')
 
 GROQ_ENDPOINT = 'https://api.groq.com/openai/v1/chat/completions'
-GROQ_MODEL = os.getenv('GROQ_MODEL', 'llama3-8b-8192')
-MAX_TOKENS = int(os.getenv('GROQ_MAX_TOKENS', 300))
-TEMPERATURE = float(os.getenv('GROQ_TEMPERATURE', 0.7))
-SYSTEM_PROMPT = os.getenv(
-    'GROQ_SYSTEM_PROMPT',
-    'You are a helpful customer support AI assistant for a data integrity platform. Be concise, clear, and practical.'
-)
+DEFAULT_MODEL = 'llama-3.1-8b-instant'
+FALLBACK_MODELS = ['llama-3.1-8b-instant', 'llama-3.3-70b-versatile']
+
+
+def _get_groq_config():
+    """Load Groq settings from environment at request time."""
+    model = os.getenv('GROQ_MODEL', DEFAULT_MODEL).strip() or DEFAULT_MODEL
+    max_tokens = int(os.getenv('GROQ_MAX_TOKENS', 300))
+    temperature = float(os.getenv('GROQ_TEMPERATURE', 0.7))
+    system_prompt = os.getenv(
+        'GROQ_SYSTEM_PROMPT',
+        'You are a helpful customer support AI assistant for a data integrity platform. Be concise, clear, and practical.'
+    )
+    return model, max_tokens, temperature, system_prompt
 
 
 @support_bp.route('/chat', methods=['POST'])
@@ -47,30 +54,55 @@ def support_chat():
     if not sanitized_messages:
         return jsonify({'error': 'At least one valid message is required'}), 400
 
+    model, max_tokens, temperature, system_prompt = _get_groq_config()
+    model_candidates = [model] + [m for m in FALLBACK_MODELS if m != model]
+
     payload = {
-        'model': GROQ_MODEL,
-        'messages': [{'role': 'system', 'content': SYSTEM_PROMPT}] + sanitized_messages,
-        'max_tokens': MAX_TOKENS,
-        'temperature': TEMPERATURE,
+        'messages': [{'role': 'system', 'content': system_prompt}] + sanitized_messages,
+        'max_tokens': max_tokens,
+        'temperature': temperature,
     }
 
-    try:
-        resp = requests.post(
-            GROQ_ENDPOINT,
-            headers={
-                'Content-Type': 'application/json',
-                'Authorization': f'Bearer {groq_api_key}',
-            },
-            json=payload,
-            timeout=25,
-        )
-    except requests.RequestException as exc:
-        return jsonify({'error': f'Groq request failed: {exc}'}), 502
+    resp = None
+    data = None
+    last_error = None
 
-    if not resp.ok:
-        return jsonify({'error': f'Groq API error {resp.status_code}', 'details': resp.text[:600]}), 502
+    for candidate_model in model_candidates:
+        try:
+            candidate_payload = dict(payload)
+            candidate_payload['model'] = candidate_model
 
-    data = resp.json()
+            resp = requests.post(
+                GROQ_ENDPOINT,
+                headers={
+                    'Content-Type': 'application/json',
+                    'Authorization': f'Bearer {groq_api_key}',
+                },
+                json=candidate_payload,
+                timeout=25,
+            )
+        except requests.RequestException as exc:
+            return jsonify({'error': f'Groq request failed: {exc}'}), 502
+
+        if resp.ok:
+            data = resp.json()
+            break
+
+        body_text = resp.text[:1000]
+        last_error = {'status': resp.status_code, 'body': body_text}
+
+        # If model is decommissioned/unknown, try next fallback model.
+        if 'model_decommissioned' in body_text or 'not_supported' in body_text or 'model_not_found' in body_text:
+            continue
+
+        return jsonify({'error': f'Groq API error {resp.status_code}', 'details': body_text}), 502
+
+    if data is None:
+        return jsonify({
+            'error': f'Groq API error {last_error["status"] if last_error else 502}',
+            'details': (last_error['body'] if last_error else 'Model selection failed')
+        }), 502
+
     reply = (
         data.get('choices', [{}])[0]
         .get('message', {})
