@@ -60,7 +60,11 @@ def _log(user_id, action, record_id=None, success=True, details=None):
 
 def _public_verification_link(verification_id: str) -> str:
     """Create absolute public verification URL: /verify/<verification_id>."""
-    base = os.getenv('PUBLIC_VERIFY_BASE_URL', 'http://localhost:5000').rstrip('/')
+    base = (
+        os.getenv('PUBLIC_VERIFY_BASE_URL')
+        or os.getenv('FRONTEND_URL')
+        or 'https://secure-data-storage-and-integrity-v.vercel.app'
+    ).rstrip('/')
     return f'{base}/verify/{verification_id}'
 
 
@@ -219,6 +223,12 @@ def get_my_records():
     user_id = request.user_id
     records = data_model.get_user_records(user_id)
     stats   = data_model.get_user_statistics(user_id)
+
+    # Add public verification URL so frontend can copy/share directly.
+    for rec in records:
+        vid = rec.get('verification_id')
+        rec['verification_link'] = _public_verification_link(vid) if vid else None
+
     return jsonify({
         'success':    True,
         'count':      len(records),

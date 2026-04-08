@@ -1012,6 +1012,19 @@
             toastTimer = setTimeout(() => toast.classList.remove('show'), 1800);
         }
 
+        function isLocalhostUrl(value) {
+            if (!value) return false;
+            return /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?\//i.test(value);
+        }
+
+        function buildVerificationLink(verificationId, apiLink) {
+            if (apiLink && !isLocalhostUrl(apiLink)) {
+                return apiLink;
+            }
+            if (!verificationId) return '';
+            return `${window.location.origin.replace(/\/$/, '')}/verify/${encodeURIComponent(verificationId)}`;
+        }
+
         // Load records
         async function loadRecords() {
             const tbody = document.getElementById('recordsTableBody');
@@ -1033,7 +1046,7 @@
                 }
                 tbody.innerHTML = '';
                 records.forEach(r => {
-                    const verifyLink = r.verification_id ? `${API}/verify/${encodeURIComponent(r.verification_id)}` : null;
+                    const verifyLink = buildVerificationLink(r.verification_id, r.verification_link);
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td title="${r.original_filename || ''}">${(r.original_filename || 'Unnamed').substring(0, 30)}</td>
@@ -1091,7 +1104,7 @@
                 const res = await fetch(API + '/api/data/upload', { method: 'POST', headers: authHeaders(), body: formData });
                 const data = await res.json();
                 if (res.ok) {
-                    const verifyLink = data.verification_link || `${window.location.origin}/verify/${encodeURIComponent(data.verification_id || '')}`;
+                    const verifyLink = buildVerificationLink(data.verification_id, data.verification_link);
                     statusEl.innerHTML = `
                         <div style="color:green;font-weight:600;">✅ Document Stored Successfully</div>
                         <div style="margin-top:0.4rem;">Hash: <code>${data.record.data_hash.substring(0, 32)}…</code></div>
@@ -1125,7 +1138,7 @@
                 const res = await fetch(API + '/api/data/text', { method: 'POST', headers: { ...authHeaders(), 'Content-Type': 'application/json' }, body: JSON.stringify({ text, label }) });
                 const data = await res.json();
                 if (res.ok) {
-                    const verifyLink = data.verification_link || `${window.location.origin}/verify/${encodeURIComponent(data.verification_id || '')}`;
+                    const verifyLink = buildVerificationLink(data.verification_id, data.verification_link);
                     statusEl.innerHTML = `
                         <div style="color:green;font-weight:600;">✅ Document Stored Successfully</div>
                         <div style="margin-top:0.4rem;">Hash: <code>${data.record.data_hash.substring(0, 32)}…</code></div>
