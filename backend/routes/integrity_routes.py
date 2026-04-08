@@ -118,9 +118,13 @@ def _log(user_id, action, record_id=None, success=True, details=None):
 
 
 def _public_verification_link(verification_id: str) -> str:
-    """Create absolute public verification URL: /verify/<verification_id>."""
-    base = os.getenv('PUBLIC_VERIFY_BASE_URL', 'http://localhost:5000').rstrip('/')
-    return f'{base}/verify/{verification_id}'
+    """Create absolute public verification URL on static verify page."""
+    base = (
+        os.getenv('PUBLIC_VERIFY_BASE_URL')
+        or os.getenv('FRONTEND_URL')
+        or 'https://secure-data-storage-and-integrity-v.vercel.app'
+    ).rstrip('/')
+    return f'{base}/verify.html?id={verification_id}'
 
 
 # == POST /api/upload ==========================================================

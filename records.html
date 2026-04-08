@@ -1022,7 +1022,7 @@
                 return apiLink;
             }
             if (!verificationId) return '';
-            return `${window.location.origin.replace(/\/$/, '')}/verify/${encodeURIComponent(verificationId)}`;
+            return `${window.location.origin.replace(/\/$/, '')}/verify.html?id=${encodeURIComponent(verificationId)}`;
         }
 
         // Load records
