@@ -7,15 +7,8 @@
 */
 
 (function () {
-  const GROQ_API_KEY = ((typeof process !== 'undefined' && process.env && process.env.GROQ_API_KEY) || 'YOUR_GROQ_API_KEY_HERE');
-  const SYSTEM_PROMPT = 'You are a helpful customer support AI assistant for a data integrity platform. Be concise, clear, and practical.';
-
-  const GROQ_ENDPOINT = 'https://api.groq.com/openai/v1/chat/completions';
-  const GROQ_MODEL = 'llama3-8b-8192';
-  const MAX_TOKENS = 300;
-  const TEMPERATURE = 0.7;
-
-  const PLACEHOLDER_KEY = 'YOUR_GROQ_API_KEY_HERE';
+  const SUPPORT_API_BASE = (window.SUPPORT_API_BASE_URL || 'https://secure-data-storage-and-integrity.onrender.com').replace(/\/$/, '');
+  const SUPPORT_CHAT_ENDPOINT = SUPPORT_API_BASE + '/api/support/chat';
   const chatHistory = [];
 
   let isOpen = false;
@@ -273,7 +266,7 @@
         </div>
       </header>
       <div class="ai-warning-banner" id="aiWarningBanner">
-        Warning: GROQ_API_KEY is still placeholder. Configure your environment key before production use.
+        Support AI is temporarily unavailable. Please try again in a moment.
       </div>
       <div class="ai-chat-body" id="aiChatBody"></div>
       <div class="ai-chat-input-wrap">
@@ -327,31 +320,25 @@
     typingNode = null;
   }
 
-  async function fetchGroqReply() {
-    const messages = [{ role: 'system', content: SYSTEM_PROMPT }].concat(chatHistory);
-
-    const response = await fetch(GROQ_ENDPOINT, {
+  async function fetchSupportReply() {
+    const response = await fetch(SUPPORT_CHAT_ENDPOINT, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + GROQ_API_KEY,
       },
       body: JSON.stringify({
-        model: GROQ_MODEL,
-        messages: messages,
-        max_tokens: MAX_TOKENS,
-        temperature: TEMPERATURE,
+        messages: chatHistory,
       }),
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error('Groq API error ' + response.status + ': ' + errorText);
+      throw new Error('Support API error ' + response.status + ': ' + errorText);
     }
 
     const data = await response.json();
-    const content = data && data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content
-      ? String(data.choices[0].message.content).trim()
+    const content = data && data.reply
+      ? String(data.reply).trim()
       : '';
     return content || 'I could not generate a response right now. Please try again.';
   }
@@ -369,7 +356,7 @@
     const sendBtn = document.getElementById('aiSendBtn');
     const warningBanner = document.getElementById('aiWarningBanner');
 
-    warningBanner.classList.toggle('show', GROQ_API_KEY === PLACEHOLDER_KEY || !String(GROQ_API_KEY).trim());
+    warningBanner.classList.remove('show');
 
     appendMessage(body, 'bot', 'Hi, I am your AI support assistant. How can I help you today?');
 
@@ -407,19 +394,15 @@
       input.value = '';
       input.style.height = 'auto';
 
-      if (GROQ_API_KEY === PLACEHOLDER_KEY || !String(GROQ_API_KEY).trim()) {
-        appendMessage(body, 'bot', 'Please set a valid GROQ_API_KEY in your environment first.');
-        return;
-      }
-
       try {
         showTyping(body);
-        const reply = await fetchGroqReply();
+        const reply = await fetchSupportReply();
         hideTyping();
         appendMessage(body, 'bot', reply);
         chatHistory.push({ role: 'assistant', content: reply });
       } catch (err) {
         hideTyping();
+        warningBanner.classList.add('show');
         appendMessage(body, 'bot', 'Sorry, I hit an error: ' + err.message);
       }
     }

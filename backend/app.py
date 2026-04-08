@@ -20,6 +20,7 @@ from routes.auth_routes import auth_bp, init_auth_routes
 from routes.otp_auth_routes import otp_auth_bp, init_otp_auth
 from routes.integrity_routes import integrity_bp, init_integrity_routes
 from routes.admin_routes import admin_bp, init_admin_routes
+from routes.support_routes import support_bp
 from complaint_routes import complaint_bp, init_complaint_routes
 
 import os
@@ -37,7 +38,17 @@ app.url_map.strict_slashes = False
 app.secret_key = os.getenv('FLASK_SECRET_KEY', 'dev-secret-key-change-in-production')
 
 # Configure CORS (allow frontend to access API)
-cors_origins = os.getenv('CORS_ORIGINS', 'http://localhost:8000').split(',')
+cors_origins = [o.strip() for o in os.getenv('CORS_ORIGINS', 'http://localhost:8000').split(',') if o.strip()]
+
+# Always allow configured frontend URL and known deployed frontend fallback.
+frontend_url = (os.getenv('FRONTEND_URL') or '').strip()
+if frontend_url and frontend_url not in cors_origins:
+    cors_origins.append(frontend_url)
+
+default_frontend = 'https://secure-data-storage-and-integrity-v.vercel.app'
+if default_frontend not in cors_origins:
+    cors_origins.append(default_frontend)
+
 CORS(app, resources={r"/api/*": {"origins": cors_origins}}, supports_credentials=True)
 
 # Connect to MongoDB
@@ -62,6 +73,7 @@ app.register_blueprint(auth_bp)
 app.register_blueprint(otp_auth_bp)
 app.register_blueprint(integrity_bp)
 app.register_blueprint(admin_bp)
+app.register_blueprint(support_bp)
 app.register_blueprint(complaint_bp)
 
 # Root endpoint
@@ -101,6 +113,7 @@ def index():
             'POST /api/auth/verify-login':    'Verify OTP → receive JWT token',
             'GET  /api/auth/user/profile':    'Get user profile (requires auth)',
             'PUT  /api/auth/user/profile':    'Update profile (requires auth)',
+            'POST /api/support/chat':         'Customer care AI chat (Groq via backend proxy)',
         }
     })
 
