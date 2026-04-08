@@ -127,6 +127,30 @@ def health():
     })
 
 
+@app.route('/api/verify/<string:code>', methods=['GET'])
+def verify(code):
+    """Public verification lookup by verification_id code."""
+    try:
+        record = db['data_records'].find_one({'verification_id': code})
+        if not record:
+            return jsonify({'status': 'error', 'message': 'Verification code not found'}), 404
+
+        return jsonify({
+            'status': 'success',
+            'message': 'Verified!',
+            'verification_id': code,
+            'record': {
+                'filename': record.get('original_filename') or record.get('label') or 'Unnamed',
+                'upload_method': record.get('upload_method'),
+                'file_type': record.get('file_type'),
+                'created_at': record.get('created_at').isoformat() if record.get('created_at') else None,
+                'last_verification_status': record.get('last_verification_status')
+            }
+        }), 200
+    except Exception as exc:
+        return jsonify({'status': 'error', 'message': f'Verification lookup failed: {exc}'}), 500
+
+
 @app.route('/verify/<verification_id>')
 def public_verify_page(verification_id):
     """Serve public verification page (no login required)."""

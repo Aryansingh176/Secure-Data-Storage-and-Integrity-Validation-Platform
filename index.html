@@ -1196,6 +1196,58 @@
             setTimeout(() => { element.style.display = 'none'; }, 5000);
         }
 
+        async function handleVerifyDeepLink() {
+            const path = window.location.pathname || '';
+            if (!path.startsWith('/verify/')) return false;
+
+            const verificationId = decodeURIComponent(path.replace('/verify/', '').split('/')[0]).trim();
+            if (!verificationId) return true;
+
+            const hostContainer = document.querySelector('.hero .container') || document.querySelector('.container');
+            if (!hostContainer) return true;
+
+            const banner = document.createElement('div');
+            banner.style.marginBottom = '1rem';
+            banner.style.padding = '0.95rem 1.1rem';
+            banner.style.borderRadius = '12px';
+            banner.style.background = 'rgba(79,70,229,0.08)';
+            banner.style.border = '1px solid rgba(79,70,229,0.22)';
+            banner.style.color = '#1e1b4b';
+            banner.innerHTML = `<strong>Verification Code:</strong> ${verificationId} <span style="opacity:.75;">(checking...)</span>`;
+            hostContainer.prepend(banner);
+
+            try {
+                const res = await fetch(`${API}/api/verify/${encodeURIComponent(verificationId)}`);
+                const data = await res.json();
+                if (!res.ok || data.status !== 'success') {
+                    banner.style.background = 'rgba(239,68,68,0.1)';
+                    banner.style.border = '1px solid rgba(239,68,68,0.25)';
+                    banner.style.color = '#7f1d1d';
+                    banner.innerHTML = `<strong>Verification Failed:</strong> ${data.message || 'Code not found'}`;
+                    return true;
+                }
+
+                const rec = data.record || {};
+                banner.style.background = 'rgba(16,185,129,0.1)';
+                banner.style.border = '1px solid rgba(16,185,129,0.28)';
+                banner.style.color = '#065f46';
+                banner.innerHTML = `
+                    <strong>Verification Success:</strong> ${data.message}<br>
+                    <small>
+                        File: ${rec.filename || 'Unnamed'} | Method: ${rec.upload_method || 'n/a'} | 
+                        Status: ${rec.last_verification_status || 'not verified yet'}
+                    </small>
+                `;
+            } catch (err) {
+                banner.style.background = 'rgba(239,68,68,0.1)';
+                banner.style.border = '1px solid rgba(239,68,68,0.25)';
+                banner.style.color = '#7f1d1d';
+                banner.innerHTML = `<strong>Verification Error:</strong> Unable to reach backend API.`;
+            }
+
+            return true;
+        }
+
         // File upload handler
         document.getElementById('fileUploadForm').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -1263,7 +1315,10 @@
         });
 
         // Authentication check on load
-        window.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener('DOMContentLoaded', async () => {
+            const isVerifyRoute = await handleVerifyDeepLink();
+            if (isVerifyRoute) return;
+
             if (!getToken()) {
                 window.location.href = 'login.html';
             }
